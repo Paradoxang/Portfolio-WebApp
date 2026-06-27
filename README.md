@@ -37,6 +37,17 @@ npm run build    # build de producción en /dist
 npm run preview  # previsualizar el build
 ```
 
+## ▲ Despliegue en Vercel
+
+El proyecto está listo para Vercel (incluye `vercel.json` con el *rewrite* de SPA
+para que las rutas del cliente funcionen al recargar).
+
+1. Entra a [vercel.com/new](https://vercel.com/new) e importa este repositorio.
+2. Vercel autodetecta el framework **Vite** — no hay que configurar nada:
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+3. Pulsa **Deploy**.
+
 ## 📁 Estructura
 
 ```
