@@ -497,10 +497,10 @@ export function About() {
               </h2>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
                 <a
-                  href="tel:+573145775930"
+                  href="tel:+573189819384"
                   className="chip w-full justify-center gap-2 px-5 py-3 text-xs tracking-[0.12em] text-primary/80 sm:w-auto"
                 >
-                  <Phone className="h-4 w-4 shrink-0 text-accent-1" /> +57 314 577 5930
+                  <Phone className="h-4 w-4 shrink-0 text-accent-1" /> +57 318 981 9384
                 </a>
                 <a
                   href="https://instagram.com/paradoxxan"
