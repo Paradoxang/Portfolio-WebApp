@@ -143,6 +143,16 @@
   position: relative;
   height: min(72vh, 96vw);
   aspect-ratio: 1100 / 1287;
+}
+
+/* Narrower on phones so the giant wordmark behind it stays visible */
+@media (max-width: 640px) {
+  .portrait-card {
+    height: min(56vh, 74vw);
+  }
+}
+
+.portrait-card {
   border-radius: 1.25rem;
   overflow: hidden;
   border: 1px solid rgba(240, 179, 87, 0.35);

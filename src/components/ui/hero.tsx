@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import { useRef } from "react";
+import { ArrowRight, Menu, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ParticlesBackground } from "@/components/ui/particles-background";
 
@@ -110,6 +110,7 @@ const navItems: { label: string; to: string }[] = [
 ];
 
 const Hero = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <section className="h-screen w-full p-2 sm:p-3 md:p-4">
       <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
@@ -132,9 +133,9 @@ const Hero = () => {
 
         {/* ── Giant MIRANDA, sitting behind the portrait ── */}
         <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[4] flex -translate-y-1/2 justify-center">
-          <h1 className="font-display font-bold leading-[0.8] tracking-[-0.04em] text-[30vw] sm:text-[26vw] md:text-[23vw] lg:text-[21vw]">
+          <h1 className="font-display font-bold leading-[0.8] tracking-[-0.04em] text-[20vw] sm:text-[18vw] md:text-[16vw] lg:text-[14vw]">
             <WordsPullUp
-              text="MIRANDA"
+              text="PARADOXANG"
               showAsterisk
               wordClassName="text-gradient"
             />
@@ -161,13 +162,14 @@ const Hero = () => {
         </motion.div>
 
         {/* Navbar — top right */}
-        <nav className="absolute right-3 top-3 z-20 sm:right-5 sm:top-5">
-          <div className="flex items-center gap-3 rounded-2xl bg-black/70 px-4 py-2 backdrop-blur-sm sm:gap-5 md:gap-8 md:px-6">
+        <nav className="absolute right-3 top-3 z-30 sm:right-5 sm:top-5">
+          {/* Desktop / tablet: inline links */}
+          <div className="hidden items-center gap-3 rounded-2xl bg-black/70 px-4 py-2 backdrop-blur-sm sm:flex sm:gap-5 md:gap-8 md:px-6">
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 to={item.to}
-                className="text-[10px] transition-colors sm:text-xs md:text-sm"
+                className="whitespace-nowrap text-xs transition-colors md:text-sm"
                 style={{ color: "rgba(238, 242, 248, 0.7)" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#f0b357")}
                 onMouseLeave={(e) =>
@@ -178,6 +180,33 @@ const Hero = () => {
               </Link>
             ))}
           </div>
+
+          {/* Mobile: hamburger button */}
+          <button
+            type="button"
+            aria-label="Abrir menú"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/70 text-primary backdrop-blur-sm sm:hidden"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+
+          {/* Mobile: dropdown panel */}
+          {menuOpen && (
+            <div className="absolute right-0 top-12 flex w-48 flex-col overflow-hidden rounded-2xl bg-black/90 p-1.5 backdrop-blur-md sm:hidden">
+              {navItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-xl px-4 py-2.5 text-sm text-primary/80 transition-colors hover:bg-white/5 hover:text-accent-1"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          )}
         </nav>
 
         {/* Top-left wordmark */}

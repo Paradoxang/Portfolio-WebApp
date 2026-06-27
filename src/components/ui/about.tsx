@@ -495,26 +495,27 @@ export function About() {
               <h2 className="font-display mt-4 text-3xl font-bold tracking-[-0.02em] sm:text-5xl">
                 ¿Construimos algo juntos?
               </h2>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
                 <a
                   href="tel:+573145775930"
-                  className="chip gap-2 px-5 py-3 text-xs tracking-[0.12em] text-primary/80"
+                  className="chip w-full justify-center gap-2 px-5 py-3 text-xs tracking-[0.12em] text-primary/80 sm:w-auto"
                 >
-                  <Phone className="h-4 w-4 text-accent-1" /> +57 314 577 5930
+                  <Phone className="h-4 w-4 shrink-0 text-accent-1" /> +57 314 577 5930
                 </a>
                 <a
                   href="https://instagram.com/paradoxxan"
                   target="_blank"
                   rel="noreferrer"
-                  className="chip gap-2 px-5 py-3 text-xs tracking-[0.12em] text-primary/80"
+                  className="chip w-full justify-center gap-2 px-5 py-3 text-xs tracking-[0.12em] text-primary/80 sm:w-auto"
                 >
-                  <Instagram className="h-4 w-4 text-accent-1" /> @paradoxxan
+                  <Instagram className="h-4 w-4 shrink-0 text-accent-1" /> @paradoxxan
                 </a>
                 <a
                   href="mailto:santiago.miranda.trabajo@gmail.com"
-                  className="chip gap-2 px-5 py-3 text-xs tracking-[0.12em] text-primary/80"
+                  className="chip w-full max-w-full justify-center gap-2 px-5 py-3 text-xs tracking-[0.12em] text-primary/80 sm:w-auto"
                 >
-                  <Mail className="h-4 w-4 text-accent-1" /> santiago.miranda.trabajo@gmail.com
+                  <Mail className="h-4 w-4 shrink-0 text-accent-1" />
+                  <span className="break-all">santiago.miranda.trabajo@gmail.com</span>
                 </a>
               </div>
             </div>
