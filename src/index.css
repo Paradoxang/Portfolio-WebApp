@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette tuned around the portrait: cool slate backdrop + warm key light */
+  --color-primary: #eef2f8;
+  --color-ink: #0b0e14; /* deep slate-charcoal, like the photo backdrop */
+
+  --color-accent-1: #f0b357; /* warm gold — the luminic key light */
+  --color-accent-2: #e8c98a; /* soft champagne */
+  --color-accent-3: #6fb3c9; /* steel cyan */
+  --color-accent-4: #5b7a99; /* slate blue */
+
+  /* Sophisticated, code-flavoured type system */
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: "Space Grotesk", "JetBrains Mono", system-ui, sans-serif;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ink);
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+}
+
+/* Subtle film grain to add texture over the gradient/particles */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Animated vibrant gradient backdrop */
+@keyframes aurora-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.aurora-bg {
+  background: linear-gradient(
+    125deg,
+    #232f3f,
+    #0c1018,
+    #1a2433,
+    #0c1018,
+    #1f1a13
+  );
+  background-size: 300% 300%;
+  animation: aurora-shift 22s ease infinite;
+}
+
+/* Gradient text helper — warm key light fading into cool steel */
+.text-gradient {
+  background: linear-gradient(
+    100deg,
+    var(--color-accent-2),
+    var(--color-accent-1),
+    var(--color-primary),
+    var(--color-accent-3)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: aurora-shift 10s ease infinite;
+}
+
+/* ── Warm luminic spotlight behind the centered portrait ──
+   Creates the light/contrast that lifts the subject off the cool backdrop. */
+@keyframes spotlight-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.82;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.06);
+    opacity: 1;
+  }
+}
+
+.spotlight-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(64vh, 78vw);
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 50% 44%,
+    rgba(240, 179, 87, 0.95) 0%,
+    rgba(240, 179, 87, 0.5) 34%,
+    rgba(232, 201, 138, 0.22) 56%,
+    transparent 72%
+  );
+  filter: blur(2px);
+  animation: spotlight-pulse 7s ease-in-out infinite;
+}
+
+/* ── Floating portrait ── */
+@keyframes portrait-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+.float-portrait {
+  animation: portrait-float 6.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Framed portrait card — the photo's own cool-slate backdrop sits against the
+   dark page, and a warm gold rim provides the luminic key light. */
+.portrait-card {
+  position: relative;
+  height: min(72vh, 96vw);
+  aspect-ratio: 1100 / 1287;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  border: 1px solid rgba(240, 179, 87, 0.35);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 90px rgba(240, 179, 87, 0.18);
+  will-change: transform;
+}
+
+/* Slow diagonal light sweep across the portrait */
+@keyframes shine-sweep {
+  0% {
+    transform: translateX(-150%) skewX(-18deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  28%,
+  100% {
+    transform: translateX(150%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+.portrait-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.16) 50%,
+    transparent 62%
+  );
+  animation: shine-sweep 9s ease-in-out infinite;
+  animation-delay: 2.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-glow,
+  .float-portrait,
+  .portrait-shine {
+    animation: none;
+  }
+}
+
+/* ── Shared surfaces for the "Sobre mí" page ── */
+.surface {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  backdrop-filter: blur(6px);
+}
+
+.surface-hover {
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.surface-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(240, 179, 87, 0.4);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Editorial photo frame with the same warm gold rim as the hero portrait */
+.photo-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid rgba(240, 179, 87, 0.3);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), 0 0 60px rgba(240, 179, 87, 0.12);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.photo-frame:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 0 80px rgba(240, 179, 87, 0.2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 9999px;
+  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+}
+.chip:hover {
+  border-color: rgba(240, 179, 87, 0.45);
+  color: #f0b357;
+  background: rgba(240, 179, 87, 0.06);
+}
+
+/* Thin gold eyebrow rule used before section titles */
+.eyebrow-rule {
+  display: inline-block;
+  width: 2.5rem;
+  height: 1px;
+  background: rgba(240, 179, 87, 0.8);
+  vertical-align: middle;
+}

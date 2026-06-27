@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# Local / editor
+*.local
+.DS_Store
+.vite
+.edge-udd-tmp/
+
+# Large source images (not used by the app — optimized .webp live in /public)
+/Foto_*.png
+/Perfil.png
+
+# Personal CV (kept out of the repo)
+*.pdf
