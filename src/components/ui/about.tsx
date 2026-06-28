@@ -110,6 +110,17 @@ interface Project {
 const projects: Project[] = [
   {
     year: "2026",
+    name: "AURORA · VIDEO HERO",
+    tag: "Frontend · React + Tailwind (Vite)",
+    desc: "Landing responsive e interactiva construida alrededor de un único video como base de toda la página: el clip queda fijo de fondo y el contenido se desliza encima, reacciona al puntero y responde al scroll. Sirve 720p/1280p/1920p según la pantalla (WebM + MP4), con poster + blur-up, dock para controlar el video y soporte de «reducir movimiento».",
+    stack: ["React", "Tailwind", "Vite", "Video adaptativo"],
+    link: "https://github.com/Paradoxang/TestWeb1Animated",
+    demo: "https://test-web1-animated12354.vercel.app",
+    mark: "AV",
+    coverLabel: "REACT · TAILWIND",
+  },
+  {
+    year: "2026",
     name: "AUTOMATIZADOR",
     tag: "Desktop · Electron 33 + Node.js",
     desc: "App de escritorio para Windows que centraliza la prospección comercial por correo, Instagram y WhatsApp en un único panel privado. Plantillas dinámicas con variables, importación masiva por CSV, lista de bajas (GDPR/Habeas Data) y credenciales cifradas localmente con DPAPI de Windows.",
