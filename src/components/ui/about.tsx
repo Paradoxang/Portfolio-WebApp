@@ -310,7 +310,7 @@ export function About() {
                   rel="noreferrer"
                   className="chip gap-2 px-4 py-2"
                 >
-                  <Github className="h-3.5 w-3.5 text-accent-1" /> PARADOXANG
+                  <Github className="h-3.5 w-3.5 text-accent-1" /> Dox Desings
                 </a>
               </div>
             </Reveal>

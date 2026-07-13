@@ -135,7 +135,7 @@ const Hero = () => {
         <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[4] flex -translate-y-1/2 justify-center">
           <h1 className="font-display font-bold leading-[0.8] tracking-[-0.04em] text-[20vw] sm:text-[18vw] md:text-[16vw] lg:text-[14vw]">
             <WordsPullUp
-              text="PARADOXANG"
+              text="Dox Desings"
               showAsterisk
               wordClassName="text-gradient"
             />
