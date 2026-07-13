@@ -131,14 +131,13 @@ const Hero = () => {
         {/* Gradient overlay for legibility */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/75" />
 
-        {/* ── Giant MIRANDA, sitting behind the portrait ── */}
-        <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[4] flex -translate-y-1/2 justify-center">
-          <h1 className="font-display font-bold leading-[0.8] tracking-[-0.04em] text-[20vw] sm:text-[18vw] md:text-[16vw] lg:text-[14vw]">
-            <WordsPullUp
-              text="Dox Desings"
-              showAsterisk
-              wordClassName="text-gradient"
-            />
+        {/* ── Giant wordmark: DOX top-left, DESIGNS bottom-right, flanking the portrait ── */}
+        <div className="pointer-events-none absolute inset-0 z-[4]">
+          <h1 className="absolute left-[4%] top-[6%] font-display font-bold leading-[0.8] tracking-[-0.04em] text-[12vw] sm:text-[11vw] md:text-[8vw] lg:text-[7vw]">
+            <WordsPullUp text="DOX" wordClassName="text-gradient" />
+          </h1>
+          <h1 className="absolute bottom-[4%] right-[4%] font-display font-bold leading-[0.8] tracking-[-0.04em] text-[12vw] sm:text-[11vw] md:text-[8vw] lg:text-[7vw]">
+            <WordsPullUp text="DESIGNS" showAsterisk wordClassName="text-gradient" />
           </h1>
         </div>
 

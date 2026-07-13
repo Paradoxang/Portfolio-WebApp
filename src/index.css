@@ -141,7 +141,7 @@
    dark page, and a warm gold rim provides the luminic key light. */
 .portrait-card {
   position: relative;
-  height: min(72vh, 96vw);
+  height: min(64vh, 88vw);
   aspect-ratio: 1100 / 1287;
 }
 
