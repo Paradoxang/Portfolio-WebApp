@@ -20,3 +20,6 @@ vite.config.d.ts
 
 # Personal CV (kept out of the repo)
 *.pdf
+
+# Source brand art (kept locally, derived assets live in public/)
+DoxDesignsLogo.png
