@@ -1,5 +1,5 @@
-# https://TU-DOMINIO.com  (reemplaza por tu dominio real)
+# https://doxdesigns.dev
 User-agent: *
 Allow: /
 
-Sitemap: https://TU-DOMINIO.com/sitemap.xml
+Sitemap: https://doxdesigns.dev/sitemap.xml
