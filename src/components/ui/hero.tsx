@@ -133,10 +133,10 @@ const Hero = () => {
 
         {/* ── Giant wordmark: DOX top-left, DESIGNS bottom-right, flanking the portrait ── */}
         <div className="pointer-events-none absolute inset-0 z-[4]">
-          <h1 className="absolute left-[4%] top-[6%] font-display font-bold leading-[0.8] tracking-[-0.04em] text-[12vw] sm:text-[11vw] md:text-[8vw] lg:text-[7vw]">
+          <h1 className="absolute left-[4%] top-[6%] xl:left-[13%] xl:top-[22%] font-display font-bold leading-[0.8] tracking-[-0.04em] text-[12vw] sm:text-[11vw] md:text-[8vw] lg:text-[7vw]">
             <WordsPullUp text="DOX" wordClassName="text-gradient" />
           </h1>
-          <h1 className="absolute bottom-[4%] right-[4%] font-display font-bold leading-[0.8] tracking-[-0.04em] text-[12vw] sm:text-[11vw] md:text-[8vw] lg:text-[7vw]">
+          <h1 className="absolute bottom-[4%] right-[4%] xl:bottom-[20%] font-display font-bold leading-[0.8] tracking-[-0.04em] text-[12vw] sm:text-[11vw] md:text-[8vw] lg:text-[7vw]">
             <WordsPullUp text="DESIGNS" showAsterisk wordClassName="text-gradient" />
           </h1>
         </div>
