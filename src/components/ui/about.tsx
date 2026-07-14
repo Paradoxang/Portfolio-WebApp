@@ -22,6 +22,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ParticlesBackground } from "@/components/ui/particles-background";
 import { ProjectCover } from "@/components/ui/project-cover";
+import { Seo } from "@/components/seo";
 
 /* ---------------- Reveal helper ---------------- */
 const Reveal = ({
@@ -243,6 +244,11 @@ export function About() {
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden">
+      <Seo
+        title="Sobre mí · Santiago Miranda | Dox Designs"
+        description="Conoce a Santiago Miranda (Dox Designs): experiencia, habilidades y proyectos — React, Next.js, .NET, Angular y Electron. Desarrollador full-stack y diseñador web en Cali, Colombia."
+        path="/sobre-mi"
+      />
       {/* Backdrop — same vibe as the hero, calmer for reading */}
       <div className="aurora-bg fixed inset-0 -z-30" />
       <div className="fixed inset-0 -z-20 opacity-50">

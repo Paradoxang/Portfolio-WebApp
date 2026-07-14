@@ -3,6 +3,7 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ParticlesBackground } from "@/components/ui/particles-background";
+import { Seo } from "@/components/seo";
 
 /* ---------------- WordsPullUp ---------------- */
 interface WordsPullUpProps {
@@ -112,6 +113,12 @@ const navItems: { label: string; to: string }[] = [
 const Hero = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
+    <>
+    <Seo
+      title="Santiago Miranda · Desarrollador y Diseñador Web | Dox Designs"
+      description="Portafolio de Santiago Miranda (Dox Designs): desarrollador full-stack y diseñador web en Cali, Colombia. Creo experiencias digitales donde el código y el diseño se encuentran — React, Next.js, .NET, Angular y Electron."
+      path="/"
+    />
     <section className="h-screen w-full p-2 sm:p-3 md:p-4">
       <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
         {/* Animated vibrant gradient backdrop */}
@@ -258,6 +265,7 @@ const Hero = () => {
         </motion.div>
       </div>
     </section>
+    </>
   );
 };
 

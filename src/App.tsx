@@ -1,16 +1,25 @@
-import { Routes, Route } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
+import type { RouteRecord } from "vite-react-ssg";
 import { Hero } from "@/components/ui/hero";
 import { About } from "@/components/ui/about";
 
-function App() {
+function Layout() {
   return (
-    <main>
-      <Routes>
-        <Route path="/" element={<Hero />} />
-        <Route path="/sobre-mi" element={<About />} />
-      </Routes>
-    </main>
+    <>
+      <Outlet />
+      <Analytics />
+    </>
   );
 }
 
-export default App;
+export const routes: RouteRecord[] = [
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { index: true, element: <Hero /> },
+      { path: "sobre-mi", element: <About /> },
+    ],
+  },
+];
