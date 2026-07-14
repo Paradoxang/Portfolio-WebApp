@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.10",
     "@vercel/analytics": "^2.0.1",
     "framer-motion": "^11.3.0",
     "lucide-react": "^0.400.0",

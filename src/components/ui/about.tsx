@@ -313,7 +313,7 @@ export function About() {
                 <a
                   href="https://github.com/Paradoxang"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="chip gap-2 px-4 py-2"
                 >
                   <Github className="h-3.5 w-3.5 text-accent-1" /> Dox Desings
@@ -424,7 +424,7 @@ export function About() {
                           <a
                             href={p.demo}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="group/btn inline-flex items-center gap-2 rounded-full bg-accent-1 py-1.5 pl-4 pr-1.5 text-xs font-medium text-black transition-all hover:gap-3"
                           >
                             Demo en vivo
@@ -437,7 +437,7 @@ export function About() {
                           <a
                             href={p.link}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="chip gap-2 px-4 py-2 text-xs tracking-[0.12em] text-primary/80 transition-colors hover:text-accent-1"
                           >
                             <Github className="h-3.5 w-3.5 text-accent-1" /> CÓDIGO
@@ -524,7 +524,7 @@ export function About() {
                 <a
                   href="https://instagram.com/paradoxxan"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="chip w-full justify-center gap-2 px-5 py-3 text-xs tracking-[0.12em] text-primary/80 sm:w-auto"
                 >
                   <Instagram className="h-4 w-4 shrink-0 text-accent-1" /> @paradoxxan
