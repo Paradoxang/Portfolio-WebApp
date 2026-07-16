@@ -17,25 +17,25 @@ export function About() {
       <section className="glow-hero relative overflow-hidden pt-32 pb-16">
         <div
           aria-hidden="true"
-          className="outline-word absolute left-[-2%] top-[8%] z-0 text-[clamp(100px,19vw,230px)] leading-[0.8]"
+          className="outline-word absolute left-[-2%] top-[6%] z-0 text-[clamp(130px,25vw,320px)] leading-[0.8]"
         >
           ABOUT
         </div>
         <div className="relative z-10 mx-auto max-w-[1200px] px-6 md:px-8">
-          <Reveal>
+          <Reveal mount>
             <div className="kicker">Sobre mí — Full-stack · .NET / Angular</div>
           </Reveal>
-          <h1 className="display mt-4 text-[clamp(52px,9vw,110px)] leading-[0.86]">
-            <RevealLine delay={0.08}>Sobre</RevealLine>
-            <RevealLine delay={0.16}>
-              <span className="text-transparent [-webkit-text-stroke:1.5px_#8fa2ff]">
-                Mí
-              </span>
+          <h1 className="display mt-4 text-[clamp(64px,13vw,170px)] leading-[0.86]">
+            <RevealLine delay={0.08} mount>
+              Sobre
+            </RevealLine>
+            <RevealLine delay={0.16} mount>
+              <span className="text-shimmer">Mí</span>
             </RevealLine>
           </h1>
 
           <div className="mt-10 grid gap-10 lg:grid-cols-12">
-            <Reveal delay={0.22} className="lg:col-span-7">
+            <Reveal delay={0.22} mount className="lg:col-span-7">
               <p className="max-w-2xl text-[15.5px] leading-[1.75] text-mute">
                 Soy{" "}
                 <strong className="font-bold text-ink">

@@ -8,7 +8,7 @@ export function Stats() {
         <div className="grid grid-cols-3 divide-x divide-white/10 border-y border-white/10 py-10">
           {stats.map((s) => (
             <div key={s.label} className="px-4 text-center sm:px-8 sm:text-left">
-              <div className="display text-[clamp(34px,5vw,52px)] leading-none text-neb">
+              <div className="display text-[clamp(44px,7vw,84px)] leading-none text-neb">
                 {"display" in s ? (
                   s.display
                 ) : (

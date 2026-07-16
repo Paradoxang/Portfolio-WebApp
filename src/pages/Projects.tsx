@@ -16,18 +16,20 @@ export function Projects() {
       <section className="glow-hero relative overflow-hidden pt-32 pb-14">
         <div
           aria-hidden="true"
-          className="outline-word absolute left-[-2%] top-[8%] z-0 text-[clamp(90px,17vw,210px)] leading-[0.8]"
+          className="outline-word absolute left-[-2%] top-[6%] z-0 text-[clamp(110px,22vw,290px)] leading-[0.8]"
         >
           PROJECTS
         </div>
         <div className="relative z-10 mx-auto max-w-[1200px] px-6 md:px-8">
-          <Reveal>
+          <Reveal mount>
             <div className="kicker">Proyectos — {String(projects.length).padStart(2, "0")}</div>
           </Reveal>
-          <h1 className="display mt-4 text-[clamp(52px,9vw,110px)] leading-[0.86]">
-            <RevealLine delay={0.08}>Proyectos</RevealLine>
+          <h1 className="display mt-4 text-[clamp(64px,13vw,170px)] leading-[0.86]">
+            <RevealLine delay={0.08} mount>
+              Proyec<span className="text-shimmer">tos</span>
+            </RevealLine>
           </h1>
-          <Reveal delay={0.2}>
+          <Reveal delay={0.2} mount>
             <p className="mt-6 max-w-[62ch] text-[15.5px] leading-[1.7] text-mute">
               Académicos y personales: cada caso con su contexto, mi rol, el
               stack y el resultado. Los que tienen demo en vivo están

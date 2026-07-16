@@ -21,11 +21,16 @@ export const EASE = [0.16, 1, 0.3, 1] as const;
  * el HTML prerenderizado no dependa de JS; las animaciones corren en cliente. */
 export const SSR = import.meta.env.SSR;
 
-/* ── Reveal: fade + translateY al entrar en viewport ── */
+/* Dispara al montar (`mount`, para contenido sobre el pliegue — robusto
+   tras hidratación SSG) o al entrar en viewport (por defecto). */
+type Trigger = { mount?: boolean };
+
+/* ── Reveal: fade + translateY ── */
 export function Reveal({
   children,
   delay = 0,
   y = 26,
+  mount = false,
   className = "",
   style,
 }: {
@@ -34,13 +39,15 @@ export function Reveal({
   y?: number;
   className?: string;
   style?: CSSProperties;
-}) {
+} & Trigger) {
   const reduced = useReducedMotion();
+  const shown = { opacity: 1, y: 0 };
   return (
     <motion.div
       initial={reduced || SSR ? false : { opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
+      {...(mount
+        ? { animate: shown }
+        : { whileInView: shown, viewport: { once: true, margin: "-60px" } })}
       transition={{ duration: 0.7, delay, ease: EASE }}
       className={className}
       style={style}
@@ -50,28 +57,85 @@ export function Reveal({
   );
 }
 
-/* ── RevealLine: título con máscara, sube desde abajo ── */
+/* ── RevealLine: título con máscara, sube desde abajo.
+   El padding/margen negativo evita que la máscara recorte tildes
+   y bordes de la tipografía (Mí, Educación…). ── */
 export function RevealLine({
   children,
   delay = 0,
+  mount = false,
   className = "",
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
-}) {
+} & Trigger) {
   const reduced = useReducedMotion();
   return (
-    <span className={`block overflow-hidden ${className}`}>
+    <span
+      className={`block overflow-hidden ${className}`}
+      style={{
+        padding: "0.16em 0.06em 0.14em",
+        margin: "-0.16em -0.06em -0.14em",
+      }}
+    >
       <motion.span
         className="block"
-        initial={reduced || SSR ? false : { y: "110%" }}
-        whileInView={{ y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
+        initial={reduced || SSR ? false : { y: "120%" }}
+        {...(mount
+          ? { animate: { y: 0 } }
+          : { whileInView: { y: 0 }, viewport: { once: true, margin: "-40px" } })}
         transition={{ duration: 0.9, delay, ease: EASE }}
       >
         {children}
       </motion.span>
+    </span>
+  );
+}
+
+/* ── Letters: revelado letra a letra con blur — para titulares "boom" ── */
+export function Letters({
+  text,
+  delay = 0,
+  stagger = 0.05,
+  mount = false,
+  className = "",
+}: {
+  text: string;
+  delay?: number;
+  stagger?: number;
+  className?: string;
+} & Trigger) {
+  const reduced = useReducedMotion();
+  const shown = { y: 0, opacity: 1, filter: "blur(0px)", scale: 1 };
+  return (
+    <span
+      className={`inline-block ${className}`}
+      style={{ padding: "0.14em 0.04em", margin: "-0.14em -0.04em" }}
+      aria-label={text}
+    >
+      {[...text].map((ch, i) => (
+        <motion.span
+          key={i}
+          aria-hidden="true"
+          className="inline-block"
+          initial={
+            reduced || SSR
+              ? false
+              : { y: "0.4em", opacity: 0, filter: "blur(14px)", scale: 1.18 }
+          }
+          {...(mount
+            ? { animate: shown }
+            : { whileInView: shown, viewport: { once: true } })}
+          transition={{
+            duration: 0.75,
+            delay: delay + i * stagger,
+            ease: EASE,
+          }}
+        >
+          {ch === " " ? " " : ch}
+        </motion.span>
+      ))}
     </span>
   );
 }

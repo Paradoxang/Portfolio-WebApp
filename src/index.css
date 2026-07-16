@@ -213,6 +213,104 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* ── Shimmer de nebulosa para palabras clave (solo paleta) ── */
+@keyframes shimmer-x {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+.text-shimmer {
+  background: linear-gradient(90deg, #8fa2ff, #ff8fbd, #eef2fb, #8fa2ff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-x 5s linear infinite;
+}
+
+/* ── Marquee horizontal continuo (palabra gigante del hero) ── */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-x 46s linear infinite;
+}
+
+/* ── Glow pulsante para el retrato ── */
+@keyframes glow-pulse-kf {
+  0%,
+  100% {
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55),
+      0 0 70px rgba(143, 162, 255, 0.16);
+  }
+  50% {
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55),
+      0 0 130px rgba(143, 162, 255, 0.38);
+  }
+}
+.glow-pulse {
+  animation: glow-pulse-kf 5.5s ease-in-out infinite;
+}
+
+/* ── Flotación suave ── */
+@keyframes float-y-kf {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+.float-y {
+  animation: float-y-kf 6.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ── Indicador de scroll ── */
+@keyframes scroll-line-kf {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+.scroll-line {
+  animation: scroll-line-kf 1.9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-shimmer,
+  .marquee-track,
+  .glow-pulse,
+  .float-y,
+  .scroll-line {
+    animation: none;
+  }
+}
+
 /* Lenis smooth scroll */
 html.lenis,
 html.lenis body {
