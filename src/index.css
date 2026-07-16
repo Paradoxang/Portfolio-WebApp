@@ -1,34 +1,46 @@
 @import "tailwindcss";
 
+/* ── Dox Designs · Guía de Revitalización — tokens ──
+   Cósmico navy + editorial tipográfico. Acentos de nebulosa
+   siempre puntuales, nunca rellenos grandes. */
 @theme {
-  /* Palette tuned around the portrait: cool slate backdrop + warm key light */
-  --color-primary: #eef2f8;
-  --color-ink: #0b0e14; /* deep slate-charcoal, like the photo backdrop */
+  /* Superficies */
+  --color-space: #04060d;
+  --color-base: #060912;
+  --color-panel: #0e1526;
+  --color-panel-hi: #131c33;
 
-  --color-accent-1: #f0b357; /* warm gold — the luminic key light */
-  --color-accent-2: #e8c98a; /* soft champagne */
-  --color-accent-3: #6fb3c9; /* steel cyan */
-  --color-accent-4: #5b7a99; /* slate blue */
+  /* Texto */
+  --color-ink: #eef2fb;
+  --color-mute: #a8b2c9;
+  --color-faint: #66707f;
 
-  /* Sophisticated, code-flavoured type system */
+  /* Acentos — nebulosa */
+  --color-neb: #8fa2ff; /* azul nebulosa: enlaces, foco, numeración */
+  --color-cosmo: #ff8fbd; /* magenta cósmico: acentos puntuales, hover */
+
+  /* Tipografía */
+  --font-display: "Anton", "Arial Narrow", Impact, sans-serif;
+  --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-display: "Space Grotesk", "JetBrains Mono", system-ui, sans-serif;
 }
 
 @layer base {
-  html,
-  body,
-  #root {
-    height: 100%;
-  }
-
+  /* Nota: sin scroll-behavior:smooth — Lenis se encarga del smooth scroll
+     y ambos entran en conflicto (ver docs de Lenis). */
   body {
     margin: 0;
-    background-color: var(--color-ink);
-    color: var(--color-primary);
-    font-family: var(--font-mono);
+    background-color: var(--color-base);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(143, 162, 255, 0.3);
+    color: #fff;
   }
 
   a {
@@ -42,214 +54,174 @@
   }
 }
 
-/* Subtle film grain to add texture over the gradient/particles */
+/* ── Kicker: etiqueta mono con numeración de sección ── */
+.kicker {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-neb);
+}
+
+/* ── Título display Anton ── */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: #f4f6fd;
+}
+
+/* Palabra gigante de fondo: solo contorno */
+.outline-word {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(143, 162, 255, 0.14);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Variante rellena tenue */
+.ghost-word {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  color: rgba(143, 162, 255, 0.07);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Glows de nebulosa (solo hero y CTA) ── */
+.glow-hero {
+  background: radial-gradient(
+      120% 85% at 72% -5%,
+      rgba(143, 162, 255, 0.18),
+      transparent 58%
+    ),
+    radial-gradient(
+      95% 70% at 6% 108%,
+      rgba(255, 143, 189, 0.1),
+      transparent 55%
+    );
+}
+
+.glow-cta {
+  background: radial-gradient(
+    110% 90% at 12% 110%,
+    rgba(143, 162, 255, 0.16),
+    transparent 55%
+  );
+}
+
+.glow-quote {
+  background: radial-gradient(
+    120% 120% at 100% 0%,
+    rgba(255, 143, 189, 0.12),
+    transparent 60%
+  );
+}
+
+/* ── Tarjetas panel ── */
+.card {
+  background: linear-gradient(180deg, #101a30, #0c1424);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.card-flat {
+  background: #0b1120;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.card-hover {
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(143, 162, 255, 0.4);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Chips / pills ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+}
+.pill:hover {
+  border-color: rgba(143, 162, 255, 0.5);
+  color: var(--color-neb);
+  background: rgba(143, 162, 255, 0.06);
+}
+
+/* ── Botón primario nebulosa ── */
+.btn-neb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--color-neb);
+  color: #060912;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+.btn-neb:hover {
+  background: #a5b4ff;
+  box-shadow: 0 8px 30px rgba(143, 162, 255, 0.35);
+}
+
+/* ── Grano sutil ── */
 .noise-overlay {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Animated vibrant gradient backdrop */
-@keyframes aurora-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.aurora-bg {
-  background: linear-gradient(
-    125deg,
-    #232f3f,
-    #0c1018,
-    #1a2433,
-    #0c1018,
-    #1f1a13
-  );
-  background-size: 300% 300%;
-  animation: aurora-shift 22s ease infinite;
-}
-
-/* Gradient text helper — warm key light fading into cool steel */
-.text-gradient {
-  background: linear-gradient(
-    100deg,
-    var(--color-accent-2),
-    var(--color-accent-1),
-    var(--color-primary),
-    var(--color-accent-3)
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: aurora-shift 10s ease infinite;
-}
-
-/* ── Warm luminic spotlight behind the centered portrait ──
-   Creates the light/contrast that lifts the subject off the cool backdrop. */
-@keyframes spotlight-pulse {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.82;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.06);
-    opacity: 1;
-  }
-}
-
-.spotlight-glow {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: min(64vh, 78vw);
-  aspect-ratio: 1;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle at 50% 44%,
-    rgba(240, 179, 87, 0.95) 0%,
-    rgba(240, 179, 87, 0.5) 34%,
-    rgba(232, 201, 138, 0.22) 56%,
-    transparent 72%
-  );
-  filter: blur(2px);
-  animation: spotlight-pulse 7s ease-in-out infinite;
-}
-
-/* ── Floating portrait ── */
-@keyframes portrait-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-16px);
-  }
-}
-
-.float-portrait {
-  animation: portrait-float 6.5s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* Framed portrait card — the photo's own cool-slate backdrop sits against the
-   dark page, and a warm gold rim provides the luminic key light. */
-.portrait-card {
-  position: relative;
-  height: min(64vh, 88vw);
-  aspect-ratio: 1100 / 1287;
-}
-
-/* Narrower on phones so the giant wordmark behind it stays visible */
-@media (max-width: 640px) {
-  .portrait-card {
-    height: min(56vh, 74vw);
-  }
-}
-
-.portrait-card {
-  border-radius: 1.25rem;
-  overflow: hidden;
-  border: 1px solid rgba(240, 179, 87, 0.35);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 0 90px rgba(240, 179, 87, 0.18);
-  will-change: transform;
-}
-
-/* Slow diagonal light sweep across the portrait */
-@keyframes shine-sweep {
-  0% {
-    transform: translateX(-150%) skewX(-18deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.5;
-  }
-  28%,
-  100% {
-    transform: translateX(150%) skewX(-18deg);
-    opacity: 0;
-  }
-}
-
-.portrait-shine {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    100deg,
-    transparent 38%,
-    rgba(255, 255, 255, 0.16) 50%,
-    transparent 62%
-  );
-  animation: shine-sweep 9s ease-in-out infinite;
-  animation-delay: 2.5s;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .spotlight-glow,
-  .float-portrait,
-  .portrait-shine {
-    animation: none;
-  }
-}
-
-/* ── Shared surfaces for the "Sobre mí" page ── */
-.surface {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
-  backdrop-filter: blur(6px);
-}
-
-.surface-hover {
-  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-.surface-hover:hover {
-  transform: translateY(-4px);
-  border-color: rgba(240, 179, 87, 0.4);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* Editorial photo frame with the same warm gold rim as the hero portrait */
+/* ── Marco editorial para fotos ── */
 .photo-frame {
   position: relative;
   overflow: hidden;
-  border-radius: 1rem;
-  border: 1px solid rgba(240, 179, 87, 0.3);
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), 0 0 60px rgba(240, 179, 87, 0.12);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5), 0 0 60px rgba(143, 162, 255, 0.08);
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
 .photo-frame:hover {
   transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 0 80px rgba(240, 179, 87, 0.2);
+  border-color: rgba(143, 162, 255, 0.35);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 0 80px rgba(143, 162, 255, 0.15);
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
+/* ── Cover estilizada de proyecto (miniatura) ── */
+.project-cover {
+  background: repeating-linear-gradient(
+      135deg,
+      #141d33,
+      #141d33 10px,
+      #0f1626 10px,
+      #0f1626 20px
+    );
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 9999px;
-  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
-}
-.chip:hover {
-  border-color: rgba(240, 179, 87, 0.45);
-  color: #f0b357;
-  background: rgba(240, 179, 87, 0.06);
 }
 
-/* Thin gold eyebrow rule used before section titles */
-.eyebrow-rule {
-  display: inline-block;
-  width: 2.5rem;
-  height: 1px;
-  background: rgba(240, 179, 87, 0.8);
-  vertical-align: middle;
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
 }
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
