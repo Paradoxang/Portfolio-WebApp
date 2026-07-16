@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { Instagram, Mail, MapPin, Phone } from "lucide-react";
 import { useRef } from "react";
 import { Magnetic, Reveal, RevealLine } from "@/lib/anim";
+import { OrbitRings } from "@/components/Cosmic";
 import { contact } from "@/data/site";
 
 export function Cta() {
@@ -19,8 +20,9 @@ export function Cta() {
       ref={ref}
       className="mx-auto max-w-[1200px] scroll-mt-24 px-6 pb-24 pt-8 md:px-8"
     >
-      <div className="glow-cta overflow-hidden rounded-2xl border border-white/10 bg-space/60">
-        <div className="grid items-center gap-10 p-8 md:p-12 lg:grid-cols-[1fr_0.9fr]">
+      <div className="glow-cta relative overflow-hidden rounded-2xl border border-white/10 bg-space/60">
+        <OrbitRings className="absolute -right-24 -top-24 h-[380px] w-[380px] opacity-70" />
+        <div className="relative grid items-center gap-10 p-8 md:p-12 lg:grid-cols-[1fr_0.9fr]">
           <div>
             <Reveal>
               <div className="kicker">05 — Contacto</div>

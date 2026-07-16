@@ -278,6 +278,35 @@
   will-change: transform;
 }
 
+/* ── Rotación de órbitas ── */
+@keyframes spin-slow-kf {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin-slow-kf 40s linear infinite;
+  transform-origin: center;
+}
+.spin-slow-rev {
+  animation: spin-slow-kf 60s linear infinite reverse;
+  transform-origin: center;
+}
+
+/* ── Twinkle de nodos de constelación ── */
+@keyframes twinkle-kf {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+.twinkle {
+  animation: twinkle-kf 4s ease-in-out infinite;
+}
+
 /* ── Indicador de scroll ── */
 @keyframes scroll-line-kf {
   0% {
@@ -306,7 +335,10 @@
   .marquee-track,
   .glow-pulse,
   .float-y,
-  .scroll-line {
+  .scroll-line,
+  .spin-slow,
+  .spin-slow-rev,
+  .twinkle {
     animation: none;
   }
 }

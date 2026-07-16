@@ -1,10 +1,12 @@
 import { Reveal } from "@/lib/anim";
 import { SectionHeading } from "@/components/SectionHeading";
+import { Constellation } from "@/components/Cosmic";
 import { services } from "@/data/site";
 
 export function Services() {
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-20 md:px-8 md:py-28">
+    <section className="relative mx-auto max-w-[1200px] overflow-hidden px-6 py-20 md:px-8 md:py-28">
+      <Constellation className="absolute right-4 top-16 hidden h-[150px] w-[200px] opacity-70 md:block" />
       <SectionHeading kicker="01 — Qué hago" title="What I Do" />
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {services.map((s, i) => (

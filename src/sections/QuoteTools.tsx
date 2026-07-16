@@ -1,4 +1,5 @@
 import { Reveal } from "@/lib/anim";
+import { OrbitRings } from "@/components/Cosmic";
 import { quote, tools } from "@/data/site";
 
 export function QuoteTools() {
@@ -7,8 +8,9 @@ export function QuoteTools() {
       <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
         {/* Cita destacada con glow magenta */}
         <Reveal>
-          <blockquote className="card-flat glow-quote relative m-0 h-full rounded-2xl p-8 md:p-10">
-            <div className="display text-[44px] leading-[0.6] text-neb">“</div>
+          <blockquote className="card-flat glow-quote relative m-0 h-full overflow-hidden rounded-2xl p-8 md:p-10">
+            <OrbitRings className="absolute -bottom-28 -right-16 h-[300px] w-[300px] opacity-50" />
+            <div className="relative display text-[44px] leading-[0.6] text-neb">“</div>
             <p className="display mt-4 text-[clamp(22px,3vw,32px)] leading-[1.25]">
               {quote.text}
             </p>

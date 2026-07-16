@@ -10,6 +10,9 @@ import {
   PenTool,
   LayoutTemplate,
   Bot,
+  Search,
+  Lightbulb,
+  Rocket,
   type LucideIcon,
 } from "lucide-react";
 
@@ -63,12 +66,18 @@ export const services: Service[] = [
 ];
 
 /* ── Work process ── */
-export const process = [
-  { num: "01", title: "Descubrir", desc: "Objetivos, audiencia y requisitos del proyecto." },
-  { num: "02", title: "Idear", desc: "Planeación, wireframes y la solución correcta." },
-  { num: "03", title: "Diseñar", desc: "Visual limpio, moderno y centrado en el usuario." },
-  { num: "04", title: "Desarrollar", desc: "Código rápido, responsive y de alto rendimiento." },
-  { num: "05", title: "Entregar", desc: "Pruebas, ajustes y lanzamiento pixel-perfect." },
+export interface Step {
+  num: string;
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+}
+export const process: Step[] = [
+  { num: "01", icon: Search, title: "Descubrir", desc: "Objetivos, audiencia y requisitos del proyecto." },
+  { num: "02", icon: Lightbulb, title: "Idear", desc: "Planeación, wireframes y la solución correcta." },
+  { num: "03", icon: PenTool, title: "Diseñar", desc: "Visual limpio, moderno y centrado en el usuario." },
+  { num: "04", icon: Code2, title: "Desarrollar", desc: "Código rápido, responsive y de alto rendimiento." },
+  { num: "05", icon: Rocket, title: "Entregar", desc: "Pruebas, ajustes y lanzamiento pixel-perfect." },
 ];
 
 /* ── Tools ── */
