@@ -61,7 +61,7 @@ export function About() {
                   rel="noopener noreferrer"
                   className="pill gap-2 px-4 py-2 font-mono text-[10px] font-semibold tracking-[0.12em] uppercase text-mute"
                 >
-                  Dox Desings
+                  GitHub · {contact.githubHandle}
                 </a>
                 <span className="pill gap-2 px-4 py-2 font-mono text-[10px] font-semibold tracking-[0.12em] uppercase text-mute">
                   {contact.location}
