@@ -71,13 +71,9 @@ export function About() {
 
             {/* Collage editorial */}
             <Reveal delay={0.3} className="lg:col-span-5">
-              <div className="grid grid-cols-3 items-start gap-3">
-                {collage.map((f, i) => (
-                  <div
-                    key={f.src}
-                    className={`photo-frame ${i === 1 ? "mt-6" : i === 2 ? "mt-12" : ""}`}
-                    style={{ aspectRatio: f.ratio }}
-                  >
+              <div className="grid grid-cols-3 gap-3">
+                {collage.map((f) => (
+                  <div key={f.src} className="photo-frame aspect-[3/4]">
                     <img
                       src={f.src}
                       alt="Santiago Miranda"
@@ -97,7 +93,7 @@ export function About() {
         <Reveal>
           <div className="kicker">01 — Habilidades técnicas</div>
         </Reveal>
-        <h2 className="display mt-3 text-[clamp(34px,5.5vw,58px)] leading-[0.94]">
+        <h2 className="display mt-3 text-[clamp(42px,7vw,80px)] leading-[0.94]">
           <RevealLine delay={0.06}>Habilidades</RevealLine>
         </h2>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -131,7 +127,7 @@ export function About() {
         <Reveal>
           <div className="kicker">02 — Trayectoria</div>
         </Reveal>
-        <h2 className="display mt-3 text-[clamp(34px,5.5vw,58px)] leading-[0.94]">
+        <h2 className="display mt-3 text-[clamp(42px,7vw,80px)] leading-[0.94]">
           <RevealLine delay={0.06}>Experiencia &amp; Educación</RevealLine>
         </h2>
         <div className="relative mt-12 flex flex-col gap-10 border-l border-white/10 pl-8">

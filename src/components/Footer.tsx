@@ -1,4 +1,4 @@
-import { Github, Instagram } from "lucide-react";
+import { Facebook, Github, Instagram } from "lucide-react";
 import { contact } from "@/data/site";
 
 export function Footer() {
@@ -24,6 +24,14 @@ export function Footer() {
             className="flex items-center gap-2 transition-colors hover:text-neb"
           >
             <Instagram className="h-3.5 w-3.5" /> Instagram
+          </a>
+          <a
+            href={contact.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 transition-colors hover:text-neb"
+          >
+            <Facebook className="h-3.5 w-3.5" /> Facebook
           </a>
           <span>{contact.domain}</span>
         </div>

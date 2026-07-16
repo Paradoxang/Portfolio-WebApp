@@ -21,10 +21,13 @@ export const contact = {
   email: "santiago.miranda.trabajo@gmail.com",
   phone: "+57 318 981 9384",
   phoneHref: "tel:+573189819384",
+  whatsapp:
+    "https://wa.me/573189819384?text=Hola%20Santiago%2C%20vengo%20de%20tu%20portafolio%20y%20me%20interesa%20un%20proyecto.",
   instagram: "https://instagram.com/paradoxxan",
   instagramHandle: "@paradoxxan",
   github: "https://github.com/Paradoxang",
   githubHandle: "Paradoxang",
+  facebook: "https://www.facebook.com/profile.php?id=61591547326067",
   location: "Cali · CO",
   domain: "doxdesigns.dev",
 };

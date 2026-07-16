@@ -40,14 +40,17 @@ export function Reveal({
   className?: string;
   style?: CSSProperties;
 } & Trigger) {
+  const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const inView = useInView(ref, { once: true, margin: "-50px" });
+  const show = SSR || mount || inView;
+  const hidden = { opacity: 0, y };
   const shown = { opacity: 1, y: 0 };
   return (
     <motion.div
-      initial={reduced || SSR ? false : { opacity: 0, y }}
-      {...(mount
-        ? { animate: shown }
-        : { whileInView: shown, viewport: { once: true, margin: "-60px" } })}
+      ref={ref}
+      initial={reduced || SSR ? false : hidden}
+      animate={reduced ? shown : show ? shown : hidden}
       transition={{ duration: 0.7, delay, ease: EASE }}
       className={className}
       style={style}
@@ -70,9 +73,13 @@ export function RevealLine({
   delay?: number;
   className?: string;
 } & Trigger) {
+  const ref = useRef<HTMLSpanElement>(null);
   const reduced = useReducedMotion();
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  const show = SSR || mount || inView;
   return (
     <span
+      ref={ref}
       className={`block overflow-hidden ${className}`}
       style={{
         padding: "0.16em 0.06em 0.14em",
@@ -82,9 +89,7 @@ export function RevealLine({
       <motion.span
         className="block"
         initial={reduced || SSR ? false : { y: "120%" }}
-        {...(mount
-          ? { animate: { y: 0 } }
-          : { whileInView: { y: 0 }, viewport: { once: true, margin: "-40px" } })}
+        animate={{ y: reduced || show ? 0 : "120%" }}
         transition={{ duration: 0.9, delay, ease: EASE }}
       >
         {children}
@@ -106,10 +111,15 @@ export function Letters({
   stagger?: number;
   className?: string;
 } & Trigger) {
+  const ref = useRef<HTMLSpanElement>(null);
   const reduced = useReducedMotion();
+  const inView = useInView(ref, { once: true });
+  const show = SSR || mount || inView;
+  const hidden = { y: "0.4em", opacity: 0, filter: "blur(14px)", scale: 1.18 };
   const shown = { y: 0, opacity: 1, filter: "blur(0px)", scale: 1 };
   return (
     <span
+      ref={ref}
       className={`inline-block ${className}`}
       style={{ padding: "0.14em 0.04em", margin: "-0.14em -0.04em" }}
       aria-label={text}
@@ -119,14 +129,8 @@ export function Letters({
           key={i}
           aria-hidden="true"
           className="inline-block"
-          initial={
-            reduced || SSR
-              ? false
-              : { y: "0.4em", opacity: 0, filter: "blur(14px)", scale: 1.18 }
-          }
-          {...(mount
-            ? { animate: shown }
-            : { whileInView: shown, viewport: { once: true } })}
+          initial={reduced || SSR ? false : hidden}
+          animate={reduced ? shown : show ? shown : hidden}
           transition={{
             duration: 0.75,
             delay: delay + i * stagger,
