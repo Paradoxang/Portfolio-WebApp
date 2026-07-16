@@ -21,6 +21,16 @@ export function Hero() {
       ref={ref}
       className="glow-hero relative flex min-h-screen flex-col overflow-hidden pt-20"
     >
+      {/* Nebulosa de fondo (glow a la derecha, oscuro a la izquierda para el texto) */}
+      <img
+        src="/nebula-banner.webp"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-right opacity-70"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-base via-base/60 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-base" />
+
       {/* Marquee gigante de fondo con parallax */}
       <motion.div
         aria-hidden="true"
@@ -50,13 +60,13 @@ export function Hero() {
               </div>
             </Reveal>
             <h1
-              className="display mt-6 text-[clamp(68px,15.5vw,215px)] leading-[0.84]"
+              className="display mt-6 text-[clamp(52px,11vw,150px)] leading-[0.86]"
               aria-label="Santiago Miranda"
             >
-              <span className="block">
+              <span className="block whitespace-nowrap">
                 <Letters text="SANTIAGO" delay={0.1} stagger={0.05} mount />
               </span>
-              <RevealLine delay={0.45} mount>
+              <RevealLine delay={0.45} mount className="whitespace-nowrap">
                 <span className="text-shimmer">MIRANDA</span>
               </RevealLine>
             </h1>

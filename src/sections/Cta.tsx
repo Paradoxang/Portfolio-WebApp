@@ -21,7 +21,14 @@ export function Cta() {
       className="mx-auto max-w-[1200px] scroll-mt-24 px-6 pb-24 pt-8 md:px-8"
     >
       <div className="glow-cta relative overflow-hidden rounded-2xl border border-white/10 bg-space/60">
-        <OrbitRings className="absolute -right-24 -top-24 h-[380px] w-[380px] opacity-70" />
+        <img
+          src="/cosmic-orb.webp"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className="float-y pointer-events-none absolute -right-16 -top-28 h-[360px] w-[360px] opacity-50 mix-blend-screen sm:h-[440px] sm:w-[440px]"
+        />
+        <OrbitRings className="absolute -right-20 -top-20 h-[320px] w-[320px] opacity-40" />
         <div className="relative grid items-center gap-10 p-8 md:p-12 lg:grid-cols-[1fr_0.9fr]">
           <div>
             <Reveal>

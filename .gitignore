@@ -23,3 +23,7 @@ vite.config.d.ts
 
 # Source brand art (kept locally, derived assets live in public/)
 DoxDesignsLogo.png
+
+# Source stock art (kept locally, optimized webp lives in public/)
+Stock cosmic 1.png
+Stock cosmic 2.png
