@@ -34,7 +34,7 @@ export const contact = {
 
 /* ── Stats (cifras reales, sin inventar clientes) ── */
 export const stats = [
-  { value: 7, suffix: "+", label: "Proyectos enviados" },
+  { value: 25, suffix: "+", label: "Proyectos realizados" },
   { display: "C1", label: "Inglés bilingüe" },
   { value: 4, suffix: "+", label: "Años construyendo" },
 ] as const;
