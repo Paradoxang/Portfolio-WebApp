@@ -11,6 +11,14 @@ interface Star {
   vy: number;
 }
 
+interface ShootingStar {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number; // 1 → 0
+}
+
 /**
  * Campo de estrellas cósmico: drift muy lento + twinkle sutil.
  * Los glows/parallax reaccionan levemente al puntero (por capa de profundidad).
@@ -28,6 +36,7 @@ export function Starfield({ className = "" }: { className?: string }) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let stars: Star[] = [];
+    let shooting: ShootingStar[] = [];
     let width = 0;
     let height = 0;
     let raf = 0;
@@ -70,6 +79,24 @@ export function Starfield({ className = "" }: { className?: string }) {
         ctx.arc(px, py, s.r, 0, Math.PI * 2);
         ctx.fill();
       }
+      // Estrellas fugaces: estela con gradiente que se desvanece
+      for (const s of shooting) {
+        const tail = 14;
+        const grad = ctx.createLinearGradient(
+          s.x,
+          s.y,
+          s.x - s.vx * tail,
+          s.y - s.vy * tail
+        );
+        grad.addColorStop(0, `rgba(238,242,251,${0.85 * s.life})`);
+        grad.addColorStop(1, "rgba(143,162,255,0)");
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x - s.vx * tail, s.y - s.vy * tail);
+        ctx.stroke();
+      }
       ctx.globalAlpha = 1;
     };
 
@@ -82,6 +109,26 @@ export function Starfield({ className = "" }: { className?: string }) {
         if (s.y < -4) s.y = height + 4;
         if (s.y > height + 4) s.y = -4;
       }
+
+      // Estrella fugaz ocasional (~cada 6-10s)
+      if (shooting.length === 0 && Math.random() < 0.0025) {
+        const speed = 9 + Math.random() * 5;
+        const ang = Math.PI * (0.15 + Math.random() * 0.2); // diagonal ↘
+        shooting.push({
+          x: Math.random() * width * 0.7,
+          y: Math.random() * height * 0.35,
+          vx: Math.cos(ang) * speed,
+          vy: Math.sin(ang) * speed,
+          life: 1,
+        });
+      }
+      shooting = shooting.filter((s) => s.life > 0);
+      for (const s of shooting) {
+        s.x += s.vx;
+        s.y += s.vy;
+        s.life -= 0.02;
+      }
+
       draw(t);
       raf = requestAnimationFrame(tick);
     };

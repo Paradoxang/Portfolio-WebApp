@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
@@ -14,6 +14,7 @@ import { Projects } from "@/pages/Projects";
 function Layout() {
   useLenis();
   const location = useLocation();
+  const { scrollYProgress } = useScroll();
   const firstRender = useRef(true);
   useEffect(() => {
     firstRender.current = false;
@@ -33,6 +34,13 @@ function Layout() {
 
   return (
     <div className="relative min-h-screen bg-base font-sans text-ink">
+      {/* Barra de progreso de scroll */}
+      <motion.div
+        aria-hidden="true"
+        className="fixed inset-x-0 top-0 z-[60] h-[2.5px] origin-left bg-gradient-to-r from-neb via-cosmo to-neb"
+        style={{ scaleX: scrollYProgress }}
+      />
+
       {/* Fondo cósmico global */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <Starfield />

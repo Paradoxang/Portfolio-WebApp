@@ -1,9 +1,17 @@
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Atom, Braces, Palette, Zap } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { Letters, Magnetic, Reveal, RevealLine, EASE, SSR } from "@/lib/anim";
+import { Letters, Magnetic, Reveal, RevealLine, Tilt, EASE, SSR } from "@/lib/anim";
 import { contact } from "@/data/site";
+
+/* Chips de tecnología flotando alrededor del retrato */
+const floatChips = [
+  { icon: Atom, label: "React", pos: "-left-6 top-8 lg:-left-14", delay: "0s" },
+  { icon: Braces, label: ".NET", pos: "-right-4 top-24 lg:-right-10", delay: "1.4s" },
+  { icon: Palette, label: "UI/UX", pos: "-left-4 bottom-24 lg:-left-10", delay: "2.6s" },
+  { icon: Zap, label: "Next.js", pos: "-right-6 bottom-10 lg:-right-14", delay: "3.5s" },
+];
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -114,20 +122,36 @@ export function Hero() {
               }
               animate={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
               transition={{ duration: 1.2, delay: 0.35, ease: EASE }}
-              className="float-y"
+              className="float-y relative"
             >
-              <div
-                className="glow-pulse relative overflow-hidden rounded-2xl border border-white/10"
-                style={{ aspectRatio: "1100 / 1287" }}
-              >
-                <img
-                  src="/perfil.webp"
-                  alt="Santiago Miranda"
-                  draggable={false}
-                  className="h-full w-full select-none object-cover"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-space/50 via-transparent to-transparent" />
-              </div>
+              <Tilt max={7}>
+                <div
+                  className="glow-pulse relative overflow-hidden rounded-2xl border border-white/10"
+                  style={{ aspectRatio: "1100 / 1287" }}
+                >
+                  <img
+                    src="/perfil.webp"
+                    alt="Santiago Miranda"
+                    draggable={false}
+                    className="h-full w-full select-none object-cover"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-space/50 via-transparent to-transparent" />
+                </div>
+              </Tilt>
+
+              {/* Chips de tecnología flotando */}
+              {floatChips.map((c) => (
+                <div
+                  key={c.label}
+                  className={`float-y absolute z-10 ${c.pos}`}
+                  style={{ animationDelay: c.delay }}
+                >
+                  <span className="pill gap-2 border-white/20 bg-space/80 px-3.5 py-2 font-mono text-[10px] font-semibold tracking-[0.1em] uppercase text-mute backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,.45)]">
+                    <c.icon className="h-3.5 w-3.5 text-neb" strokeWidth={1.8} />
+                    {c.label}
+                  </span>
+                </div>
+              ))}
             </motion.div>
           </motion.div>
         </div>

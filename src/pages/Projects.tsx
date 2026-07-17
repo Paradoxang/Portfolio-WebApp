@@ -1,7 +1,27 @@
-import { ArrowUpRight, Github } from "lucide-react";
+import {
+  ArrowUpRight,
+  Bot,
+  FileText,
+  Github,
+  Globe,
+  LayoutTemplate,
+  Monitor,
+  Server,
+  Target,
+  User,
+  type LucideIcon,
+} from "lucide-react";
 import { Seo } from "@/components/seo";
 import { Reveal, RevealLine, scrollToTarget } from "@/lib/anim";
 import { projects } from "@/data/site";
+
+const tipoIcons: Record<string, LucideIcon> = {
+  Frontend: LayoutTemplate,
+  "Full-stack": Server,
+  Web: Globe,
+  Desktop: Monitor,
+  "Chat-bot": Bot,
+};
 
 export function Projects() {
   return (
@@ -83,7 +103,18 @@ export function Projects() {
                         i < projects.length - 1 ? "border-b border-white/5" : ""
                       }`}
                     >
-                      {p.tipo}
+                      <span className="flex items-center gap-2">
+                        {(() => {
+                          const TipoIcon = tipoIcons[p.tipo] ?? Globe;
+                          return (
+                            <TipoIcon
+                              className="h-3.5 w-3.5 text-neb"
+                              strokeWidth={1.6}
+                            />
+                          );
+                        })()}
+                        {p.tipo}
+                      </span>
                     </td>
                     <td
                       className={`px-4 py-3.5 font-mono text-[11px] text-faint ${
@@ -137,19 +168,28 @@ export function Projects() {
                   <Reveal delay={0.08}>
                     <dl className="mt-8 flex flex-col gap-5">
                       <div>
-                        <dt className="kicker !text-[10px]">Contexto</dt>
+                        <dt className="kicker flex items-center gap-2 !text-[10px]">
+                          <FileText className="h-3.5 w-3.5" strokeWidth={1.6} />
+                          Contexto
+                        </dt>
                         <dd className="mt-2 ml-0 text-[14.5px] leading-[1.7] text-mute">
                           {p.desc}
                         </dd>
                       </div>
                       <div>
-                        <dt className="kicker !text-[10px]">Rol</dt>
+                        <dt className="kicker flex items-center gap-2 !text-[10px]">
+                          <User className="h-3.5 w-3.5" strokeWidth={1.6} />
+                          Rol
+                        </dt>
                         <dd className="mt-2 ml-0 text-[14.5px] leading-[1.7] text-mute">
                           {p.rol}
                         </dd>
                       </div>
                       <div>
-                        <dt className="kicker !text-[10px]">Resultado</dt>
+                        <dt className="kicker flex items-center gap-2 !text-[10px]">
+                          <Target className="h-3.5 w-3.5" strokeWidth={1.6} />
+                          Resultado
+                        </dt>
                         <dd className="mt-2 ml-0 text-[14.5px] leading-[1.7] text-mute">
                           {p.resultado}
                         </dd>
@@ -200,7 +240,7 @@ export function Projects() {
 
                 {/* Cover */}
                 <Reveal delay={0.12}>
-                  <div className="project-cover relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl lg:sticky lg:top-28">
+                  <div className="project-cover shine-hover relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl lg:sticky lg:top-28">
                     <span className="display text-[clamp(64px,9vw,110px)] text-neb/22">
                       {p.mark}
                     </span>

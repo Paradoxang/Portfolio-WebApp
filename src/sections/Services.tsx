@@ -11,9 +11,9 @@ export function Services() {
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {services.map((s, i) => (
           <Reveal key={s.title} delay={i * 0.08}>
-            <div className="card card-hover h-full p-6">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[9px] border border-neb/30 bg-neb/10">
-                <s.icon className="h-4.5 w-4.5 text-neb" strokeWidth={1.6} />
+            <div className="card card-hover shine-hover group h-full p-6">
+              <div className="flex h-11 w-11 items-center justify-center rounded-[10px] border border-neb/30 bg-neb/10 transition-all duration-300 group-hover:-rotate-6 group-hover:scale-110 group-hover:border-neb/60 group-hover:bg-neb/20 group-hover:shadow-[0_0_24px_rgba(143,162,255,.35)]">
+                <s.icon className="h-5 w-5 text-neb" strokeWidth={1.6} />
               </div>
               <div className="mt-5 text-[16px] font-bold leading-snug text-ink">
                 {s.title}

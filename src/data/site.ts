@@ -13,6 +13,9 @@ import {
   Search,
   Lightbulb,
   Rocket,
+  Languages,
+  Hourglass,
+  FolderCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -34,9 +37,9 @@ export const contact = {
 
 /* ── Stats (cifras reales, sin inventar clientes) ── */
 export const stats = [
-  { value: 25, suffix: "+", label: "Proyectos realizados" },
-  { display: "C1", label: "Inglés bilingüe" },
-  { value: 4, suffix: "+", label: "Años construyendo" },
+  { icon: FolderCheck, value: 25, suffix: "+", label: "Proyectos realizados" },
+  { icon: Languages, display: "C1", label: "Inglés bilingüe" },
+  { icon: Hourglass, value: 4, suffix: "+", label: "Años construyendo" },
 ] as const;
 
 /* ── What I do ── */

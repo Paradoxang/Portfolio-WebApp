@@ -13,7 +13,7 @@ export function ProjectCard({ project }: { project: Project }) {
       className="group block"
       aria-label={`Ver caso: ${project.name}`}
     >
-      <div className="project-cover relative aspect-[4/3] overflow-hidden rounded-xl">
+      <div className="project-cover shine-hover relative aspect-[4/3] overflow-hidden rounded-xl">
         {/* Monograma */}
         <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-105">
           <span className="display text-[clamp(48px,7vw,84px)] text-neb/25 transition-colors duration-400 group-hover:text-neb/40">

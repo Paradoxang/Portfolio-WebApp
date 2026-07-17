@@ -2,6 +2,7 @@ import { Languages, Award, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/seo";
 import { Reveal, RevealLine } from "@/lib/anim";
+import { Constellation, GlowOrb } from "@/components/Cosmic";
 import { skillGroups, timeline, achievements, collage, contact } from "@/data/site";
 
 export function About() {
@@ -70,8 +71,9 @@ export function About() {
             </Reveal>
 
             {/* Collage editorial */}
-            <Reveal delay={0.3} className="lg:col-span-5">
-              <div className="grid grid-cols-3 gap-3">
+            <Reveal delay={0.3} className="relative lg:col-span-5">
+              <GlowOrb className="absolute -right-16 -top-16 h-64 w-64" color="#8fa2ff" />
+              <div className="relative grid grid-cols-3 gap-3">
                 {collage.map((f) => (
                   <div key={f.src} className="photo-frame aspect-[3/4]">
                     <img
@@ -123,7 +125,8 @@ export function About() {
       </section>
 
       {/* Experiencia & educación */}
-      <section className="mx-auto max-w-[1200px] px-6 py-16 md:px-8">
+      <section className="relative mx-auto max-w-[1200px] px-6 py-16 md:px-8">
+        <Constellation className="absolute right-6 top-10 hidden h-[180px] w-[240px] opacity-70 md:block" />
         <Reveal>
           <div className="kicker">02 — Trayectoria</div>
         </Reveal>

@@ -217,6 +217,48 @@ export function Magnetic({
   );
 }
 
+/* ── Tilt: inclinación 3D que sigue al puntero ── */
+export function Tilt({
+  children,
+  max = 9,
+  className = "",
+}: {
+  children: ReactNode;
+  max?: number;
+  className?: string;
+}) {
+  const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const rx = useMotionValue(0);
+  const ry = useMotionValue(0);
+  const srx = useSpring(rx, { stiffness: 180, damping: 18 });
+  const sry = useSpring(ry, { stiffness: 180, damping: 18 });
+
+  if (reduced) return <div className={className}>{children}</div>;
+
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      style={{ rotateX: srx, rotateY: sry, transformPerspective: 900 }}
+      onMouseMove={(e) => {
+        const r = ref.current?.getBoundingClientRect();
+        if (!r) return;
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        ry.set(px * max * 2);
+        rx.set(-py * max * 2);
+      }}
+      onMouseLeave={() => {
+        rx.set(0);
+        ry.set(0);
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 /* ── Lenis smooth scroll (cliente, respeta reduced-motion) ── */
 let lenisInstance: Lenis | null = null;
 

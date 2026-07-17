@@ -44,7 +44,7 @@ export function Nav() {
               <Link
                 key={l.label}
                 to={l.to}
-                className="font-mono text-[11px] font-medium tracking-[0.14em] uppercase text-mute transition-colors hover:text-neb"
+                className="link-underline font-mono text-[11px] font-medium tracking-[0.14em] uppercase text-mute transition-colors hover:text-neb"
               >
                 {l.label}
               </Link>
@@ -53,7 +53,7 @@ export function Nav() {
                 key={l.label}
                 to={l.to}
                 className={({ isActive }) =>
-                  `font-mono text-[11px] font-medium tracking-[0.14em] uppercase transition-colors hover:text-neb ${
+                  `link-underline font-mono text-[11px] font-medium tracking-[0.14em] uppercase transition-colors hover:text-neb ${
                     isActive ? "text-neb" : "text-mute"
                   }`
                 }

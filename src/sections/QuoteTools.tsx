@@ -28,7 +28,7 @@ export function QuoteTools() {
               {tools.map((t) => (
                 <div
                   key={t}
-                  className="flex aspect-square items-center justify-center rounded-lg border border-white/10 bg-panel-hi/60 px-1 text-center font-mono text-[10px] font-medium text-faint transition-colors duration-300 hover:border-neb/40 hover:text-neb"
+                  className="flex aspect-square cursor-default items-center justify-center rounded-lg border border-white/10 bg-panel-hi/60 px-1 text-center font-mono text-[10px] font-medium text-faint transition-all duration-300 hover:-translate-y-1 hover:border-neb/50 hover:text-neb hover:shadow-[0_8px_20px_rgba(143,162,255,.2)]"
                 >
                   {t}
                 </div>

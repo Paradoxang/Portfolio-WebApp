@@ -307,6 +307,50 @@
   animation: twinkle-kf 4s ease-in-out infinite;
 }
 
+/* ── Barrido de luz al hover (tarjetas/covers) ── */
+.shine-hover {
+  position: relative;
+  overflow: hidden;
+}
+.shine-hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.13) 50%,
+    transparent 60%
+  );
+  transform: translateX(-130%) skewX(-15deg);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.shine-hover:hover::before {
+  transform: translateX(130%) skewX(-15deg);
+}
+
+/* ── Subrayado animado (nav) ── */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--color-neb), var(--color-cosmo));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+}
+
 /* ── Indicador de scroll ── */
 @keyframes scroll-line-kf {
   0% {
