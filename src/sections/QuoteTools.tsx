@@ -23,14 +23,18 @@ export function QuoteTools() {
         {/* Tools I use */}
         <Reveal delay={0.12}>
           <div className="card-flat h-full rounded-2xl p-8">
-            <div className="kicker">04 — Herramientas · Tools I Use</div>
+            <div className="kicker">05 — Herramientas · Tools I Use</div>
             <div className="mt-6 grid grid-cols-4 gap-2.5">
               {tools.map((t) => (
                 <div
-                  key={t}
-                  className="flex aspect-square cursor-default items-center justify-center rounded-lg border border-white/10 bg-panel-hi/60 px-1 text-center font-mono text-[10px] font-medium text-faint transition-all duration-300 hover:-translate-y-1 hover:border-neb/50 hover:text-neb hover:shadow-[0_8px_20px_rgba(143,162,255,.2)]"
+                  key={t.name}
+                  className="group flex aspect-square cursor-default flex-col items-center justify-center gap-2 rounded-lg border border-white/10 bg-panel-hi/60 px-1 text-center font-mono text-[9.5px] font-medium text-faint transition-all duration-300 hover:-translate-y-1 hover:border-neb/50 hover:text-neb hover:shadow-[0_8px_20px_rgba(143,162,255,.2)]"
                 >
-                  {t}
+                  <t.icon
+                    className="h-5 w-5 text-faint transition-colors duration-300 group-hover:text-neb"
+                    strokeWidth={1.5}
+                  />
+                  {t.name}
                 </div>
               ))}
             </div>

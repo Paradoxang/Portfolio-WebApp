@@ -351,6 +351,39 @@
   transform: scaleX(1);
 }
 
+/* ── Línea de escaneo (sección de ciberseguridad) ── */
+@keyframes scan-y-kf {
+  0% {
+    top: -10%;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    top: 110%;
+    opacity: 0;
+  }
+}
+.scan-line-y {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(143, 162, 255, 0.7),
+    transparent
+  );
+  box-shadow: 0 0 18px rgba(143, 162, 255, 0.5);
+  animation: scan-y-kf 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
 /* ── Indicador de scroll ── */
 @keyframes scroll-line-kf {
   0% {
@@ -382,7 +415,8 @@
   .scroll-line,
   .spin-slow,
   .spin-slow-rev,
-  .twinkle {
+  .twinkle,
+  .scan-line-y {
     animation: none;
   }
 }

@@ -1,12 +1,17 @@
 import {
   ArrowUpRight,
   Bot,
+  Bug,
   FileText,
   Github,
   Globe,
+  KeyRound,
   LayoutTemplate,
+  Lock,
+  Mail,
   Monitor,
   Server,
+  ShieldCheck,
   Target,
   User,
   type LucideIcon,
@@ -270,6 +275,91 @@ export function Projects() {
             </article>
           ))}
         </div>
+      </section>
+
+      {/* ── Ciberseguridad: valor agregado en cada entrega ── */}
+      <section className="mx-auto max-w-[1200px] px-6 pb-28 md:px-8">
+        <Reveal>
+          <div className="glow-quote relative overflow-hidden rounded-2xl border border-neb/20 bg-space/60 p-8 md:p-12">
+            <div className="scan-line-y" />
+            <div className="relative">
+              <div className="kicker">Extra — Valor agregado</div>
+              <h2 className="display mt-4 text-[clamp(36px,5.5vw,64px)] leading-[0.94]">
+                <RevealLine delay={0.06}>
+                  Ciberseguridad en{" "}
+                  <span className="text-shimmer">cada entrega</span>
+                </RevealLine>
+              </h2>
+              <p className="mt-6 max-w-[70ch] text-[15px] leading-[1.75] text-mute">
+                Además del desarrollo, cuento con{" "}
+                <strong className="font-bold text-ink">
+                  especialización en Ciberseguridad
+                </strong>
+                . Eso significa que la seguridad no es un extra que se cobra
+                aparte ni un parche de última hora: cada proyecto sale
+                endurecido por defecto, protegiendo tu negocio, tus datos y la
+                confianza de tus clientes.
+              </p>
+
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {[
+                  {
+                    icon: ShieldCheck,
+                    title: "Cabeceras y CSP estrictas",
+                    desc: "Política de contenido que bloquea scripts no autorizados y clickjacking.",
+                  },
+                  {
+                    icon: Lock,
+                    title: "HTTPS + HSTS preload",
+                    desc: "Cifrado forzado en todas las conexiones, sin excepciones.",
+                  },
+                  {
+                    icon: Globe,
+                    title: "Dominio y DNS blindados",
+                    desc: "Registros CAA y DNSSEC contra secuestro y certificados falsos.",
+                  },
+                  {
+                    icon: Mail,
+                    title: "Anti-suplantación de correo",
+                    desc: "SPF y DMARC en modo estricto: nadie envía correos en tu nombre.",
+                  },
+                  {
+                    icon: Bug,
+                    title: "Dependencias vigiladas",
+                    desc: "Auditoría continua de librerías y parches automáticos.",
+                  },
+                  {
+                    icon: KeyRound,
+                    title: "Datos y credenciales",
+                    desc: "Cifrado local, mínimo privilegio y divulgación responsable.",
+                  },
+                ].map((p, i) => (
+                  <Reveal key={p.title} delay={0.08 + i * 0.06}>
+                    <div className="card card-hover group h-full p-5">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-[9px] border border-neb/30 bg-neb/10 transition-all duration-300 group-hover:scale-110 group-hover:border-neb/60 group-hover:shadow-[0_0_20px_rgba(143,162,255,.35)]">
+                        <p.icon className="h-4.5 w-4.5 text-neb" strokeWidth={1.6} />
+                      </div>
+                      <div className="mt-4 text-[14px] font-bold text-ink">
+                        {p.title}
+                      </div>
+                      <p className="mt-1 text-[12.5px] leading-[1.55] text-faint">
+                        {p.desc}
+                      </p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+
+              <p className="mt-8 border-t border-white/10 pt-6 font-mono text-[11px] leading-[1.8] text-faint">
+                <span className="text-neb">›_</span> La prueba está aquí mismo:
+                este portafolio corre con CSP estricta sin{" "}
+                <span className="text-mute">unsafe-inline</span>, HSTS preload,
+                SPF/DMARC en reject, Dependabot y security.txt — calificación A
+                en Mozilla Observatory.
+              </p>
+            </div>
+          </div>
+        </Reveal>
       </section>
     </>
   );

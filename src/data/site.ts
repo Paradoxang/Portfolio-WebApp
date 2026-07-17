@@ -16,6 +16,12 @@ import {
   Languages,
   Hourglass,
   FolderCheck,
+  Braces,
+  Atom,
+  Zap,
+  Shield,
+  FileCode,
+  Wind,
   type LucideIcon,
 } from "lucide-react";
 
@@ -87,15 +93,19 @@ export const process: Step[] = [
 ];
 
 /* ── Tools ── */
-export const tools = [
-  ".NET",
-  "React",
-  "Next.js",
-  "Angular",
-  "TypeScript",
-  "Tailwind",
-  "SQL Server",
-  "Git",
+export interface Tool {
+  name: string;
+  icon: LucideIcon;
+}
+export const tools: Tool[] = [
+  { name: ".NET", icon: Braces },
+  { name: "React", icon: Atom },
+  { name: "Next.js", icon: Zap },
+  { name: "Angular", icon: Shield },
+  { name: "TypeScript", icon: FileCode },
+  { name: "Tailwind", icon: Wind },
+  { name: "SQL Server", icon: Database },
+  { name: "Git", icon: GitBranch },
 ];
 
 /* ── Cita ── */
@@ -127,23 +137,21 @@ export interface Project {
 export const projects: Project[] = [
   {
     num: "01",
-    slug: "aurora",
+    slug: "dr-adrian",
     preview: {
-      mp4: "/previews/aurora-960.mp4",
-      webm: "/previews/aurora-960.webm",
-      poster: "/previews/aurora-poster.jpg",
+      mp4: "/previews/dr-adrian-960.mp4",
+      webm: "/previews/dr-adrian-960.webm",
+      poster: "/previews/dr-adrian-poster.jpg",
     },
-    name: "Aurora · Video Hero",
-    tipo: "Frontend",
-    tag: "React + Tailwind (Vite)",
-    desc: "Landing responsive e interactiva construida alrededor de un único video como base de toda la página: el clip queda fijo de fondo y el contenido se desliza encima, reacciona al puntero y responde al scroll.",
-    rol: "Diseño y desarrollo completo",
-    resultado:
-      "Sirve 720p/1280p/1920p según la pantalla (WebM + MP4), con poster + blur-up, dock para controlar el video y soporte de «reducir movimiento».",
-    stack: ["React", "Tailwind", "Vite", "Video adaptativo"],
-    link: "https://github.com/Paradoxang/TestWeb1Animated",
-    demo: "https://test-web1-animated12354.vercel.app",
-    mark: "AV",
+    name: "Portafolio Dr. Adrián",
+    tipo: "Web",
+    tag: "Portafolio profesional médico",
+    desc: "Portafolio digital del Dr. Adrián, especialista médico: una carta de presentación en línea que reúne su perfil profesional, servicios y datos de contacto.",
+    rol: "Diseño y desarrollo",
+    resultado: "Diseño responsive y limpio, desplegado en Vercel.",
+    stack: ["React", "Tailwind", "Vercel", "Responsive"],
+    demo: "https://portfolio-doctor-app.vercel.app/",
+    mark: "DA",
     year: "2026",
     featured: true,
   },
@@ -192,26 +200,33 @@ export const projects: Project[] = [
   },
   {
     num: "04",
-    slug: "dr-adrian",
+    slug: "aurora",
     preview: {
-      mp4: "/previews/dr-adrian-960.mp4",
-      webm: "/previews/dr-adrian-960.webm",
-      poster: "/previews/dr-adrian-poster.jpg",
+      mp4: "/previews/aurora-960.mp4",
+      webm: "/previews/aurora-960.webm",
+      poster: "/previews/aurora-poster.jpg",
     },
-    name: "Portafolio Dr. Adrián",
-    tipo: "Web",
-    tag: "Portafolio profesional médico",
-    desc: "Portafolio digital del Dr. Adrián, especialista médico: una carta de presentación en línea que reúne su perfil profesional, servicios y datos de contacto.",
-    rol: "Diseño y desarrollo",
-    resultado: "Diseño responsive y limpio, desplegado en Vercel.",
-    stack: ["React", "Tailwind", "Vercel", "Responsive"],
-    demo: "https://portfolio-doctor-app.vercel.app/",
-    mark: "DA",
+    name: "Aurora · Video Hero",
+    tipo: "Frontend",
+    tag: "React + Tailwind (Vite)",
+    desc: "Landing responsive e interactiva construida alrededor de un único video como base de toda la página: el clip queda fijo de fondo y el contenido se desliza encima, reacciona al puntero y responde al scroll.",
+    rol: "Diseño y desarrollo completo",
+    resultado:
+      "Sirve 720p/1280p/1920p según la pantalla (WebM + MP4), con poster + blur-up, dock para controlar el video y soporte de «reducir movimiento».",
+    stack: ["React", "Tailwind", "Vite", "Video adaptativo"],
+    link: "https://github.com/Paradoxang/TestWeb1Animated",
+    demo: "https://test-web1-animated12354.vercel.app",
+    mark: "AV",
     year: "2026",
   },
   {
     num: "05",
     slug: "integracion-ia",
+    preview: {
+      mp4: "/previews/integracion-ia-960.mp4",
+      webm: "/previews/integracion-ia-960.webm",
+      poster: "/previews/integracion-ia-poster.jpg",
+    },
     name: "Integración de IA",
     tipo: "Chat-bot",
     tag: "Tecnologías META",
@@ -225,6 +240,11 @@ export const projects: Project[] = [
   {
     num: "06",
     slug: "crud-clientes",
+    preview: {
+      mp4: "/previews/crud-clientes-960.mp4",
+      webm: "/previews/crud-clientes-960.webm",
+      poster: "/previews/crud-clientes-poster.jpg",
+    },
     name: "CRUD Clientes",
     tipo: "Full-stack",
     tag: ".NET 8 + Angular",

@@ -4,6 +4,7 @@ import { Stats } from "@/sections/Stats";
 import { Services } from "@/sections/Services";
 import { SelectedProjects } from "@/sections/SelectedProjects";
 import { Process } from "@/sections/Process";
+import { Security } from "@/sections/Security";
 import { QuoteTools } from "@/sections/QuoteTools";
 import { Cta } from "@/sections/Cta";
 
@@ -20,6 +21,7 @@ export function Home() {
       <Services />
       <SelectedProjects />
       <Process />
+      <Security />
       <QuoteTools />
       <Cta />
     </>
