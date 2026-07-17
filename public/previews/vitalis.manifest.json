@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-07-17T19:48:17.997Z",
+  "input": "Teaser Vitalis Gif.gif",
+  "name": "vitalis",
+  "outDir": "C:\\Users\\Santiago pc\\Proyectos\\Portafolio\\public\\previews",
+  "quality": 72,
+  "type": "gif-to-video",
+  "source": {
+    "width": 1896,
+    "height": 888,
+    "durationSec": null,
+    "hasAudio": false
+  },
+  "aspectRatio": 2.1351,
+  "muted": true,
+  "poster": {
+    "webp": "vitalis-poster.webp",
+    "jpg": "vitalis-poster.jpg"
+  },
+  "lqip": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAACQAwCdASoYAAsAPu1iqU2ppaOiMAgBMB2JZQCw7Bjc+12HSWQAAOJCRWN4+MT1CwlxId0vAkAuSm9EY0q7sgAA",
+  "widths": [
+    960
+  ],
+  "outputs": [
+    {
+      "format": "mp4",
+      "width": 960,
+      "file": "vitalis-960.mp4",
+      "kb": 1716
+    },
+    {
+      "format": "webm",
+      "width": 960,
+      "file": "vitalis-960.webm",
+      "kb": 1138
+    }
+  ]
+}

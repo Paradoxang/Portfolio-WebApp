@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-07-17T19:47:23.993Z",
+  "input": "Teaser Hotel Marea Gif.gif",
+  "name": "hotel-marea",
+  "outDir": "C:\\Users\\Santiago pc\\Proyectos\\Portafolio\\public\\previews",
+  "quality": 72,
+  "type": "gif-to-video",
+  "source": {
+    "width": 1896,
+    "height": 888,
+    "durationSec": null,
+    "hasAudio": false
+  },
+  "aspectRatio": 2.1351,
+  "muted": true,
+  "poster": {
+    "webp": "hotel-marea-poster.webp",
+    "jpg": "hotel-marea-poster.jpg"
+  },
+  "lqip": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAABwAwCdASoYAAsAPu1kqk4ppaQiMAgBMB2JZQCdABgjhAiyoUAA/rnyrlIO8hAPdfQih9algknPBqotxV4wih4A",
+  "widths": [
+    960
+  ],
+  "outputs": [
+    {
+      "format": "mp4",
+      "width": 960,
+      "file": "hotel-marea-960.mp4",
+      "kb": 1532
+    },
+    {
+      "format": "webm",
+      "width": 960,
+      "file": "hotel-marea-960.webm",
+      "kb": 840
+    }
+  ]
+}

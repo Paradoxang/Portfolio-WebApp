@@ -1,10 +1,12 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ProjectPreview } from "@/components/ProjectPreview";
 import type { Project } from "@/data/site";
 
 /**
- * Miniatura de proyecto: cover estilizada navy con monograma,
- * numeración Anton y overlay al hover que revela el stack + flecha.
+ * Miniatura de proyecto: teaser en video si existe (GIF convertido), si no
+ * cover estilizada navy con monograma. Numeración Anton y overlay al hover
+ * que revela el stack + flecha.
  */
 export function ProjectCard({ project }: { project: Project }) {
   return (
@@ -14,13 +16,21 @@ export function ProjectCard({ project }: { project: Project }) {
       aria-label={`Ver caso: ${project.name}`}
     >
       <div className="project-cover shine-hover relative aspect-[4/3] overflow-hidden rounded-xl">
-        {/* Monograma */}
-        <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-105">
-          <span className="display text-[clamp(48px,7vw,84px)] text-neb/25 transition-colors duration-400 group-hover:text-neb/40">
-            {project.mark}
-          </span>
-        </div>
-        <div className="absolute left-4 top-4 font-mono text-[10px] font-medium tracking-[0.16em] uppercase text-faint">
+        {project.preview ? (
+          <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
+            <ProjectPreview
+              preview={project.preview}
+              alt={`Teaser de ${project.name}`}
+            />
+          </div>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-105">
+            <span className="display text-[clamp(48px,7vw,84px)] text-neb/25 transition-colors duration-400 group-hover:text-neb/40">
+              {project.mark}
+            </span>
+          </div>
+        )}
+        <div className="absolute left-4 top-4 rounded-full bg-space/70 px-2.5 py-1 font-mono text-[10px] font-medium tracking-[0.16em] uppercase text-mute backdrop-blur-sm">
           {project.tipo} · {project.year}
         </div>
 
@@ -30,7 +40,7 @@ export function ProjectCard({ project }: { project: Project }) {
             {project.stack.slice(0, 4).map((s) => (
               <span
                 key={s}
-                className="rounded-full border border-neb/30 bg-neb/10 px-2.5 py-1 font-mono text-[9px] font-medium tracking-[0.08em] uppercase text-neb"
+                className="rounded-full border border-neb/30 bg-neb/10 px-2.5 py-1 font-mono text-[9px] font-medium tracking-[0.08em] uppercase text-neb backdrop-blur-sm"
               >
                 {s}
               </span>

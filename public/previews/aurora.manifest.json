@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-07-17T19:47:03.654Z",
+  "input": "Teaser aurora gif.gif",
+  "name": "aurora",
+  "outDir": "C:\\Users\\Santiago pc\\Proyectos\\Portafolio\\public\\previews",
+  "quality": 72,
+  "type": "gif-to-video",
+  "source": {
+    "width": 1896,
+    "height": 888,
+    "durationSec": null,
+    "hasAudio": false
+  },
+  "aspectRatio": 2.1351,
+  "muted": true,
+  "poster": {
+    "webp": "aurora-poster.webp",
+    "jpg": "aurora-poster.jpg"
+  },
+  "lqip": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAwCdASoYAAsAPu1iqU2ppaOiMAgBMB2JYwCsAB6vGqIdswaLt/IAAP6CjOg+NVnjMZbk63RM/r4OJ2YSZ4aCLQvCMEQA",
+  "widths": [
+    960
+  ],
+  "outputs": [
+    {
+      "format": "mp4",
+      "width": 960,
+      "file": "aurora-960.mp4",
+      "kb": 3147
+    },
+    {
+      "format": "webm",
+      "width": 960,
+      "file": "aurora-960.webm",
+      "kb": 2480
+    }
+  ]
+}

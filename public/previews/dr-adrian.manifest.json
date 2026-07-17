@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-07-17T19:47:50.551Z",
+  "input": "Teaser Varcarcel Gif.gif",
+  "name": "dr-adrian",
+  "outDir": "C:\\Users\\Santiago pc\\Proyectos\\Portafolio\\public\\previews",
+  "quality": 72,
+  "type": "gif-to-video",
+  "source": {
+    "width": 1896,
+    "height": 888,
+    "durationSec": null,
+    "hasAudio": false
+  },
+  "aspectRatio": 2.1351,
+  "muted": true,
+  "poster": {
+    "webp": "dr-adrian-poster.webp",
+    "jpg": "dr-adrian-poster.jpg"
+  },
+  "lqip": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAACwAwCdASoYAAsAPu1orU6ppiSiMAgBMB2JZwCw7CHMJCV1kiqugAD+7VlauvwUhbVi+lit24G9PGcBwaUa1WN6AAA=",
+  "widths": [
+    960
+  ],
+  "outputs": [
+    {
+      "format": "mp4",
+      "width": 960,
+      "file": "dr-adrian-960.mp4",
+      "kb": 1709
+    },
+    {
+      "format": "webm",
+      "width": 960,
+      "file": "dr-adrian-960.webm",
+      "kb": 1101
+    }
+  ]
+}

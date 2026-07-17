@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Seo } from "@/components/seo";
+import { ProjectPreview } from "@/components/ProjectPreview";
 import { Reveal, RevealLine, scrollToTarget } from "@/lib/anim";
 import { projects } from "@/data/site";
 
@@ -240,14 +241,27 @@ export function Projects() {
 
                 {/* Cover */}
                 <Reveal delay={0.12}>
-                  <div className="project-cover shine-hover relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl lg:sticky lg:top-28">
-                    <span className="display text-[clamp(64px,9vw,110px)] text-neb/22">
-                      {p.mark}
-                    </span>
-                    <div className="absolute left-5 top-5 font-mono text-[10px] tracking-[0.16em] uppercase text-faint">
+                  <div
+                    className={`project-cover shine-hover relative flex items-center justify-center overflow-hidden rounded-2xl lg:sticky lg:top-28 ${
+                      p.preview ? "aspect-[1896/888]" : "aspect-[4/3]"
+                    }`}
+                  >
+                    {p.preview ? (
+                      <div className="absolute inset-0">
+                        <ProjectPreview
+                          preview={p.preview}
+                          alt={`Teaser de ${p.name}`}
+                        />
+                      </div>
+                    ) : (
+                      <span className="display text-[clamp(64px,9vw,110px)] text-neb/22">
+                        {p.mark}
+                      </span>
+                    )}
+                    <div className="absolute left-5 top-5 rounded-full bg-space/70 px-2.5 py-1 font-mono text-[10px] tracking-[0.16em] uppercase text-mute backdrop-blur-sm">
                       {p.tipo}
                     </div>
-                    <div className="absolute bottom-5 right-5 font-mono text-[10px] tracking-[0.16em] uppercase text-faint">
+                    <div className="absolute bottom-5 right-5 rounded-full bg-space/70 px-2.5 py-1 font-mono text-[10px] tracking-[0.16em] uppercase text-mute backdrop-blur-sm">
                       {p.year}
                     </div>
                   </div>

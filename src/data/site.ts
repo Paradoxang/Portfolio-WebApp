@@ -120,12 +120,19 @@ export interface Project {
   mark: string;
   year: string;
   featured?: boolean;
+  /** Teaser en video (GIF convertido a MP4/WebM) + poster estático. */
+  preview?: { mp4: string; webm: string; poster: string };
 }
 
 export const projects: Project[] = [
   {
     num: "01",
     slug: "aurora",
+    preview: {
+      mp4: "/previews/aurora-960.mp4",
+      webm: "/previews/aurora-960.webm",
+      poster: "/previews/aurora-poster.jpg",
+    },
     name: "Aurora · Video Hero",
     tipo: "Frontend",
     tag: "React + Tailwind (Vite)",
@@ -143,6 +150,11 @@ export const projects: Project[] = [
   {
     num: "02",
     slug: "hotel-marea",
+    preview: {
+      mp4: "/previews/hotel-marea-960.mp4",
+      webm: "/previews/hotel-marea-960.webm",
+      poster: "/previews/hotel-marea-poster.jpg",
+    },
     name: "Hotel Marea",
     tipo: "Full-stack",
     tag: "Next.js + TypeScript",
@@ -159,23 +171,12 @@ export const projects: Project[] = [
   },
   {
     num: "03",
-    slug: "crud-clientes",
-    name: "CRUD Clientes",
-    tipo: "Full-stack",
-    tag: ".NET 8 + Angular",
-    desc: "Gestor de clientes (prueba técnica) con API REST en .NET 8 / EF Core 8 y frontend Angular con componentes standalone y signals.",
-    rol: "Full-stack · prueba técnica",
-    resultado:
-      "CRUD completo con búsqueda, paginación, filtros por estado, validación en doble capa, índice único anti-duplicados y documentación Swagger/OpenAPI.",
-    stack: [".NET 8", "Angular", "EF Core 8", "SQL Server", "Swagger"],
-    link: "https://github.com/Paradoxang/CRUDclientes",
-    mark: "CC",
-    year: "2025",
-    featured: true,
-  },
-  {
-    num: "04",
     slug: "vitalis",
+    preview: {
+      mp4: "/previews/vitalis-960.mp4",
+      webm: "/previews/vitalis-960.webm",
+      poster: "/previews/vitalis-poster.jpg",
+    },
     name: "Vitalis · Consultorio",
     tipo: "Web",
     tag: "Landing para consultorio médico",
@@ -187,10 +188,16 @@ export const projects: Project[] = [
     demo: "https://vitalis-muestreo-app.vercel.app/",
     mark: "VC",
     year: "2026",
+    featured: true,
   },
   {
-    num: "05",
+    num: "04",
     slug: "dr-adrian",
+    preview: {
+      mp4: "/previews/dr-adrian-960.mp4",
+      webm: "/previews/dr-adrian-960.webm",
+      poster: "/previews/dr-adrian-poster.jpg",
+    },
     name: "Portafolio Dr. Adrián",
     tipo: "Web",
     tag: "Portafolio profesional médico",
@@ -203,22 +210,7 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
-    num: "06",
-    slug: "automatizador",
-    name: "Automatizador",
-    tipo: "Desktop",
-    tag: "Electron 33 + Node.js",
-    desc: "App de escritorio para Windows que centraliza la prospección comercial por correo, Instagram y WhatsApp en un único panel privado.",
-    rol: "Producto completo",
-    resultado:
-      "Plantillas dinámicas con variables, importación masiva por CSV, lista de bajas (GDPR/Habeas Data) y credenciales cifradas localmente con DPAPI de Windows.",
-    stack: ["Electron 33", "Node.js", "Nodemailer", "JavaScript"],
-    link: "https://github.com/Paradoxang/Automat-app",
-    mark: "AX",
-    year: "2026",
-  },
-  {
-    num: "07",
+    num: "05",
     slug: "integracion-ia",
     name: "Integración de IA",
     tipo: "Chat-bot",
@@ -228,6 +220,21 @@ export const projects: Project[] = [
     resultado: "Alcanzó ~90% en pruebas de satisfacción del cliente.",
     stack: ["IA", "META", "Tokens", "~90% CSAT"],
     mark: "IA",
+    year: "2025",
+  },
+  {
+    num: "06",
+    slug: "crud-clientes",
+    name: "CRUD Clientes",
+    tipo: "Full-stack",
+    tag: ".NET 8 + Angular",
+    desc: "Gestor de clientes (prueba técnica) con API REST en .NET 8 / EF Core 8 y frontend Angular con componentes standalone y signals.",
+    rol: "Full-stack · prueba técnica",
+    resultado:
+      "CRUD completo con búsqueda, paginación, filtros por estado, validación en doble capa, índice único anti-duplicados y documentación Swagger/OpenAPI.",
+    stack: [".NET 8", "Angular", "EF Core 8", "SQL Server", "Swagger"],
+    link: "https://github.com/Paradoxang/CRUDclientes",
+    mark: "CC",
     year: "2025",
   },
 ];
