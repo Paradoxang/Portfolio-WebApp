@@ -114,45 +114,56 @@ export function Hero() {
             style={reduced ? undefined : { y: portraitY }}
             className="mx-auto w-[min(70vw,300px)] lg:w-full lg:max-w-[400px]"
           >
-            <motion.div
-              initial={
-                reduced || SSR
-                  ? false
-                  : { clipPath: "inset(100% 0% 0% 0%)", opacity: 0.6 }
-              }
-              animate={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
-              transition={{ duration: 1.2, delay: 0.35, ease: EASE }}
-              className="float-y relative"
-            >
-              <Tilt max={7}>
-                <div
-                  className="glow-pulse relative overflow-hidden rounded-2xl border border-white/10"
-                  style={{ aspectRatio: "1100 / 1287" }}
-                >
-                  <img
-                    src="/perfil.webp"
-                    alt="Santiago Miranda"
-                    draggable={false}
-                    className="h-full w-full select-none object-cover"
-                  />
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-space/50 via-transparent to-transparent" />
-                </div>
-              </Tilt>
+            <div className="float-y relative">
+              {/* El clip-path del reveal vive en su propio wrapper: si envolviera
+                 también a los chips, los recortaría (clip-path recorta todo lo
+                 que sobresale del cuadro, incluso tras terminar la animación). */}
+              <motion.div
+                initial={
+                  reduced || SSR
+                    ? false
+                    : { clipPath: "inset(100% 0% 0% 0%)", opacity: 0.6 }
+                }
+                animate={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
+                transition={{ duration: 1.2, delay: 0.35, ease: EASE }}
+              >
+                <Tilt max={7}>
+                  <div
+                    className="glow-pulse relative overflow-hidden rounded-2xl border border-white/10"
+                    style={{ aspectRatio: "1100 / 1287" }}
+                  >
+                    <img
+                      src="/perfil.webp"
+                      alt="Santiago Miranda"
+                      draggable={false}
+                      className="h-full w-full select-none object-cover"
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-space/50 via-transparent to-transparent" />
+                  </div>
+                </Tilt>
+              </motion.div>
 
-              {/* Chips de tecnología flotando */}
-              {floatChips.map((c) => (
-                <div
+              {/* Chips de tecnología flotando (fuera del clip-path) */}
+              {floatChips.map((c, i) => (
+                <motion.div
                   key={c.label}
-                  className={`float-y absolute z-10 ${c.pos}`}
-                  style={{ animationDelay: c.delay }}
+                  initial={reduced || SSR ? false : { opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 1.1 + i * 0.15, ease: EASE }}
+                  className={`absolute z-10 ${c.pos}`}
                 >
-                  <span className="pill gap-2 border-white/20 bg-space/80 px-3.5 py-2 font-mono text-[10px] font-semibold tracking-[0.1em] uppercase text-mute backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,.45)]">
-                    <c.icon className="h-3.5 w-3.5 text-neb" strokeWidth={1.8} />
-                    {c.label}
-                  </span>
-                </div>
+                  <div className="float-y" style={{ animationDelay: c.delay }}>
+                    <span className="pill gap-2 border-white/20 bg-space/80 px-3.5 py-2 font-mono text-[10px] font-semibold tracking-[0.1em] uppercase text-mute backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,.45)]">
+                      <c.icon
+                        className="h-3.5 w-3.5 text-neb"
+                        strokeWidth={1.8}
+                      />
+                      {c.label}
+                    </span>
+                  </div>
+                </motion.div>
               ))}
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </div>
