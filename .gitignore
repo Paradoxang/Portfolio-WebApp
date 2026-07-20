@@ -27,3 +27,6 @@ DoxDesignsLogo.png
 # Source stock art (kept locally, optimized webp lives in public/)
 Stock cosmic 1.png
 Stock cosmic 2.png
+
+# Source teaser GIFs (kept locally, converted mp4/webm live in public/previews/)
+*.gif

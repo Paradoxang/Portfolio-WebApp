@@ -162,11 +162,10 @@ export const projects: Project[] = [
     num: "02",
     slug: "calidoso",
     preview: {
-      mp4: "/previews/calidoso-814.mp4",
-      webm: "/previews/calidoso-814.webm",
+      mp4: "/previews/calidoso-960.mp4",
+      webm: "/previews/calidoso-960.webm",
       poster: "/previews/calidoso-poster.jpg",
     },
-    previewAspect: "1/1",
     name: "Calidoso · Café",
     tipo: "Web",
     tag: "E-commerce para tienda de café",
