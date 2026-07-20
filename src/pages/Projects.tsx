@@ -248,8 +248,13 @@ export function Projects() {
                 <Reveal delay={0.12}>
                   <div
                     className={`project-cover shine-hover relative flex items-center justify-center overflow-hidden rounded-2xl lg:sticky lg:top-28 ${
-                      p.preview ? "aspect-[1896/888]" : "aspect-[4/3]"
+                      p.preview ? "" : "aspect-[4/3]"
                     }`}
+                    style={
+                      p.preview
+                        ? { aspectRatio: p.previewAspect ?? "1896/888" }
+                        : undefined
+                    }
                   >
                     {p.preview ? (
                       <div className="absolute inset-0">

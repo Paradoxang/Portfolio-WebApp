@@ -132,6 +132,9 @@ export interface Project {
   featured?: boolean;
   /** Teaser en video (GIF convertido a MP4/WebM) + poster estático. */
   preview?: { mp4: string; webm: string; poster: string };
+  /** Aspect ratio del preview en la cover grande de /proyectos (CSS). Por
+   * defecto panorámico 1896/888 — solo se pisa si el video de origen no lo es. */
+  previewAspect?: string;
 }
 
 export const projects: Project[] = [
@@ -157,23 +160,23 @@ export const projects: Project[] = [
   },
   {
     num: "02",
-    slug: "hotel-marea",
+    slug: "calidoso",
     preview: {
-      mp4: "/previews/hotel-marea-960.mp4",
-      webm: "/previews/hotel-marea-960.webm",
-      poster: "/previews/hotel-marea-poster.jpg",
+      mp4: "/previews/calidoso-814.mp4",
+      webm: "/previews/calidoso-814.webm",
+      poster: "/previews/calidoso-poster.jpg",
     },
-    name: "Hotel Marea",
-    tipo: "Full-stack",
-    tag: "Next.js + TypeScript",
-    desc: "Aplicación web de muestreo construida con Next.js (App Router) y TypeScript, con persistencia mediante Drizzle ORM y despliegue continuo en Vercel.",
-    rol: "Full-stack",
+    previewAspect: "1/1",
+    name: "Calidoso · Café",
+    tipo: "Web",
+    tag: "E-commerce para tienda de café",
+    desc: "Tienda en línea para Calidoso, negocio de café: catálogo de producto, presentación de marca e interfaz responsive desplegada en Vercel.",
+    rol: "Diseño y desarrollo",
     resultado:
-      "Arquitectura modular (app, modules, components, db) pensada para escalar, con despliegue continuo en Vercel.",
-    stack: ["Next.js", "TypeScript", "Drizzle ORM", "Vercel"],
-    link: "https://github.com/Paradoxang/hotelmarea-muestreo-app",
-    demo: "https://hotelmarea-muestreo-app.vercel.app",
-    mark: "HM",
+      "E-commerce enfocado en conversión, con identidad cálida y navegación clara del catálogo.",
+    stack: ["React", "Tailwind", "Vercel", "E-commerce"],
+    demo: "https://calidoso-test-app.vercel.app/",
+    mark: "CA",
     year: "2026",
     featured: true,
   },
@@ -200,6 +203,47 @@ export const projects: Project[] = [
   },
   {
     num: "04",
+    slug: "eco-muestreo",
+    preview: {
+      mp4: "/previews/eco-muestreo-960.mp4",
+      webm: "/previews/eco-muestreo-960.webm",
+      poster: "/previews/eco-muestreo-poster.jpg",
+    },
+    name: "Eco Muestreo · Joyería",
+    tipo: "Web",
+    tag: "E-commerce para joyería artesanal",
+    desc: "Tienda en línea para Eco Muestreo, joyería artesanal: catálogo de piezas, presentación de marca e interfaz responsive desplegada en Vercel.",
+    rol: "Diseño y desarrollo",
+    resultado:
+      "E-commerce con estética artesanal, pensado para resaltar cada pieza y facilitar la compra.",
+    stack: ["React", "Tailwind", "Vercel", "E-commerce"],
+    demo: "https://eco-muestreo-app-t4p3.vercel.app/",
+    mark: "EM",
+    year: "2026",
+  },
+  {
+    num: "05",
+    slug: "hotel-marea",
+    preview: {
+      mp4: "/previews/hotel-marea-960.mp4",
+      webm: "/previews/hotel-marea-960.webm",
+      poster: "/previews/hotel-marea-poster.jpg",
+    },
+    name: "Hotel Marea",
+    tipo: "Full-stack",
+    tag: "Next.js + TypeScript",
+    desc: "Aplicación web de muestreo construida con Next.js (App Router) y TypeScript, con persistencia mediante Drizzle ORM y despliegue continuo en Vercel.",
+    rol: "Full-stack",
+    resultado:
+      "Arquitectura modular (app, modules, components, db) pensada para escalar, con despliegue continuo en Vercel.",
+    stack: ["Next.js", "TypeScript", "Drizzle ORM", "Vercel"],
+    link: "https://github.com/Paradoxang/hotelmarea-muestreo-app",
+    demo: "https://hotelmarea-muestreo-app.vercel.app",
+    mark: "HM",
+    year: "2026",
+  },
+  {
+    num: "06",
     slug: "aurora",
     preview: {
       mp4: "/previews/aurora-960.mp4",
@@ -220,7 +264,7 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
-    num: "05",
+    num: "07",
     slug: "integracion-ia",
     preview: {
       mp4: "/previews/integracion-ia-960.mp4",
@@ -238,7 +282,7 @@ export const projects: Project[] = [
     year: "2025",
   },
   {
-    num: "06",
+    num: "08",
     slug: "crud-clientes",
     preview: {
       mp4: "/previews/crud-clientes-960.mp4",

@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-07-20T16:52:32.735Z",
+  "input": "EcomuestreoGif.gif",
+  "name": "eco-muestreo",
+  "outDir": "C:\\Users\\Santiago pc\\Proyectos\\Portafolio\\public\\previews",
+  "quality": 72,
+  "type": "gif-to-video",
+  "source": {
+    "width": 1896,
+    "height": 888,
+    "durationSec": null,
+    "hasAudio": false
+  },
+  "aspectRatio": 2.1351,
+  "muted": true,
+  "poster": {
+    "webp": "eco-muestreo-poster.webp",
+    "jpg": "eco-muestreo-poster.jpg"
+  },
+  "lqip": "data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAABwAwCdASoYAAsAPu1iqU2ppaOiMAgBMB2JZwC3uDKK3XI2fAAA/u/U+csXMske+/CtNRdAAAA=",
+  "widths": [
+    960
+  ],
+  "outputs": [
+    {
+      "format": "mp4",
+      "width": 960,
+      "file": "eco-muestreo-960.mp4",
+      "kb": 2123
+    },
+    {
+      "format": "webm",
+      "width": 960,
+      "file": "eco-muestreo-960.webm",
+      "kb": 1103
+    }
+  ]
+}

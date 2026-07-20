@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-07-20T16:52:07.556Z",
+  "input": "CalidosoGif.gif",
+  "name": "calidoso",
+  "outDir": "C:\\Users\\Santiago pc\\Proyectos\\Portafolio\\public\\previews",
+  "quality": 72,
+  "type": "gif-to-video",
+  "source": {
+    "width": 815,
+    "height": 815,
+    "durationSec": null,
+    "hasAudio": false
+  },
+  "aspectRatio": 1,
+  "muted": true,
+  "poster": {
+    "webp": "calidoso-poster.webp",
+    "jpg": "calidoso-poster.jpg"
+  },
+  "lqip": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADQAwCdASoYABgAPu1kqU2ppaQiMAgBMB2JQBllhDv4DmlIhzN2IAAA/sk52QFD4GL2mt43yQYtusdyf3E4O3PiUGsHUE9sKfYdAAAA",
+  "widths": [
+    814
+  ],
+  "outputs": [
+    {
+      "format": "mp4",
+      "width": 814,
+      "file": "calidoso-814.mp4",
+      "kb": 1985
+    },
+    {
+      "format": "webm",
+      "width": 814,
+      "file": "calidoso-814.webm",
+      "kb": 1405
+    }
+  ]
+}
