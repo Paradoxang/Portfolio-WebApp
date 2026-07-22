@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { Facebook, Instagram, Mail, MapPin, MessageCircle } from "lucide-react";
 import { useRef } from "react";
 import { Magnetic, Reveal, RevealLine } from "@/lib/anim";
+import { trackContact } from "@/lib/analytics";
 import { contact } from "@/data/site";
 
 export function Cta() {
@@ -37,6 +38,7 @@ export function Cta() {
                   href={contact.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackContact("whatsapp")}
                   className="flex items-center gap-3 transition-colors hover:text-neb"
                 >
                   <MessageCircle className="h-4 w-4 text-neb" /> WhatsApp ·{" "}
@@ -44,6 +46,7 @@ export function Cta() {
                 </a>
                 <a
                   href={`mailto:${contact.email}`}
+                  onClick={() => trackContact("email")}
                   className="flex items-center gap-3 transition-colors hover:text-neb"
                 >
                   <Mail className="h-4 w-4 text-neb" /> {contact.email}
@@ -77,6 +80,7 @@ export function Cta() {
                     href={contact.whatsapp}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackContact("whatsapp")}
                     className="btn-neb px-7 py-3.5 text-sm"
                   >
                     Disponible para proyectos

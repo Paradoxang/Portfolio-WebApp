@@ -10,6 +10,10 @@ interface SeoProps {
   description: string;
   /** Path starting with "/" — used for canonical and og:url. */
   path: string;
+  /** Datos estructurados extra de esta página (Schema.org). Se serializan como
+   * JSON-LD; el `type="application/ld+json"` los deja fuera del paso de build
+   * que externaliza scripts inline, y la CSP no los bloquea (no son ejecutables). */
+  jsonLd?: object;
 }
 
 /**
@@ -17,7 +21,7 @@ interface SeoProps {
  * change between pages; the shared tags (favicon, og:image, locale, JSON-LD, …)
  * live in index.html.
  */
-export function Seo({ title, description, path }: SeoProps) {
+export function Seo({ title, description, path, jsonLd }: SeoProps) {
   const url = SITE + path;
   // Head (react-helmet-async) covers the prerendered HTML & crawlers; this guarantees
   // the tab title also updates on client-side (SPA) navigation.
@@ -34,6 +38,9 @@ export function Seo({ title, description, path }: SeoProps) {
       <meta property="og:url" content={url} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
+      {jsonLd && (
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      )}
     </Head>
   );
 }

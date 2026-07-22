@@ -34,35 +34,121 @@
 
     <!-- Fonts are self-hosted via @fontsource (imported in src/main.tsx) -->
 
-    <!-- Structured data: Person (Schema.org) -->
+    <!-- Structured data (Schema.org): negocio de servicios + persona.
+         El ProfessionalService es lo que le dice a Google que eres un proveedor
+         contratable con zona de cobertura — clave para el resultado local. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Santiago Miranda",
-        "alternateName": "Dox Designs",
-        "url": "https://doxdesigns.dev/",
-        "image": "https://doxdesigns.dev/og-image.jpg",
-        "jobTitle": "Desarrollador Full-Stack y Diseñador Web",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Cali",
-          "addressCountry": "CO"
-        },
-        "knowsAbout": [
-          "React",
-          "Next.js",
-          "TypeScript",
-          ".NET",
-          "Angular",
-          "Electron",
-          "Diseño web",
-          "UI/UX"
-        ],
-        "sameAs": [
-          "https://github.com/Paradoxang",
-          "https://instagram.com/paradoxxan",
-          "https://www.facebook.com/profile.php?id=61591547326067"
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://doxdesigns.dev/#business",
+            "name": "Dox Designs",
+            "alternateName": "Dox Designs — Santiago Miranda",
+            "description": "Diseño y desarrollo de páginas web, tiendas online y aplicaciones a medida en Cali, Colombia. Sitios rápidos, seguros y responsive.",
+            "url": "https://doxdesigns.dev/",
+            "image": "https://doxdesigns.dev/og-image.jpg",
+            "logo": "https://doxdesigns.dev/favicon-512.png",
+            "email": "santiago.miranda.trabajo@gmail.com",
+            "telephone": "+57-318-981-9384",
+            "priceRange": "$$",
+            "currenciesAccepted": "COP, USD",
+            "founder": { "@id": "https://doxdesigns.dev/#santiago" },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Cali",
+              "addressRegion": "Valle del Cauca",
+              "addressCountry": "CO"
+            },
+            "areaServed": [
+              { "@type": "City", "name": "Cali" },
+              { "@type": "Country", "name": "Colombia" }
+            ],
+            "knowsLanguage": ["es", "en"],
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Servicios de desarrollo y diseño web",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Diseño de páginas web para negocios",
+                    "description": "Sitios web y landing pages responsive para empresas, consultorios y marcas personales."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Tiendas online (e-commerce)",
+                    "description": "Tiendas en línea con catálogo de productos, enfocadas en vender."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Aplicaciones web a medida",
+                    "description": "Sistemas y paneles internos full-stack con .NET, Next.js y SQL Server."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Integración de inteligencia artificial",
+                    "description": "Chat-bots y asistentes de atención al cliente entrenados para tu negocio."
+                  }
+                }
+              ]
+            },
+            "sameAs": [
+              "https://github.com/Paradoxang",
+              "https://instagram.com/paradoxxan",
+              "https://www.facebook.com/profile.php?id=61591547326067"
+            ]
+          },
+          {
+            "@type": "Person",
+            "@id": "https://doxdesigns.dev/#santiago",
+            "name": "Santiago Miranda",
+            "alternateName": "Dox Designs",
+            "url": "https://doxdesigns.dev/",
+            "image": "https://doxdesigns.dev/og-image.jpg",
+            "jobTitle": "Desarrollador Full-Stack y Diseñador Web",
+            "worksFor": { "@id": "https://doxdesigns.dev/#business" },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Cali",
+              "addressCountry": "CO"
+            },
+            "knowsAbout": [
+              "React",
+              "Next.js",
+              "TypeScript",
+              ".NET",
+              "Angular",
+              "Electron",
+              "Diseño web",
+              "UI/UX",
+              "Ciberseguridad"
+            ],
+            "sameAs": [
+              "https://github.com/Paradoxang",
+              "https://instagram.com/paradoxxan",
+              "https://www.facebook.com/profile.php?id=61591547326067"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://doxdesigns.dev/#website",
+            "url": "https://doxdesigns.dev/",
+            "name": "Dox Designs — Santiago Miranda",
+            "inLanguage": "es",
+            "publisher": { "@id": "https://doxdesigns.dev/#business" }
+          }
         ]
       }
     </script>

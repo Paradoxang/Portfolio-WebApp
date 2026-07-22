@@ -7,9 +7,11 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Starfield } from "@/components/Starfield";
 import { useLenis, scrollToTarget, EASE } from "@/lib/anim";
+import { loadAnalytics, trackPageView } from "@/lib/analytics";
 import { Home } from "@/pages/Home";
 import { About } from "@/pages/About";
 import { Projects } from "@/pages/Projects";
+import { Services } from "@/pages/Services";
 
 function Layout() {
   useLenis();
@@ -19,6 +21,14 @@ function Layout() {
   useEffect(() => {
     firstRender.current = false;
   }, []);
+
+  // Google Analytics: carga el tag una vez y registra cada cambio de ruta
+  useEffect(() => {
+    loadAnalytics();
+  }, []);
+  useEffect(() => {
+    trackPageView(location.pathname + location.hash);
+  }, [location]);
 
   // Scroll: al ancla si hay hash, arriba si no (vía Lenis)
   useEffect(() => {
@@ -74,6 +84,7 @@ export const routes: RouteRecord[] = [
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
+      { path: "servicios", element: <Services /> },
       { path: "proyectos", element: <Projects /> },
       { path: "sobre-mi", element: <About /> },
     ],
