@@ -11,7 +11,7 @@
  */
 
 /** ID de medición de GA4, p. ej. "G-ABC123XYZ". Vacío = analytics desactivado. */
-export const GA_MEASUREMENT_ID = "";
+export const GA_MEASUREMENT_ID = "G-RSRJR75JKC";
 
 /** ID de conversión de Google Ads, p. ej. "AW-123456789". Opcional. */
 export const GOOGLE_ADS_ID = "";
