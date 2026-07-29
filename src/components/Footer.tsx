@@ -5,7 +5,14 @@ export function Footer() {
   return (
     <footer className="border-t border-white/10">
       <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 px-6 py-8 font-mono text-[10px] font-medium tracking-[0.16em] uppercase text-faint sm:flex-row md:px-8">
-        <span>
+        <span className="flex items-center gap-2.5">
+          <img
+            src="/brand/isotipo.webp"
+            alt="Dox Designs"
+            width="24"
+            height="24"
+            className="h-6 w-6 rounded-md ring-1 ring-white/10"
+          />
           DOX DESIGNS<span className="text-neb">*</span> — Santiago Miranda · 2026
         </span>
         <div className="flex items-center gap-5">

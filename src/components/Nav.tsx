@@ -31,11 +31,17 @@ export function Nav() {
       }`}
     >
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4 md:px-8">
-        <Link
-          to="/"
-          className="font-mono text-[12px] font-semibold tracking-[0.26em] text-ink transition-colors hover:text-neb"
-        >
-          DOX DESIGNS<span className="text-neb">*</span>
+        <Link to="/" className="group flex items-center gap-2.5">
+          <img
+            src="/brand/isotipo.webp"
+            alt="Dox Designs"
+            width="32"
+            height="32"
+            className="h-8 w-8 rounded-md ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-110"
+          />
+          <span className="font-mono text-[12px] font-semibold tracking-[0.26em] text-ink transition-colors group-hover:text-neb">
+            DOX DESIGNS<span className="text-neb">*</span>
+          </span>
         </Link>
 
         {/* Desktop */}
