@@ -1,16 +1,16 @@
 /**
- * Google Analytics 4 + base para Google Ads.
+ * Google Analytics 4 + Google Ads + Meta Pixel.
  *
- * Notas de seguridad: no usamos ningún <script> inline — el tag externo se
- * inyecta desde este bundle ('self') y la inicialización de gtag es JS normal,
- * así la CSP sigue sin necesitar 'unsafe-inline'. Solo hubo que autorizar los
- * dominios de Google en vercel.json.
+ * Notas de seguridad: no usamos ningún <script> inline — los tags externos se
+ * inyectan desde este bundle ('self') y la inicialización es JS normal, así la
+ * CSP sigue sin necesitar 'unsafe-inline'. Solo hubo que autorizar los dominios
+ * de Google y Meta en vercel.json.
  *
- * Para activarlo: pon tu ID de medición GA4 en `GA_MEASUREMENT_ID` (G-XXXXXXXXXX).
- * Mientras esté vacío no se carga nada ni se rastrea a nadie.
+ * Cada plataforma se activa poniendo su ID abajo; con el ID vacío no se carga
+ * nada ni se rastrea a nadie.
  */
 
-/** ID de medición de GA4, p. ej. "G-ABC123XYZ". Vacío = analytics desactivado. */
+/** ID de medición de GA4, p. ej. "G-ABC123XYZ". Vacío = GA4 desactivado. */
 export const GA_MEASUREMENT_ID = "G-RSRJR75JKC";
 
 /** ID de conversión de Google Ads, p. ej. "AW-123456789". Opcional. */
@@ -19,22 +19,43 @@ export const GOOGLE_ADS_ID = "";
 /** Etiqueta de la conversión de Ads para "contacto por WhatsApp", p. ej. "AW-123/abcDEF". */
 export const ADS_CONTACT_CONVERSION_LABEL = "";
 
+/** ID del Meta Pixel (Facebook/Instagram). Vacío = pixel desactivado. */
+export const META_PIXEL_ID = "1908259770134955";
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
+    fbq?: FbqFn;
+    _fbq?: FbqFn;
   }
 }
 
+interface FbqFn {
+  (...args: unknown[]): void;
+  callMethod?: (...args: unknown[]) => void;
+  queue?: unknown[];
+  push?: unknown;
+  loaded?: boolean;
+  version?: string;
+}
+
 export const analyticsEnabled = () =>
-  typeof window !== "undefined" && Boolean(GA_MEASUREMENT_ID || GOOGLE_ADS_ID);
+  typeof window !== "undefined" &&
+  Boolean(GA_MEASUREMENT_ID || GOOGLE_ADS_ID || META_PIXEL_ID);
 
 let loaded = false;
 
-/** Carga el tag de Google una sola vez (GA4 y/o Ads). */
+/** Carga los tags de Google (GA4 / Ads) y el Meta Pixel una sola vez. */
 export function loadAnalytics() {
-  if (loaded || !analyticsEnabled()) return;
+  if (loaded || typeof window === "undefined") return;
   loaded = true;
+  loadGoogle();
+  loadMetaPixel();
+}
+
+function loadGoogle() {
+  if (!GA_MEASUREMENT_ID && !GOOGLE_ADS_ID) return;
 
   const primaryId = GA_MEASUREMENT_ID || GOOGLE_ADS_ID;
   const tag = document.createElement("script");
@@ -55,14 +76,45 @@ export function loadAnalytics() {
   if (GOOGLE_ADS_ID) window.gtag("config", GOOGLE_ADS_ID);
 }
 
+/**
+ * Meta Pixel. Equivale al snippet oficial de Facebook, pero escrito como JS
+ * normal en vez de un <script> inline (que la CSP bloquearía).
+ *
+ * No dispara PageView aquí: lo hace `trackPageView` en cada cambio de ruta,
+ * incluida la carga inicial — así no se cuenta dos veces la primera vista.
+ */
+function loadMetaPixel() {
+  if (!META_PIXEL_ID || window.fbq) return;
+
+  const fbq: FbqFn = function (...args: unknown[]) {
+    if (fbq.callMethod) fbq.callMethod.apply(fbq, args);
+    else fbq.queue!.push(args);
+  };
+  fbq.push = fbq;
+  fbq.loaded = true;
+  fbq.version = "2.0";
+  fbq.queue = [];
+  window.fbq = fbq;
+  if (!window._fbq) window._fbq = fbq;
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = "https://connect.facebook.net/en_US/fbevents.js";
+  document.head.appendChild(script);
+
+  window.fbq("init", META_PIXEL_ID);
+}
+
 /** Registra una vista de página (llamar en cada cambio de ruta). */
 export function trackPageView(path: string, title?: string) {
-  if (!GA_MEASUREMENT_ID || !window.gtag) return;
-  window.gtag("event", "page_view", {
-    page_path: path,
-    page_location: window.location.href,
-    page_title: title ?? document.title,
-  });
+  if (GA_MEASUREMENT_ID && window.gtag) {
+    window.gtag("event", "page_view", {
+      page_path: path,
+      page_location: window.location.href,
+      page_title: title ?? document.title,
+    });
+  }
+  if (META_PIXEL_ID && window.fbq) window.fbq("track", "PageView");
 }
 
 /**
@@ -70,11 +122,17 @@ export function trackPageView(path: string, title?: string) {
  * que importa: mide clientes potenciales, no visitas.
  */
 export function trackContact(method: "whatsapp" | "email" | "phone" | "facebook") {
-  if (!window.gtag) return;
-  window.gtag("event", "contacto", { method });
-  if (ADS_CONTACT_CONVERSION_LABEL) {
-    window.gtag("event", "conversion", {
-      send_to: ADS_CONTACT_CONVERSION_LABEL,
-    });
+  if (window.gtag) {
+    window.gtag("event", "contacto", { method });
+    if (ADS_CONTACT_CONVERSION_LABEL) {
+      window.gtag("event", "conversion", {
+        send_to: ADS_CONTACT_CONVERSION_LABEL,
+      });
+    }
+  }
+  // En Meta, "Lead" es el evento estándar para un cliente potencial que hace
+  // contacto — es el que se optimiza en las campañas de Instagram/Facebook.
+  if (META_PIXEL_ID && window.fbq) {
+    window.fbq("track", "Lead", { content_category: method });
   }
 }
