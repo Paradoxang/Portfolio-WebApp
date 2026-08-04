@@ -76,12 +76,18 @@ function loadGoogle() {
   if (GOOGLE_ADS_ID) window.gtag("config", GOOGLE_ADS_ID);
 }
 
+/** La vista inicial la envía `loadMetaPixel` (junto al init, como el snippet
+ * oficial); esta bandera hace que `trackPageView` omita esa primera llamada
+ * para no contarla dos veces. */
+let metaSkipFirstPageView = false;
+
 /**
  * Meta Pixel. Equivale al snippet oficial de Facebook, pero escrito como JS
  * normal en vez de un <script> inline (que la CSP bloquearía).
  *
- * No dispara PageView aquí: lo hace `trackPageView` en cada cambio de ruta,
- * incluida la carga inicial — así no se cuenta dos veces la primera vista.
+ * `init` y el primer `PageView` van seguidos en la misma función, igual que en
+ * el snippet oficial: si se separan, el Pixel Helper avisa "Track event before
+ * pixel init" (el dato igual llega por la cola, pero la advertencia confunde).
  */
 function loadMetaPixel() {
   if (!META_PIXEL_ID || window.fbq) return;
@@ -103,6 +109,8 @@ function loadMetaPixel() {
   document.head.appendChild(script);
 
   window.fbq("init", META_PIXEL_ID);
+  window.fbq("track", "PageView");
+  metaSkipFirstPageView = true;
 }
 
 /** Registra una vista de página (llamar en cada cambio de ruta). */
@@ -114,7 +122,11 @@ export function trackPageView(path: string, title?: string) {
       page_title: title ?? document.title,
     });
   }
-  if (META_PIXEL_ID && window.fbq) window.fbq("track", "PageView");
+  if (META_PIXEL_ID && window.fbq) {
+    // La vista de la carga inicial ya se envió junto al init.
+    if (metaSkipFirstPageView) metaSkipFirstPageView = false;
+    else window.fbq("track", "PageView");
+  }
 }
 
 /**
