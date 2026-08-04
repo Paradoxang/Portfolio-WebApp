@@ -85,29 +85,35 @@ let metaSkipFirstPageView = false;
  * Meta Pixel. Equivale al snippet oficial de Facebook, pero escrito como JS
  * normal en vez de un <script> inline (que la CSP bloquearía).
  *
- * `init` y el primer `PageView` van seguidos en la misma función, igual que en
- * el snippet oficial: si se separan, el Pixel Helper avisa "Track event before
- * pixel init" (el dato igual llega por la cola, pero la advertencia confunde).
+ * Estructura calcada del snippet oficial, y el detalle importa: la salida
+ * anticipada por "ya existe window.fbq" solo debe omitir la creación del stub,
+ * NO el init. Si se salta el init (p. ej. porque la extensión Pixel Helper ya
+ * creó su propio fbq), los eventos se envían sin pixel asociado y la extensión
+ * reporta "Track event before pixel init" con pixel_ids vacío.
  */
 function loadMetaPixel() {
-  if (!META_PIXEL_ID || window.fbq) return;
+  if (!META_PIXEL_ID) return;
 
-  const fbq: FbqFn = function (...args: unknown[]) {
-    if (fbq.callMethod) fbq.callMethod.apply(fbq, args);
-    else fbq.queue!.push(args);
-  };
-  fbq.push = fbq;
-  fbq.loaded = true;
-  fbq.version = "2.0";
-  fbq.queue = [];
-  window.fbq = fbq;
-  if (!window._fbq) window._fbq = fbq;
+  // Stub + carga de fbevents.js: solo si nadie lo creó antes.
+  if (!window.fbq) {
+    const fbq: FbqFn = function (...args: unknown[]) {
+      if (fbq.callMethod) fbq.callMethod.apply(fbq, args);
+      else fbq.queue!.push(args);
+    };
+    fbq.push = fbq;
+    fbq.loaded = true;
+    fbq.version = "2.0";
+    fbq.queue = [];
+    window.fbq = fbq;
+    if (!window._fbq) window._fbq = fbq;
 
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = "https://connect.facebook.net/en_US/fbevents.js";
-  document.head.appendChild(script);
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://connect.facebook.net/en_US/fbevents.js";
+    document.head.appendChild(script);
+  }
 
+  // init + primera vista: siempre, pase lo que pase con el stub.
   window.fbq("init", META_PIXEL_ID);
   window.fbq("track", "PageView");
   metaSkipFirstPageView = true;
