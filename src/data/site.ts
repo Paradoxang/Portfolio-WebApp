@@ -140,6 +140,27 @@ export interface Project {
 export const projects: Project[] = [
   {
     num: "01",
+    slug: "gem-eyes",
+    preview: {
+      mp4: "/previews/gem-eyes-960.mp4",
+      webm: "/previews/gem-eyes-960.webm",
+      poster: "/previews/gem-eyes-poster.jpg",
+    },
+    name: "Gem Eyes",
+    tipo: "Web",
+    tag: "Sitio de estudio creativo",
+    desc: "Sitio web para un estudio creativo con una identidad visual audaz: ilustración a pantalla completa, animaciones expresivas y secciones de galería, proceso y contacto.",
+    rol: "Diseño y desarrollo completo",
+    resultado:
+      "Experiencia inmersiva y responsive que destaca el arte del estudio sin sacrificar la velocidad de carga.",
+    stack: ["React", "Tailwind", "Vite", "Vercel"],
+    demo: "https://gem-eyes-web-app.vercel.app/",
+    mark: "GE",
+    year: "2026",
+    featured: true,
+  },
+  {
+    num: "02",
     slug: "dr-adrian",
     preview: {
       mp4: "/previews/dr-adrian-960.mp4",
@@ -159,7 +180,7 @@ export const projects: Project[] = [
     featured: true,
   },
   {
-    num: "02",
+    num: "03",
     slug: "calidoso",
     preview: {
       mp4: "/previews/calidoso-960.mp4",
@@ -180,7 +201,7 @@ export const projects: Project[] = [
     featured: true,
   },
   {
-    num: "03",
+    num: "04",
     slug: "vitalis",
     preview: {
       mp4: "/previews/vitalis-960.mp4",
@@ -201,7 +222,7 @@ export const projects: Project[] = [
     featured: true,
   },
   {
-    num: "04",
+    num: "05",
     slug: "eco-muestreo",
     preview: {
       mp4: "/previews/eco-muestreo-960.mp4",
@@ -219,9 +240,10 @@ export const projects: Project[] = [
     demo: "https://eco-muestreo-app-t4p3.vercel.app/",
     mark: "EM",
     year: "2026",
+    featured: true,
   },
   {
-    num: "05",
+    num: "06",
     slug: "hotel-marea",
     preview: {
       mp4: "/previews/hotel-marea-960.mp4",
@@ -240,9 +262,10 @@ export const projects: Project[] = [
     demo: "https://hotelmarea-muestreo-app.vercel.app",
     mark: "HM",
     year: "2026",
+    featured: true,
   },
   {
-    num: "06",
+    num: "07",
     slug: "aurora",
     preview: {
       mp4: "/previews/aurora-960.mp4",
@@ -263,7 +286,7 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
-    num: "07",
+    num: "08",
     slug: "integracion-ia",
     preview: {
       mp4: "/previews/integracion-ia-960.mp4",
@@ -281,7 +304,7 @@ export const projects: Project[] = [
     year: "2025",
   },
   {
-    num: "08",
+    num: "09",
     slug: "crud-clientes",
     preview: {
       mp4: "/previews/crud-clientes-960.mp4",

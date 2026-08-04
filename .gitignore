@@ -30,3 +30,6 @@ Stock cosmic 2.png
 
 # Source teaser GIFs (kept locally, converted mp4/webm live in public/previews/)
 *.gif
+
+# Source teaser videos (kept locally, converted files live in public/previews/)
+GemEyesVideo.mp4

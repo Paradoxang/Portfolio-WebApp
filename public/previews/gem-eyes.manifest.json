@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-08-04T17:43:26.805Z",
+  "input": "GemEyesVideo.mp4",
+  "name": "gem-eyes",
+  "outDir": "C:\\Users\\Santiago pc\\Proyectos\\Portafolio\\public\\previews",
+  "quality": 72,
+  "type": "video",
+  "source": {
+    "width": 1896,
+    "height": 888,
+    "durationSec": 31.05,
+    "hasAudio": false
+  },
+  "aspectRatio": 2.1351,
+  "muted": true,
+  "poster": {
+    "webp": "gem-eyes-poster.webp",
+    "jpg": "gem-eyes-poster.jpg"
+  },
+  "lqip": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAABQBACdASoYAAsAPu1kqk4ppaQiMAgBMB2JZACdMoR4GCioRCse7TbCOQsgAPhQDwsMwRgCXesxfS760CnjANEftBAuexZl6GSdzgHgAAA=",
+  "widths": [
+    960
+  ],
+  "outputs": [
+    {
+      "format": "mp4",
+      "width": 960,
+      "file": "gem-eyes-960.mp4",
+      "kb": 2759
+    },
+    {
+      "format": "webm",
+      "width": 960,
+      "file": "gem-eyes-960.webm",
+      "kb": 3159
+    }
+  ]
+}
