@@ -121,6 +121,10 @@ function loadMetaPixel() {
 
 /** Registra una vista de página (llamar en cada cambio de ruta). */
 export function trackPageView(path: string, title?: string) {
+  // React ejecuta los efectos de los hijos antes que los del padre, así que una
+  // página puede querer registrar un evento antes de que el Layout haya cargado
+  // los tags. `loadAnalytics` es idempotente: garantiza que ya estén listos.
+  loadAnalytics();
   if (GA_MEASUREMENT_ID && window.gtag) {
     window.gtag("event", "page_view", {
       page_path: path,
@@ -140,6 +144,7 @@ export function trackPageView(path: string, title?: string) {
  * que importa: mide clientes potenciales, no visitas.
  */
 export function trackContact(method: "whatsapp" | "email" | "phone" | "facebook") {
+  loadAnalytics();
   if (window.gtag) {
     window.gtag("event", "contacto", { method });
     if (ADS_CONTACT_CONVERSION_LABEL) {
@@ -148,9 +153,32 @@ export function trackContact(method: "whatsapp" | "email" | "phone" | "facebook"
       });
     }
   }
-  // En Meta, "Lead" es el evento estándar para un cliente potencial que hace
-  // contacto — es el que se optimiza en las campañas de Instagram/Facebook.
   if (META_PIXEL_ID && window.fbq) {
+    // Dos eventos estándar de Meta para la misma acción:
+    // · Contact — el que describe el hecho (alguien inició contacto).
+    // · Lead    — el que se suele elegir para optimizar las campañas.
+    // Si prefieres uno solo en el Administrador de anuncios, borra el otro.
+    window.fbq("track", "Contact", { content_category: method });
     window.fbq("track", "Lead", { content_category: method });
+  }
+}
+
+/**
+ * Vista de una página/contenido clave (p. ej. Servicios). En Meta permite crear
+ * públicos de "interesados" y hacerles remarketing.
+ */
+export function trackViewContent(name: string, category?: string) {
+  loadAnalytics();
+  if (window.gtag) {
+    window.gtag("event", "view_content", {
+      content_name: name,
+      content_category: category,
+    });
+  }
+  if (META_PIXEL_ID && window.fbq) {
+    window.fbq("track", "ViewContent", {
+      content_name: name,
+      content_category: category,
+    });
   }
 }

@@ -8,11 +8,12 @@ import {
   ShieldCheck,
   ShoppingCart,
 } from "lucide-react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/seo";
 import { OrbitRings } from "@/components/Cosmic";
 import { Magnetic, Reveal, RevealLine } from "@/lib/anim";
-import { trackContact } from "@/lib/analytics";
+import { trackContact, trackViewContent } from "@/lib/analytics";
 import { contact } from "@/data/site";
 
 /* Servicios en lenguaje de cliente (no de programador): así es como los
@@ -96,6 +97,12 @@ const faqs = [
 ];
 
 export function Services() {
+  // Señal de interés: quien llega aquí está evaluando contratar. Sirve para
+  // crear públicos de remarketing en Meta.
+  useEffect(() => {
+    trackViewContent("Servicios", "diseno_web");
+  }, []);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
