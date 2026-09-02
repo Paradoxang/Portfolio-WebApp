@@ -278,6 +278,93 @@
   will-change: transform;
 }
 
+/* ── Hero: retrato con paneo de 7 frames ──
+   Los frames comparten lienzo y pivotan en el sitio: se apilan con geometría
+   idéntica y solo cambia la opacidad. Nada de encuadres por frame. */
+.hero-fig {
+  position: relative;
+  justify-self: center;
+  height: clamp(340px, 64vh, 660px);
+  aspect-ratio: 1792 / 2398; /* reserva el espacio: sin salto de layout */
+  max-width: 100%;
+}
+
+/* Halo detrás de la cabeza: sin él la silueta oscura se pierde contra el fondo */
+.hero-fig::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  width: 78%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle,
+    rgba(143, 162, 255, 0.26),
+    transparent 62%
+  );
+  filter: blur(26px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* La máscara va aquí y NO en .hero-fig: mask-clip es border-box y recortaría
+   también a los chips, que son hermanos de este stack. */
+.hero-fig__stack {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 62%,
+    rgba(0, 0, 0, 0.55) 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 62%,
+    rgba(0, 0, 0, 0.55) 82%,
+    transparent 100%
+  );
+}
+
+/* <picture> no debe crear caja propia: la imagen se posiciona en el stack */
+.hero-fig__stack picture {
+  display: contents;
+}
+
+.hero-fig__f {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  opacity: 0;
+  /* lineal a propósito: con 7 pasos de 30°, una curva suave se lee como arrastre */
+  transition: opacity 120ms linear;
+  will-change: opacity;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.hero-fig__f.is-on {
+  opacity: 1;
+}
+
+@media (max-width: 1023px) {
+  .hero-fig {
+    height: clamp(300px, 46vh, 440px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-fig__f {
+    transition: none;
+  }
+}
+
 /* ── Rotación de órbitas ── */
 @keyframes spin-slow-kf {
   to {

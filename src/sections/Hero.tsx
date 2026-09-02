@@ -1,17 +1,10 @@
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { ArrowRight, Atom, Braces, Palette, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { Letters, Magnetic, Reveal, RevealLine, Tilt, EASE, SSR } from "@/lib/anim";
+import { Letters, Magnetic, Reveal, RevealLine } from "@/lib/anim";
+import { HeroPortrait } from "@/components/HeroPortrait";
 import { contact } from "@/data/site";
-
-/* Chips de tecnología flotando alrededor del retrato */
-const floatChips = [
-  { icon: Atom, label: "React", pos: "-left-6 top-8 lg:-left-14", delay: "0s" },
-  { icon: Braces, label: ".NET", pos: "-right-4 top-24 lg:-right-10", delay: "1.4s" },
-  { icon: Palette, label: "UI/UX", pos: "-left-4 bottom-24 lg:-left-10", delay: "2.6s" },
-  { icon: Zap, label: "Next.js", pos: "-right-6 bottom-10 lg:-right-14", delay: "3.5s" },
-];
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -58,7 +51,7 @@ export function Hero() {
       </motion.div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1240px] flex-1 items-center px-6 md:px-8">
-        <div className="grid w-full items-center gap-12 py-14 lg:grid-cols-[1.35fr_0.65fr]">
+        <div className="grid w-full items-center gap-12 py-14 lg:grid-cols-[1.15fr_0.85fr]">
           {/* Texto — protagonista absoluto */}
           <div>
             <Reveal mount>
@@ -109,61 +102,13 @@ export function Hero() {
             </Reveal>
           </div>
 
-          {/* Retrato editorial con glow pulsante y flotación */}
+          {/* Retrato recortado que panea siguiendo el cursor. Sin marco: la
+              figura se funde con el fondo mediante la máscara inferior. */}
           <motion.div
             style={reduced ? undefined : { y: portraitY }}
-            className="mx-auto w-[min(70vw,300px)] lg:w-full lg:max-w-[400px]"
+            className="order-first flex justify-center lg:order-none"
           >
-            <div className="float-y relative">
-              {/* El clip-path del reveal vive en su propio wrapper: si envolviera
-                 también a los chips, los recortaría (clip-path recorta todo lo
-                 que sobresale del cuadro, incluso tras terminar la animación). */}
-              <motion.div
-                initial={
-                  reduced || SSR
-                    ? false
-                    : { clipPath: "inset(100% 0% 0% 0%)", opacity: 0.6 }
-                }
-                animate={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
-                transition={{ duration: 1.2, delay: 0.35, ease: EASE }}
-              >
-                <Tilt max={7}>
-                  <div
-                    className="glow-pulse relative overflow-hidden rounded-2xl border border-white/10"
-                    style={{ aspectRatio: "1100 / 1287" }}
-                  >
-                    <img
-                      src="/perfil.webp"
-                      alt="Santiago Miranda"
-                      draggable={false}
-                      className="h-full w-full select-none object-cover"
-                    />
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-space/50 via-transparent to-transparent" />
-                  </div>
-                </Tilt>
-              </motion.div>
-
-              {/* Chips de tecnología flotando (fuera del clip-path) */}
-              {floatChips.map((c, i) => (
-                <motion.div
-                  key={c.label}
-                  initial={reduced || SSR ? false : { opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 1.1 + i * 0.15, ease: EASE }}
-                  className={`absolute z-10 ${c.pos}`}
-                >
-                  <div className="float-y" style={{ animationDelay: c.delay }}>
-                    <span className="pill gap-2 border-white/20 bg-space/80 px-3.5 py-2 font-mono text-[10px] font-semibold tracking-[0.1em] uppercase text-mute backdrop-blur-sm shadow-[0_8px_24px_rgba(0,0,0,.45)]">
-                      <c.icon
-                        className="h-3.5 w-3.5 text-neb"
-                        strokeWidth={1.8}
-                      />
-                      {c.label}
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            <HeroPortrait />
           </motion.div>
         </div>
       </div>
