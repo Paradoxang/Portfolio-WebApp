@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Letters, Magnetic, Reveal, RevealLine } from "@/lib/anim";
@@ -15,6 +15,27 @@ import { trackContact } from "@/lib/analytics";
  * sin ruido visual. A `false` vuelve la Hero completa, sin tocar nada más.
  */
 const HERO_ISOLATED: boolean = true;
+
+/** Flecha de descenso alargada: un icono cuadrado no da la proporción. */
+function FlechaLarga() {
+  return (
+    <svg
+      className="hero-arrow"
+      viewBox="0 0 12 68"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path d="M6 0 V60" stroke="currentColor" strokeWidth="1.4" />
+      <path
+        d="M1.2 54 L6 65.4 L10.8 54"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 /** Qué se muestra en modo aislado: la capa 3 fundida o la comparativa apilada. */
 const ISOLATED_VIEW: "fusion" | "comparativa" = "fusion";
 
@@ -57,7 +78,7 @@ export function Hero() {
           {/* Izquierda: el "01" solo en escritorio; en móvil queda la etiqueta
               con su flecha, como enlace a servicios. */}
           <Link to="/servicios" className="hero-rail hero-rail--left">
-            {/* El número a la izquierda de la etiqueta; la flecha, debajo. */}
+            {/* El número a la izquierda de la etiqueta; la flecha, a su derecha. */}
             <span className="hero-index-group">
               <span className="hero-index-box hero-solo-escritorio">
                 <span className="hero-index">01</span>
@@ -65,8 +86,8 @@ export function Hero() {
               <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
                 Especialidades
               </span>
+              <FlechaLarga />
             </span>
-            <ChevronDown className="hero-arrow" aria-hidden="true" />
           </Link>
 
           <div className="hero-rail hero-rail--right">
@@ -85,7 +106,7 @@ export function Hero() {
 
             {/* En móvil el lado derecho lleva a proyectos, como en el esquema. */}
             <Link to="/proyectos" className="hero-rail__enlace hero-solo-movil">
-              <ChevronDown className="hero-arrow" aria-hidden="true" />
+              <FlechaLarga />
               <span className="hero-rail__vertical font-elnath text-[13px]">
                 Proyectos
               </span>
