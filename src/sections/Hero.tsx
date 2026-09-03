@@ -57,11 +57,14 @@ export function Hero() {
           {/* Izquierda: el "01" solo en escritorio; en móvil queda la etiqueta
               con su flecha, como enlace a servicios. */}
           <Link to="/servicios" className="hero-rail hero-rail--left">
-            <span className="hero-index-box hero-solo-escritorio">
-              <span className="hero-index">01</span>
-            </span>
-            <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
-              Especialidades
+            {/* El número a la izquierda de la etiqueta; la flecha, debajo. */}
+            <span className="hero-index-group">
+              <span className="hero-index-box hero-solo-escritorio">
+                <span className="hero-index">01</span>
+              </span>
+              <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
+                Especialidades
+              </span>
             </span>
             <ChevronDown className="hero-arrow" aria-hidden="true" />
           </Link>

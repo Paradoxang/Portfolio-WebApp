@@ -501,7 +501,14 @@
   left: var(--borde-hero);
   flex-direction: column;
   align-items: center;
-  gap: 2.4rem;
+  gap: 1.6rem;
+}
+/* El número y la etiqueta van en fila; la flecha queda fuera del grupo, debajo. */
+.hero-index-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.9rem;
 }
 .hero-rail--right {
   right: var(--borde-hero);
