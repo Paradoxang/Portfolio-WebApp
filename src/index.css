@@ -769,11 +769,16 @@
   .hero-fig--fusion {
     --fusion-foto-resto: 0.72;
     max-width: none;
-    /* Sangra el padding del contenedor (px-6). Sin esto la caja, más ancha que
-       su celda, se alinea al inicio en vez de centrarse y desborda por la
-       derecha. */
+    /* Sangra el padding del contenedor (px-6) y lo recupera en el ancho: la
+       caja llega justo a los bordes de la pantalla.
+       Nada de `100vw` aquí: incluye el área de desbordamiento, así que la
+       figura salía más ancha que el viewport, desbordaba la página, y eso
+       ensanchaba el bloque contenedor del que cuelga el nav fijo — el burger
+       acababa fuera de pantalla. Midiendo contra el contenedor no hay bucle. */
     margin-inline: -1.5rem;
-    height: min(clamp(420px, 76vh, 1100px), calc(100vw * 1.3382));
+    width: calc(100% + 3rem);
+    height: auto;
+    max-height: 76vh;
   }
 }
 

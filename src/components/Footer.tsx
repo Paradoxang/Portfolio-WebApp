@@ -15,7 +15,9 @@ export function Footer() {
           />
           DOX DESIGNS<span className="text-neb">*</span> — Santiago Miranda · 2026
         </span>
-        <div className="flex items-center gap-5">
+        {/* Con salto: los cuatro enlaces suman más que el ancho de un móvil y
+            sin él desbordaban la página, lo que ensanchaba el nav fijo. */}
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
           <a
             href={contact.github}
             target="_blank"
