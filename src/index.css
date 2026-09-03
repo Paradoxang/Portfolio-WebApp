@@ -423,7 +423,11 @@
    es cuestión de opacidad. El desenfoque solo vive durante el tránsito: en
    reposo las dos capas están a `blur(0)` para no recomponer 14 imágenes. */
 .hero-fig--fusion {
-  height: min(clamp(420px, 88vh, 1100px), calc((100vw - 4rem) * 1.3382));
+  --fusion-ms: 480ms;
+  --fusion-blur: 16px;
+  /* Cuánto queda de la fotografía con la fusión completa. */
+  --fusion-foto-resto: 0.28;
+  height: min(clamp(420px, 90vh, 1100px), calc((100vw - 4rem) * 1.3382));
 }
 
 .hero-fusion__capa {
@@ -674,8 +678,11 @@
     padding-top: 2.5rem;
     padding-bottom: 1rem;
   }
+  /* Los raíles suben para dejarle sitio a la figura. */
   .hero-rail {
     --borde-hero: 0.9rem;
+    top: 15%;
+    transform: none;
     gap: 0.55rem;
   }
   .hero-rail--left,
@@ -755,8 +762,17 @@
   .hero-fig--par {
     height: min(clamp(300px, 58vh, 620px), calc((100vw - 4rem) * 1.3382));
   }
+  /* A sangre: el `max-width` heredado la encajonaba en el ancho del contenedor
+     (con su padding), dejándola en poco más de media pantalla. La sección tiene
+     `overflow: hidden`, así que desbordar el contenedor no provoca scroll. */
   .hero-fig--fusion {
-    height: min(clamp(420px, 88vh, 1100px), calc((100vw - 4rem) * 1.3382));
+    --fusion-foto-resto: 0.72;
+    max-width: none;
+    /* Sangra el padding del contenedor (px-6). Sin esto la caja, más ancha que
+       su celda, se alinea al inicio en vez de centrarse y desborda por la
+       derecha. */
+    margin-inline: -1.5rem;
+    height: min(clamp(420px, 76vh, 1100px), calc(100vw * 1.3382));
   }
 }
 

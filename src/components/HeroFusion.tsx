@@ -17,10 +17,9 @@ import { PanStack, useHeroPan } from "@/components/heroPan";
 const MARGEN_HOVER = 220;
 /** Sin cursor no hay hover: la fusión se alterna sola para que se vea. */
 const CICLO_MS = 3600;
-/** Rescoldo de la fotografía cuando la fusión está completa (0 = sustitución). */
-const FOTO_RESTO = 0.28;
-const BLUR_PX = 16;
-const FUSION_MS = 480;
+/* El rescoldo de la fotografía, el desenfoque y la duración viven en el CSS
+ * (`--fusion-*`): en móvil el rescoldo sube mucho para que Santiago nunca
+ * desaparezca, y una variable en línea impediría esa anulación. */
 
 interface HeroFusionProps {
   /** La Hero lo usa para anclar el campo de partículas sobre el rostro. */
@@ -66,27 +65,17 @@ export function HeroFusion({ figureRef, onFusedChange }: HeroFusionProps) {
       if (e.pointerType !== "mouse") return;
       cambiar(cerca(e.clientX, e.clientY));
     };
-    const onDown = (e: PointerEvent) => {
-      if (e.pointerType === "mouse") return;
-      cambiar(cerca(e.clientX, e.clientY));
-    };
-    const onUp = (e: PointerEvent) => {
-      if (e.pointerType === "mouse") return;
-      cambiar(false);
-    };
+    // Sin disparador táctil a propósito: tocar la pantalla hacía desaparecer la
+    // fotografía de golpe. En táctil manda el ciclo lento y nada más.
     const salir = () => cambiar(false);
 
-    window.addEventListener("pointermove", onMove, { passive: true });
-    window.addEventListener("pointerdown", onDown, { passive: true });
-    window.addEventListener("pointerup", onUp, { passive: true });
-    window.addEventListener("pointercancel", salir, { passive: true });
-    document.addEventListener("pointerleave", salir);
+    if (fino) {
+      window.addEventListener("pointermove", onMove, { passive: true });
+      document.addEventListener("pointerleave", salir);
+    }
     return () => {
       window.clearInterval(ciclo);
       window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointerup", onUp);
-      window.removeEventListener("pointercancel", salir);
       document.removeEventListener("pointerleave", salir);
     };
   }, [figureRef]);
@@ -95,13 +84,6 @@ export function HeroFusion({ figureRef, onFusedChange }: HeroFusionProps) {
     <figure
       ref={figureRef}
       className={`hero-fig hero-fig--fusion${fused ? " is-fused" : ""}`}
-      style={
-        {
-          "--fusion-ms": `${FUSION_MS}ms`,
-          "--fusion-blur": `${BLUR_PX}px`,
-          "--fusion-foto-resto": FOTO_RESTO,
-        } as React.CSSProperties
-      }
     >
       <PanStack
         alt="Santiago Miranda"

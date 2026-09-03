@@ -218,9 +218,9 @@ export function QuantumSwarm({
       shockwavesRef.current.push({
         x,
         y,
-        radius: 10,
-        maxRadius: 220,
-        strength: 0.8,
+        radius: 8,
+        maxRadius: 110,
+        strength: 0.38,
       });
     };
     const onUp = () => (pointerRef.current.pulsando = false);
@@ -310,17 +310,19 @@ export function QuantumSwarm({
           waves.push({
             x: pointer.x,
             y: pointer.y,
-            radius: 10,
-            maxRadius: 240,
-            strength: 0.7,
+            radius: 8,
+            maxRadius: 130,
+            strength: 0.32,
           });
         }
       }
 
       for (let s = waves.length - 1; s >= 0; s--) {
         const sw = waves[s];
-        sw.radius += 15;
-        sw.strength *= 0.92;
+        // Más lenta y de menor alcance que en el original: allí la onda barría
+        // media pantalla de golpe y aquí se lee como una explosión.
+        sw.radius += 8;
+        sw.strength *= 0.9;
         if (sw.radius > sw.maxRadius || sw.strength < 0.01) waves.splice(s, 1);
       }
 
@@ -360,8 +362,8 @@ export function QuantumSwarm({
           const dy = p.y - sw.y;
           const d = Math.sqrt(dx * dx + dy * dy) || 1;
           const delta = Math.abs(d - sw.radius);
-          if (delta < 30) {
-            const impulse = (1 - delta / 30) * sw.strength * 15;
+          if (delta < 24) {
+            const impulse = (1 - delta / 24) * sw.strength * 7;
             p.vx += (dx / d) * impulse;
             p.vy += (dy / d) * impulse;
             p.excitation = 1;
