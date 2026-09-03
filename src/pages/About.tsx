@@ -26,7 +26,7 @@ export function About() {
           <Reveal mount>
             <div className="kicker">Sobre mí — Full-stack · .NET / Angular</div>
           </Reveal>
-          <h1 className="display mt-4 text-[clamp(64px,13vw,170px)] leading-[0.86]">
+          <h1 className="display mt-4 text-[clamp(40px,8.06vw,105px)] leading-[0.86]">
             <RevealLine delay={0.08} mount>
               Sobre
             </RevealLine>
@@ -95,7 +95,7 @@ export function About() {
         <Reveal>
           <div className="kicker">01 — Habilidades técnicas</div>
         </Reveal>
-        <h2 className="display mt-3 text-[clamp(42px,7vw,80px)] leading-[0.94]">
+        <h2 className="display mt-3 text-[clamp(26px,4.34vw,50px)] leading-[0.94]">
           <RevealLine delay={0.06}>Habilidades</RevealLine>
         </h2>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -130,7 +130,7 @@ export function About() {
         <Reveal>
           <div className="kicker">02 — Trayectoria</div>
         </Reveal>
-        <h2 className="display mt-3 text-[clamp(42px,7vw,80px)] leading-[0.94]">
+        <h2 className="display mt-3 text-[clamp(26px,4.34vw,50px)] leading-[0.94]">
           <RevealLine delay={0.06}>Experiencia &amp; Educación</RevealLine>
         </h2>
         <div className="relative mt-12 flex flex-col gap-10 border-l border-white/10 pl-8">
@@ -185,7 +185,7 @@ export function About() {
             <div className="card-flat glow-quote flex h-full flex-col justify-between rounded-2xl p-8">
               <div>
                 <div className="kicker">¿Trabajamos juntos?</div>
-                <p className="display mt-4 text-[clamp(22px,3vw,30px)] leading-[1.15]">
+                <p className="display mt-4 text-[clamp(14px,1.86vw,19px)] leading-[1.15]">
                   Siempre abierto a nuevos proyectos y colaboraciones.
                 </p>
               </div>

@@ -10,8 +10,8 @@ export function QuoteTools() {
         <Reveal>
           <blockquote className="card-flat glow-quote relative m-0 h-full overflow-hidden rounded-2xl p-8 md:p-10">
             <OrbitRings className="absolute -bottom-28 -right-16 h-[300px] w-[300px] opacity-50" />
-            <div className="relative display text-[44px] leading-[0.6] text-neb">“</div>
-            <p className="display mt-4 text-[clamp(22px,3vw,32px)] leading-[1.25]">
+            <div className="relative display text-[27px] leading-[0.6] text-neb">“</div>
+            <p className="display mt-4 text-[clamp(14px,1.86vw,20px)] leading-[1.25]">
               {quote.text}
             </p>
             <footer className="mt-6 font-mono text-[11px] font-medium tracking-[0.16em] uppercase text-mute">

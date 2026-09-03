@@ -19,15 +19,16 @@
   --color-neb: #8fa2ff; /* azul nebulosa: enlaces, foco, numeración */
   --color-cosmo: #ff8fbd; /* magenta cósmico: acentos puntuales, hover */
 
-  /* Tipografía */
-  --font-display: "Anton", "Arial Narrow", Impact, sans-serif;
-  --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  /* Astro para titulares, ELNATH para subtítulos. Se autoalojan como el resto
-     (la CSP solo admite fuentes de 'self'); son .ttf de 10 y 24 KB, así que no
-     compensa convertirlos a woff2. */
+  /* Tipografía. Astro para titulares y ELNATH para etiquetas y subtítulos, en
+     todo el sitio. Se autoalojan como el resto (la CSP solo admite fuentes de
+     'self'); son .ttf de 10 y 24 KB, así que no compensa pasarlos a woff2.
+     El cuerpo de texto sigue en Manrope: las otras dos son de fantasía y a
+     tamaño de párrafo se leen mal. */
   --font-astro: "Astro", "Anton", Impact, sans-serif;
   --font-elnath: "Elnath", "JetBrains Mono", ui-monospace, monospace;
+  --font-display: var(--font-astro);
+  --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-elnath);
 }
 
 @font-face {

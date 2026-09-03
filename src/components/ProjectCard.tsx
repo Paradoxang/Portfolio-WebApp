@@ -25,7 +25,7 @@ export function ProjectCard({ project }: { project: Project }) {
           </div>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-105">
-            <span className="display text-[clamp(48px,7vw,84px)] text-neb/25 transition-colors duration-400 group-hover:text-neb/40">
+            <span className="display text-[clamp(30px,4.34vw,52px)] text-neb/25 transition-colors duration-400 group-hover:text-neb/40">
               {project.mark}
             </span>
           </div>
@@ -53,7 +53,7 @@ export function ProjectCard({ project }: { project: Project }) {
       </div>
 
       <div className="mt-3 flex items-baseline gap-3">
-        <span className="display text-[26px] text-neb">{project.num}</span>
+        <span className="display text-[16px] text-neb">{project.num}</span>
         <div>
           <div className="text-[15px] font-bold text-ink transition-colors group-hover:text-neb">
             {project.name}

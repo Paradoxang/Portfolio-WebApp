@@ -136,7 +136,7 @@ export function Hero() {
               </div>
             </Reveal>
             <h1
-              className="display mt-6 text-[clamp(52px,11vw,150px)] leading-[0.86]"
+              className="display mt-6 text-[clamp(32px,6.82vw,93px)] leading-[0.86]"
               aria-label="Santiago Miranda"
             >
               <span className="block whitespace-nowrap">

@@ -23,7 +23,7 @@ export function Process() {
                       {step.num}
                     </span>
                   </div>
-                  <div className="display text-[22px] leading-none text-ink md:mt-1">
+                  <div className="display text-[14px] leading-none text-ink md:mt-1">
                     {step.title}
                   </div>
                 </div>

@@ -36,7 +36,7 @@ export function Security() {
           <div className="relative grid items-center gap-10 p-8 md:p-12 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
               <div className="kicker">04 — Valor agregado</div>
-              <h2 className="display mt-4 text-[clamp(40px,6.5vw,72px)] leading-[0.92]">
+              <h2 className="display mt-4 text-[clamp(25px,4.03vw,45px)] leading-[0.92]">
                 <RevealLine delay={0.06}>Security</RevealLine>
                 <RevealLine delay={0.14}>
                   <span className="text-shimmer">First</span>

@@ -26,7 +26,7 @@ export function Cta() {
             <Reveal>
               <div className="kicker">06 — Contacto</div>
             </Reveal>
-            <h2 className="display mt-4 text-[clamp(40px,6vw,64px)] leading-[0.92]">
+            <h2 className="display mt-4 text-[clamp(25px,3.72vw,40px)] leading-[0.92]">
               <RevealLine delay={0.06}>Let's Work</RevealLine>
               <RevealLine delay={0.14}>
                 <span className="text-shimmer">Together</span>

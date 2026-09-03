@@ -134,7 +134,7 @@ export function Services() {
           <Reveal mount>
             <div className="kicker">Servicios — Cali · Colombia</div>
           </Reveal>
-          <h1 className="display mt-4 text-[clamp(46px,9vw,120px)] leading-[0.88]">
+          <h1 className="display mt-4 text-[clamp(29px,5.58vw,74px)] leading-[0.88]">
             <RevealLine delay={0.08} mount>
               Tu negocio,
             </RevealLine>
@@ -187,7 +187,7 @@ export function Services() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-[10px] border border-neb/30 bg-neb/10 transition-all duration-300 group-hover:-rotate-6 group-hover:scale-110 group-hover:border-neb/60 group-hover:shadow-[0_0_24px_rgba(143,162,255,.35)]">
                   <s.icon className="h-5 w-5 text-neb" strokeWidth={1.6} />
                 </div>
-                <h2 className="display mt-5 text-[clamp(22px,2.6vw,30px)] leading-[1.05]">
+                <h2 className="display mt-5 text-[clamp(14px,1.61vw,19px)] leading-[1.05]">
                   {s.title}
                 </h2>
                 <p className="mt-3 text-[14.5px] leading-[1.65] text-mute">
@@ -227,7 +227,7 @@ export function Services() {
                 <ShieldCheck className="h-7 w-7 text-neb" strokeWidth={1.6} />
               </div>
               <div>
-                <h2 className="display text-[clamp(24px,3.2vw,36px)] leading-[1.05]">
+                <h2 className="display text-[clamp(15px,1.98vw,22px)] leading-[1.05]">
                   Seguridad incluida, no cobrada aparte
                 </h2>
                 <p className="mt-3 max-w-[70ch] text-[14.5px] leading-[1.7] text-mute">
@@ -247,7 +247,7 @@ export function Services() {
         <Reveal>
           <div className="kicker">Dudas comunes</div>
         </Reveal>
-        <h2 className="display mt-3 text-[clamp(36px,6vw,68px)] leading-[0.94]">
+        <h2 className="display mt-3 text-[clamp(22px,3.72vw,42px)] leading-[0.94]">
           <RevealLine delay={0.06}>Preguntas frecuentes</RevealLine>
         </h2>
         <div className="mt-10 grid gap-4 md:grid-cols-2">
@@ -270,7 +270,7 @@ export function Services() {
       <section className="mx-auto max-w-[1200px] px-6 pb-28 pt-8 md:px-8">
         <Reveal>
           <div className="glow-cta relative overflow-hidden rounded-2xl border border-white/10 bg-space/60 p-8 text-center md:p-14">
-            <h2 className="display text-[clamp(32px,5vw,56px)] leading-[0.98]">
+            <h2 className="display text-[clamp(20px,3.1vw,35px)] leading-[0.98]">
               ¿Hablamos de tu proyecto?
             </h2>
             <p className="mx-auto mt-4 max-w-[52ch] text-[15px] leading-[1.7] text-mute">
