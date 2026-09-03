@@ -1,6 +1,6 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const links = [
   { label: "Inicio", to: "/" },
@@ -30,73 +30,41 @@ export function Nav() {
         scrolled ? "bg-space/80 backdrop-blur-md border-b border-white/5" : ""
       }`}
     >
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4 md:px-8">
-        <Link to="/" className="group flex items-center gap-2.5">
+      {/* A los bordes de la pantalla, sin contenedor centrado */}
+      <div className="flex w-full items-center justify-between px-[clamp(0.6rem,1.6vw,1.6rem)] py-3">
+        <Link to="/" className="group flex items-center gap-3 md:gap-4">
           <img
             src="/brand/isotipo.webp"
-            alt="Dox Designs"
-            width="32"
-            height="32"
-            className="h-8 w-8 rounded-md ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-110"
+            alt=""
+            aria-hidden="true"
+            width="64"
+            height="64"
+            className="h-12 w-12 rounded-xl ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 md:h-14 md:w-14"
           />
-          <span className="font-mono text-[12px] font-semibold tracking-[0.26em] text-ink transition-colors group-hover:text-neb">
-            DOX DESIGNS<span className="text-neb">*</span>
+          <span className="font-astro text-[clamp(16px,2vw,26px)] leading-none tracking-[0.06em] text-ink transition-colors group-hover:text-neb">
+            DOX DESIGNS
           </span>
         </Link>
 
-        {/* Desktop */}
-        <nav className="hidden items-center gap-7 sm:flex">
-          {links.map((l) =>
-            l.to.includes("#") ? (
-              <Link
-                key={l.label}
-                to={l.to}
-                className="link-underline font-mono text-[11px] font-medium tracking-[0.14em] uppercase text-mute transition-colors hover:text-neb"
-              >
-                {l.label}
-              </Link>
-            ) : (
-              <NavLink
-                key={l.label}
-                to={l.to}
-                className={({ isActive }) =>
-                  `link-underline font-mono text-[11px] font-medium tracking-[0.14em] uppercase transition-colors hover:text-neb ${
-                    isActive ? "text-neb" : "text-mute"
-                  }`
-                }
-              >
-                {l.label}
-              </NavLink>
-            )
-          )}
-          <span className="pill gap-2 px-4 py-2 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase text-mute">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neb opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-neb" />
-            </span>
-            Disponible
-          </span>
-        </nav>
-
-        {/* Mobile */}
+        {/* Un único disparador en todos los tamaños: el nav vive en el panel. */}
         <button
           type="button"
-          aria-label="Abrir menú"
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-space/70 text-ink backdrop-blur-sm sm:hidden"
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-space/70 text-ink backdrop-blur-sm transition-colors hover:border-neb/50 hover:text-neb"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="mx-6 mb-4 flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-space/95 p-1.5 backdrop-blur-md sm:hidden">
+        <div className="mx-6 mb-4 flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-space/95 p-1.5 backdrop-blur-md md:mx-8 md:ml-auto md:max-w-xs">
           {links.map((l) => (
             <Link
               key={l.label}
               to={l.to}
-              className="rounded-xl px-4 py-3 font-mono text-[12px] tracking-[0.14em] uppercase text-mute transition-colors hover:bg-white/5 hover:text-neb"
+              className="rounded-xl px-4 py-3 font-elnath text-[13px] tracking-[0.14em] uppercase text-mute transition-colors hover:bg-white/5 hover:text-neb"
             >
               {l.label}
             </Link>

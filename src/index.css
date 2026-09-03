@@ -23,6 +23,24 @@
   --font-display: "Anton", "Arial Narrow", Impact, sans-serif;
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Astro para titulares, ELNATH para subtítulos. Se autoalojan como el resto
+     (la CSP solo admite fuentes de 'self'); son .ttf de 10 y 24 KB, así que no
+     compensa convertirlos a woff2. */
+  --font-astro: "Astro", "Anton", Impact, sans-serif;
+  --font-elnath: "Elnath", "JetBrains Mono", ui-monospace, monospace;
+}
+
+@font-face {
+  font-family: "Astro";
+  src: url("/fonts/astro.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Elnath";
+  src: url("/fonts/elnath.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
 }
 
 @layer base {
@@ -353,15 +371,397 @@
   opacity: 1;
 }
 
+/* Capa 2 (astronauta): mismo desvanecido vertical que la fotografía. Cerraba
+   antes (90%) porque el arte original acababa al 84%, pero tras reescalarlo
+   llega al borde igual que la foto; mantener el cierre adelantado hacía que en
+   la fusión el cuerpo de la ilustración terminase por encima del de la
+   fotografía y se leyera como un corte.
+   El degradado lateral sí es propio: al agrandar la ilustración sus hombros
+   topan con el borde del lienzo, y así se funden en vez de cortarse. */
+.hero-fig__stack--astro {
+  -webkit-mask-image:
+    linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 62%,
+      rgba(0, 0, 0, 0.55) 82%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to right,
+      transparent 0%,
+      #000 4.5%,
+      #000 95.5%,
+      transparent 100%
+    );
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 62%,
+      rgba(0, 0, 0, 0.55) 82%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to right,
+      transparent 0%,
+      #000 4.5%,
+      #000 95.5%,
+      transparent 100%
+    );
+  mask-composite: intersect;
+}
+
+/* Filas de la comparativa: mismo tratamiento de ancho que el modo aislado. */
+.hero-fig--par {
+  height: min(clamp(300px, 58vh, 620px), calc((100vw - 4rem) * 1.3382));
+}
+
+/* ── Capa 3: fusión de la fotografía y el astronauta ──
+   Las dos pilas comparten caja y están registradas al píxel, así que fundirlas
+   es cuestión de opacidad. El desenfoque solo vive durante el tránsito: en
+   reposo las dos capas están a `blur(0)` para no recomponer 14 imágenes. */
+.hero-fig--fusion {
+  height: min(clamp(420px, 88vh, 1100px), calc((100vw - 4rem) * 1.3382));
+}
+
+.hero-fusion__capa {
+  transition:
+    opacity var(--fusion-ms, 480ms) cubic-bezier(0.4, 0, 0.2, 1),
+    filter var(--fusion-ms, 480ms) cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, filter;
+}
+/* En reposo manda la fotografía; el astronauta espera desenfocado. */
+.hero-fusion__capa--foto {
+  opacity: 1;
+  filter: blur(0);
+}
+.hero-fusion__capa--astro {
+  opacity: 0;
+  filter: blur(var(--fusion-blur, 16px));
+}
+/* Fundidas: el astronauta entra nítido y la fotografía queda de rescoldo. */
+.is-fused .hero-fusion__capa--foto {
+  opacity: var(--fusion-foto-resto, 0.28);
+  filter: blur(calc(var(--fusion-blur, 16px) * 0.55));
+}
+.is-fused .hero-fusion__capa--astro {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* El enjambre cubre toda la sección y va por encima con `screen`: solo suma
+   luz, nunca tapa. `pointer-events: none` deja pasar los clics a los botones;
+   el canvas escucha el puntero en `window`. */
+.hero-quantum {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Cursor propio del hero: retícula fina, y las partículas se apartan a su paso. */
+.hero-cursor {
+  cursor: crosshair;
+}
+
+/* ── Tipografías de la nueva maqueta ── */
+.font-astro {
+  font-family: var(--font-astro);
+  font-weight: 400;
+}
+.font-elnath {
+  font-family: var(--font-elnath);
+  font-weight: 400;
+}
+
+/* ── Escenario del hero: figura al centro, raíles a los lados, nombre debajo ── */
+.hero-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+}
+
+/* Raíles laterales. El texto va girado y se lee de abajo arriba. */
+.hero-rail {
+  --borde-hero: clamp(1.4rem, 3vw, 3.5rem);
+  position: absolute;
+  top: 50%;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  transform: translateY(-50%);
+}
+.hero-rail--left {
+  left: var(--borde-hero);
+  flex-direction: column;
+  align-items: center;
+  gap: 2.4rem;
+}
+.hero-rail--right {
+  right: var(--borde-hero);
+}
+.hero-index-group {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.hero-rail__vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* El número de sección. En reposo está de lado y apagado; al pasar el ratón
+   entra en vórtice: gira vuelta y cuarto mientras crece y se enfoca, y acaba
+   derecho y encendido.
+   El giro es sobre el centro del propio glifo (no sobre una esquina, que lo
+   sacaba de pantalla tanto como su altura de línea). Como "01" en Astro es casi
+   cuadrado, la huella apenas cambia entre los dos estados y la caja puede ser
+   fija: así la fila no se descuadra y la etiqueta queda centrada con él. */
+.hero-index-box {
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-family: var(--font-astro);
+  font-size: clamp(84px, 12.5vw, 210px);
+  width: 1em;
+  height: 1em;
+  transform: scale(0.82);
+  filter: blur(1.6px);
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.28, 1),
+    filter 700ms ease;
+}
+.hero-index {
+  line-height: 0.8;
+  white-space: nowrap;
+  /* -450deg se ve igual que -90deg en reposo, pero al ir a 0 recorre vuelta y
+     cuarto: de ahí el remolino. */
+  transform: rotate(-450deg);
+  color: color-mix(in srgb, var(--color-mute) 55%, transparent);
+  text-shadow: none;
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.28, 1),
+    color 520ms ease, text-shadow 520ms ease;
+}
+.hero-rail--left:hover .hero-index-box,
+.hero-rail--left:focus-within .hero-index-box {
+  transform: scale(1);
+  filter: blur(0);
+}
+.hero-rail--left:hover .hero-index,
+.hero-rail--left:focus-within .hero-index {
+  transform: rotate(0deg);
+  color: var(--color-ink);
+  text-shadow: 0 0 12px rgba(143, 162, 255, 0.75),
+    0 0 44px rgba(143, 162, 255, 0.45);
+}
+/* La etiqueta acompaña al encendido, más discreta. */
+.hero-rail--left .hero-rail__vertical {
+  color: color-mix(in srgb, var(--color-mute) 70%, transparent);
+  transition: color 380ms ease;
+}
+.hero-rail--left:hover .hero-rail__vertical,
+.hero-rail--left:focus-within .hero-rail__vertical {
+  color: var(--color-mute);
+}
+
+/* Flecha de descenso bajo el número. */
+@keyframes flecha-abajo {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 0.9;
+  }
+}
+.hero-arrow {
+  width: 22px;
+  height: 22px;
+  margin-left: 0.15em;
+  color: var(--color-neb);
+  animation: flecha-abajo 2.2s ease-in-out infinite;
+}
+
+/* Nombre: se apoya sobre el pecho ya desvanecido de la figura. */
+.hero-name {
+  position: absolute;
+  bottom: 4%;
+  left: 50%;
+  z-index: 15;
+  transform: translateX(-50%);
+  padding: 0.5rem clamp(1rem, 4vw, 3rem);
+  font-family: var(--font-astro);
+  font-size: clamp(26px, 5.2vw, 76px);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--color-ink);
+  /* sin marco ni fondo: el nombre se apoya directamente sobre la figura, y la
+     sombra basta para despegarlo del pecho */
+  text-shadow: 0 2px 28px rgba(11, 10, 24, 0.95),
+    0 0 60px rgba(11, 10, 24, 0.8);
+}
+
+/* Disponibilidad: sin marco, solo el punto luminoso junto al texto. */
+.hero-disponible {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.4rem 0.2rem;
+  color: var(--color-mute);
+  transition: color 0.25s ease;
+}
+.hero-disponible:hover {
+  color: var(--color-ink);
+}
+@keyframes titilar {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 10px 2px rgba(143, 162, 255, 0.85),
+      0 0 26px 6px rgba(143, 162, 255, 0.35);
+  }
+  50% {
+    opacity: 0.45;
+    box-shadow: 0 0 6px 1px rgba(143, 162, 255, 0.4),
+      0 0 16px 3px rgba(143, 162, 255, 0.12);
+  }
+}
+.hero-disponible__punto {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cdd6ff;
+  animation: titilar 1.8s ease-in-out infinite;
+}
+
+/* Piezas que solo existen en uno de los dos tamaños. */
+.hero-solo-movil {
+  display: none;
+}
 @media (max-width: 1023px) {
-  .hero-fig {
-    height: clamp(300px, 46vh, 440px);
+  .hero-solo-escritorio {
+    display: none;
+  }
+  .hero-solo-movil {
+    display: flex;
+  }
+
+  /* Maqueta móvil: etiquetas verticales con su flecha a los lados, y el
+     nombre grande abajo. El "01" no entra. */
+  .hero-stage {
+    padding-top: 2.5rem;
+    padding-bottom: 1rem;
+  }
+  .hero-rail {
+    --borde-hero: 0.9rem;
+    gap: 0.55rem;
+  }
+  .hero-rail--left,
+  .hero-rail__enlace {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .hero-arrow {
+    width: 30px;
+    height: 30px;
+    stroke-width: 1.5;
+    margin-left: 0;
+  }
+  .hero-name {
+    white-space: normal;
+    bottom: 1.5%;
+    font-size: clamp(38px, 10.5vw, 76px);
+  }
+}
+
+/* Sin `display` a propósito: lo pone `.hero-solo-movil` dentro de la media
+   query. Declararlo aquí ganaría por orden y el enlace asomaría en escritorio. */
+.hero-rail__enlace {
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--color-mute);
+  transition: color 0.25s ease;
+}
+.hero-rail__enlace:hover {
+  color: var(--color-ink);
+}
+
+/* Sin puntero fino no hay hover, así que el número no podría encenderse nunca:
+   en esos dispositivos (táctiles anchos; en móvil el raíl ni aparece) va
+   derecho y visible desde el principio. */
+@media (hover: none) {
+  .hero-index-box {
+    transform: scale(1);
+    filter: blur(0);
+  }
+  .hero-index {
+    transform: rotate(0deg);
+    color: var(--color-ink);
+    text-shadow: 0 0 12px rgba(143, 162, 255, 0.55);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-fig__f {
+  .hero-disponible__punto,
+  .hero-arrow {
+    animation: none;
+  }
+  .hero-index,
+  .hero-index-box {
     transition: none;
+  }
+}
+
+/* Modo aislado: la figura no comparte fila con el texto, así que puede crecer.
+   El segundo término del min() capa la altura por el ancho disponible: si en su
+   lugar dejáramos que `max-width` recortara la caja, esta perdería el
+   aspect-ratio y la máscara dejaría de caer sobre el pecho.
+   2398/1792 = 1.3382; los 4rem cubren el padding del contenedor y la barra de
+   scroll, que 100vw sí incluye. */
+.hero-fig--solo {
+  height: min(clamp(380px, 82vh, 900px), calc((100vw - 4rem) * 1.3382));
+}
+
+@media (max-width: 1023px) {
+  .hero-fig {
+    height: clamp(300px, 46vh, 440px);
+  }
+  .hero-fig--solo {
+    height: min(clamp(320px, 62vh, 560px), calc((100vw - 4rem) * 1.3382));
+  }
+  /* repetidas aquí porque `.hero-fig` de arriba tiene su misma especificidad y,
+     al venir después en el archivo, ganaría por orden */
+  .hero-fig--par {
+    height: min(clamp(300px, 58vh, 620px), calc((100vw - 4rem) * 1.3382));
+  }
+  .hero-fig--fusion {
+    height: min(clamp(420px, 88vh, 1100px), calc((100vw - 4rem) * 1.3382));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-fig__f,
+  .hero-fusion__capa {
+    transition: none;
+  }
+  /* El canvas ni siquiera arranca su bucle con reduced-motion, pero por si el
+     navegador lo pinta una vez, que no compita con el contenido. */
+  .hero-quantum {
+    display: none;
   }
 }
 

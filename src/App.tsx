@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import type { RouteRecord } from "vite-react-ssg";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { Prefetch } from "@/components/Prefetch";
 import { Starfield } from "@/components/Starfield";
 import { useLenis, scrollToTarget, EASE } from "@/lib/anim";
 import { loadAnalytics, trackPageView } from "@/lib/analytics";
@@ -44,6 +45,10 @@ function Layout() {
 
   return (
     <div className="relative min-h-screen bg-base font-sans text-ink">
+      {/* Calienta los assets del hero en tiempo ocioso. No pinta nada: un velo
+          de carga se convertiría en el LCP y penalizaría el SEO. */}
+      <Prefetch />
+
       {/* Barra de progreso de scroll */}
       <motion.div
         aria-hidden="true"
