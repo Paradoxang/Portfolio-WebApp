@@ -11,6 +11,7 @@ import { useLenis, scrollToTarget, EASE } from "@/lib/anim";
 import { loadAnalytics, trackPageView } from "@/lib/analytics";
 import { Home } from "@/pages/Home";
 import { About } from "@/pages/About";
+import { Contact } from "@/pages/Contact";
 import { Projects } from "@/pages/Projects";
 import { Services } from "@/pages/Services";
 
@@ -92,6 +93,7 @@ export const routes: RouteRecord[] = [
       { path: "servicios", element: <Services /> },
       { path: "proyectos", element: <Projects /> },
       { path: "sobre-mi", element: <About /> },
+      { path: "contacto", element: <Contact /> },
     ],
   },
 ];

@@ -7,7 +7,7 @@ const links = [
   { label: "Servicios", to: "/servicios" },
   { label: "Proyectos", to: "/proyectos" },
   { label: "Sobre mí", to: "/sobre-mi" },
-  { label: "Contacto", to: "/#contacto" },
+  { label: "Contacto", to: "/contacto" },
 ];
 
 export function Nav() {

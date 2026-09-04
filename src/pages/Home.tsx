@@ -1,13 +1,15 @@
 import { Seo } from "@/components/seo";
 import { Hero } from "@/sections/Hero";
-import { Stats } from "@/sections/Stats";
 import { Services } from "@/sections/Services";
 import { SelectedProjects } from "@/sections/SelectedProjects";
-import { Process } from "@/sections/Process";
 import { Security } from "@/sections/Security";
-import { QuoteTools } from "@/sections/QuoteTools";
-import { Cta } from "@/sections/Cta";
 
+/**
+ * Portada reducida a lo esencial: qué hago, qué he hecho y cómo lo aseguro.
+ * Las secciones de cifras, proceso y herramientas salen de aquí, y el contacto
+ * pasa a tener página propia en /contacto. Los componentes siguen en
+ * `src/sections` por si vuelven.
+ */
 export function Home() {
   return (
     <>
@@ -17,13 +19,9 @@ export function Home() {
         path="/"
       />
       <Hero />
-      <Stats />
       <Services />
       <SelectedProjects />
-      <Process />
       <Security />
-      <QuoteTools />
-      <Cta />
     </>
   );
 }

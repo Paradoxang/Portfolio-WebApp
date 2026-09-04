@@ -190,7 +190,7 @@ export function About() {
                 </p>
               </div>
               <Link
-                to="/#contacto"
+                to="/contacto"
                 className="btn-neb mt-8 self-start px-6 py-3 text-[13px]"
               >
                 Contacto <ArrowRight className="h-4 w-4" />
