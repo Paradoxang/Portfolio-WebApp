@@ -484,6 +484,77 @@
   font-weight: 400;
 }
 
+/* ── Bucle del visor (sección "What I Do") ── */
+.visor {
+  position: relative;
+  justify-self: center;
+  margin: 0;
+  height: clamp(320px, 68vh, 700px);
+  aspect-ratio: 1792 / 2398;
+  max-width: 100%;
+}
+/* Halo detrás del casco: sin él la silueta oscura se pierde contra el fondo. */
+.visor::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  width: 78%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(143, 162, 255, 0.24), transparent 62%);
+  filter: blur(26px);
+  z-index: 0;
+  pointer-events: none;
+}
+/* La figura llega al borde inferior del lienzo, así que el degradado puede
+   cerrar casi al final. */
+.visor__stack {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 62%,
+    rgba(0, 0, 0, 0.5) 84%,
+    transparent 99%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 62%,
+    rgba(0, 0, 0, 0.5) 84%,
+    transparent 99%
+  );
+}
+.visor__stack picture {
+  display: contents;
+}
+.visor__f {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  opacity: 0;
+  /* Corte seco a propósito: un fundido emborrona el disco y le quita la
+     sensación de rotación. */
+  transition: none;
+  will-change: opacity;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.visor__f.is-on {
+  opacity: 1;
+}
+@media (max-width: 1023px) {
+  .visor {
+    height: clamp(300px, 52vh, 520px);
+  }
+}
+
 /* ── Escenario del hero: figura al centro, raíles a los lados, nombre debajo ── */
 .hero-stage {
   position: relative;
