@@ -66,6 +66,10 @@ interface Pieza {
   ratio?: string;
   /** Órbita del acento: radio en px y vuelta en segundos. */
   orbita?: { r: number; dur: number };
+  /** Capa a sangre: cubre el hero entero con `object-fit: cover` en vez de
+   *  medir por su ancho. La proporción del archivo no tiene por qué coincidir
+   *  con la de la pantalla, y recortar es mejor que dejar franjas. */
+  lleno?: boolean;
 }
 
 const PROFUNDIDAD: Record<Capa, number> = {
@@ -85,15 +89,19 @@ const PIEZAS: Pieza[] = [
   { id: "elem_08_malla", x: 50, y: 97, w: "clamp(700px, 92vw, 1250px)", o: 0.34, capa: "fondo", desde: "medio" },
   { id: "elem_10_vortice", x: 95, y: 30, w: "clamp(300px, 40vw, 560px)", o: 0.42, capa: "fondo", desde: "medio" },
   { id: "elem_09_anillo", x: 50.5, y: 45, w: "clamp(420px, 62vw, 820px)", o: 0.52, capa: "medio", desde: "movil" },
-  /* Polvo de estrellas. Tres apariciones, no cuatro, y ninguna en la esquina
-     superior izquierda: ahí era donde se leía como una mancha pegada. Van a los
-     dos huecos vacíos de los flancos y, en móvil, a la franja sobre la cabeza
-     —el único sitio donde la figura, que va a sangre, no las tapa. */
-  // 72vw y no 86: a lo ancho el cúmulo se salía por arriba de la pantalla.
-  { id: "part_movil", src: "elem_01_particulas", x: 52, y: 16, w: "72vw", o: 0.42, capa: "fondo", desde: "movil", hasta: "movil" },
-  // y 24 y no 29: más abajo el cúmulo mordía el texto vertical del raíl.
-  { id: "part_izq", src: "elem_01_particulas", x: 27, y: 24, w: "clamp(180px, 22vw, 320px)", o: 0.46, capa: "fondo", desde: "medio", giro: 24 },
-  { id: "part_der", src: "elem_01_particulas", x: 80, y: 40, w: "clamp(170px, 21vw, 300px)", o: 0.4, capa: "fondo", desde: "medio", giro: 148 },
+  /* Polvo de estrellas. Ya no son cúmulos sueltos repartidos a mano: el asset
+     nuevo es una capa entera, densa en las esquinas y con un corredor vacío en
+     diagonal por el centro — justo por donde pasan la figura y el wordmark. Va
+     al fondo del todo (z-4), por debajo del enjambre, de la figura y de
+     cualquier texto, así que no puede tapar nada.
+
+     La capa entera es de tablet en adelante. En un móvil vertical no funciona:
+     al ser 16:9, o se recorta y se pierden las esquinas —que es donde está toda
+     la densidad— o se estira tanto que el grano se diluye. Ahí vuelven los
+     cúmulos sueltos del asset viejo, uno por esquina. */
+  { id: "polvo", src: "elem_11_polvo", x: 50, y: 50, w: "108%", o: 0.55, capa: "fondo", desde: "medio", lleno: true },
+  { id: "part_sup_izq", src: "elem_01_particulas", x: 8, y: 5, w: "50vw", o: 0.5, capa: "fondo", desde: "movil", hasta: "movil" },
+  { id: "part_inf_der", src: "elem_01_particulas", x: 92, y: 96, w: "46vw", o: 0.45, capa: "fondo", desde: "movil", hasta: "movil", giro: 165 },
   // — por delante, contenedores en SVG —
   {
     // Bajado: a 64% se metía en la franja del raíl "ESPECIALIDADES".
@@ -104,9 +112,10 @@ const PIEZAS: Pieza[] = [
   },
   {
     // A todo lo ancho y pegada al borde inferior: es una cinta de datos, y
-    // cortada a media pantalla parecía un recorte.
+    // cortada a media pantalla parecía un recorte. También en móvil: el nombre
+    // acaba en el 88% de la altura y los 100 px de debajo estaban mudos.
     id: "tira_datos", x: 50, y: 98.5, w: "100%", o: 0.7,
-    capa: "contenedor", desde: "medio", ratio: "100 / 6", detras: true,
+    capa: "contenedor", desde: "movil", ratio: "100 / 6", detras: true,
     svg: (c) => <FxTiraDatos dibujar><TelemetriaTira corriendo={c} /></FxTiraDatos>,
   },
   {
@@ -120,16 +129,36 @@ const PIEZAS: Pieza[] = [
     svg: () => <FxReticula />,
   },
   // — acentos sólidos —
-  { id: "elem_04_esfera_a", x: 11, y: 27, w: "clamp(64px, 7.5vw, 104px)", o: 0.95, capa: "acento", desde: "movil", orbita: { r: 16, dur: 18 } },
+  /* La esfera va partida por tramo. En escritorio el raíl izquierdo está a
+     media altura y x=11 queda libre; en móvil el raíl sube al 15% y ahí la
+     esfera se plantaba sobre "ESPECIALIDADES" —855 px² medidos, y por delante,
+     que es lo peor—. La versión de móvil se aparta a la derecha lo justo para
+     que ni el radio de la órbita la devuelva. */
+  { id: "elem_04_esfera_a", x: 11, y: 27, w: "clamp(64px, 7.5vw, 104px)", o: 0.95, capa: "acento", desde: "medio", orbita: { r: 16, dur: 18 } },
+  { id: "esfera_a_movil", src: "elem_04_esfera_a", x: 26, y: 22, w: "64px", o: 0.95, capa: "acento", desde: "movil", hasta: "movil", orbita: { r: 16, dur: 18 } },
   // Apartada del raíl derecho: a 92% se le montaba encima al texto vertical.
   { id: "elem_04_esfera_c", x: 86, y: 46, w: "clamp(48px, 5.4vw, 74px)", o: 0.9, capa: "acento", desde: "medio", orbita: { r: 12, dur: 23 } },
   /* Los dos cristales bajan a móvil: eran lo que más se echaba en falta ahí.
      Uno sobre el hombro izquierdo y otro en el hueco de arriba a la derecha,
      los dos por delante de la figura, que es donde se leen como esquirlas
      flotando y no como parches. */
-  // Subido: sobre el marco HUD se plantaba encima de la telemetría y la tapaba.
-  { id: "elem_05_fragmento_c", x: 10, y: 57, w: "clamp(50px, 5.2vw, 72px)", o: 0.85, capa: "acento", desde: "movil", orbita: { r: 14, dur: 26 } },
+  /* Apartado a la derecha del raíl: a x=10 caía justo sobre el "01" —72x41 px
+     de solape medidos, y la órbita lo empeoraba. A x=24 entra en el pasillo
+     que queda entre el raíl y la figura, que estaba vacío. */
+  { id: "elem_05_fragmento_c", x: 24, y: 56, w: "clamp(50px, 5.2vw, 72px)", o: 0.85, capa: "acento", desde: "movil", orbita: { r: 14, dur: 26 } },
   { id: "elem_05_fragmento_a", x: 76, y: 15, w: "clamp(46px, 4.4vw, 60px)", o: 0.8, capa: "acento", desde: "movil", orbita: { r: 10, dur: 20 } },
+  /* Esquina inferior derecha. Es la única zona del hero que quedaba muda: el
+     wordmark acaba antes, el raíl va más arriba y la cinta de datos empieza
+     más abajo. Los dos van de tablet en adelante — en móvil ese rincón es del
+     nombre, que ocupa el ancho entero. */
+  // La esfera sirve igual en móvil: a esa altura cae entre el raíl y el nombre.
+  { id: "elem_12_esfera_d", x: 89, y: 70, w: "clamp(70px, 8vw, 115px)", o: 0.92, capa: "acento", desde: "movil", orbita: { r: 13, dur: 21 } },
+  // x 82 y no 79: a 79 quedaba a 5 px del wordmark y la órbita se le echaba encima.
+  { id: "elem_13_fragmento_d", x: 82, y: 84, w: "clamp(58px, 6.4vw, 92px)", o: 0.82, capa: "acento", desde: "medio", giro: -12, orbita: { r: 11, dur: 24 } },
+  /* El cristal nuevo sí necesita sitio propio en móvil: en el 82/84 del
+     escritorio se plantaría justo encima del nombre, que ahí ocupa casi todo
+     el ancho. Se va al flanco izquierdo, sobre el pecho de la figura. */
+  { id: "frag_d_movil", src: "elem_13_fragmento_d", x: 14, y: 72, w: "58px", o: 0.82, capa: "acento", desde: "movil", hasta: "movil", giro: 18, orbita: { r: 11, dur: 24 } },
 ];
 
 const DETRAS: Capa[] = ["fondo", "medio"];
@@ -285,11 +314,19 @@ function PiezaFx({ p, sx, sy, quieto, listo, corriendo, dpr2, orden }: PiezaProp
 
   return (
     <motion.div
-      className={`fx__pieza${p.src === "elem_08_malla" || p.id === "elem_08_malla" ? " fx__pieza--malla" : ""}`}
+      className={[
+        "fx__pieza",
+        p.src === "elem_08_malla" || p.id === "elem_08_malla" ? "fx__pieza--malla" : "",
+        p.lleno ? "fx__pieza--lleno" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       style={{
         left: `${p.x}%`,
         top: `${p.y}%`,
         width: p.w,
+        // A sangre la altura la marca el hero, no la proporción del archivo.
+        height: p.lleno ? "108%" : undefined,
         aspectRatio: p.ratio,
         rotate: p.giro,
         x,
