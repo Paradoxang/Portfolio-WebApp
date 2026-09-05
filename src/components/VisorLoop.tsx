@@ -18,7 +18,9 @@ const PASO_MS = 150;
  *  un documento que no se está rasterizando. */
 const DECODE_TIMEOUT_MS = 2000;
 
-export function VisorLoop() {
+/** `className` solo para posicionarla: en móvil la figura pasa a ser el fondo
+ *  de la composición de tarjetas. La lógica del bucle no cambia. */
+export function VisorLoop({ className = "" }: { className?: string }) {
   /** Los otros tres se montan tras el primer pintado, para no competir con el
    *  primer render de la sección. */
   const [montado, setMontado] = useState(false);
@@ -105,7 +107,7 @@ export function VisorLoop() {
   }, [listo]);
 
   return (
-    <figure ref={figRef} className="visor">
+    <figure ref={figRef} className={`visor${className ? ` ${className}` : ""}`}>
       {/* La máscara vive aquí dentro, nunca en la figura: `mask-clip` es
           `border-box` y recortaría cualquier otro elemento del contenedor. */}
       <div className="visor__stack">

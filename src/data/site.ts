@@ -48,32 +48,68 @@ export const stats = [
   { icon: Hourglass, value: 4, suffix: "+", label: "Años construyendo" },
 ] as const;
 
-/* ── What I do ── */
+/* ── What I do ──
+   Cada servicio lleva su tarjeta: la variante decide el degradado y el objeto
+   3D que sangra por la esquina. `icon` se conserva porque la página /servicios
+   sigue usándolo en su propio listado. */
+export type VarianteWdid = "modulo" | "astrolabio" | "cristal" | "vela";
+
 export interface Service {
   icon: LucideIcon;
   title: string;
   desc: string;
+  variante: VarianteWdid;
+  objeto: string;
+  etiqueta: string;
+  /** Punto del degradado que le toca al punto de la etiqueta. */
+  color: string;
+  cta: string;
+  href: string;
 }
 export const services: Service[] = [
   {
     icon: Code2,
     title: "Desarrollo full-stack",
     desc: "APIs y aplicaciones de extremo a extremo con .NET, Next.js y SQL Server.",
+    variante: "modulo",
+    objeto: "wdid_01_modulo",
+    etiqueta: "Backend & API",
+    color: "#F0A868",
+    cta: "Ver stack",
+    href: "/servicios",
   },
   {
     icon: PenTool,
     title: "Diseño de interfaz",
     desc: "UI oscura y editorial: sistemas de diseño con tipografía protagonista.",
+    variante: "astrolabio",
+    objeto: "wdid_02_astrolabio",
+    etiqueta: "Sistemas de diseño",
+    color: "#E7DCFF",
+    cta: "Ver proceso",
+    href: "/servicios",
   },
   {
     icon: LayoutTemplate,
     title: "Landings & web",
     desc: "Sitios rápidos, responsive y accesibles con React + Tailwind.",
+    variante: "cristal",
+    objeto: "wdid_03_cristal",
+    etiqueta: "Rendimiento",
+    color: "#8FA2FF",
+    cta: "Ver proyectos",
+    href: "/proyectos",
   },
   {
     icon: Bot,
     title: "Integración de IA",
     desc: "Chat-bots y asistentes con entrenamiento enfocado al negocio.",
+    variante: "vela",
+    objeto: "wdid_04_vela",
+    etiqueta: "Automatización",
+    color: "#FFB39C",
+    cta: "Hablemos",
+    href: "/contacto",
   },
 ];
 

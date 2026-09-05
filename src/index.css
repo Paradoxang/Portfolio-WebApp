@@ -26,6 +26,14 @@
      tamaño de párrafo se leen mal. */
   --font-astro: "Astro", "Anton", Impact, sans-serif;
   --font-elnath: "Elnath", "JetBrains Mono", ui-monospace, monospace;
+  /* Kenney Future Narrow (CC0). Es de caja alta: no lleva minúsculas de verdad,
+     así que cualquier texto sale en mayúsculas lo pongas como lo pongas.
+     Medida contra las otras dos a igual cuerpo: 0.675 del ancho de Astro con
+     la caja alta en 63 frente a 100, y 0.995 del ancho de Elnath con la caja
+     alta en 63 frente a 72. De ahí que los titulares suban x1.5 —recupera la
+     altura óptica dejando la huella en ancho donde estaba— y las etiquetas no
+     necesiten tocarse. */
+  --font-kenney: "Kenney Future", "Elnath", ui-monospace, monospace;
   --font-display: var(--font-astro);
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-elnath);
@@ -40,6 +48,12 @@
 @font-face {
   font-family: "Elnath";
   src: url("/fonts/elnath.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Kenney Future";
+  src: url("/fonts/kenney-future-narrow.ttf") format("truetype");
   font-weight: 400;
   font-display: swap;
 }
@@ -714,6 +728,242 @@
     #000 55%,
     transparent 100%
   );
+}
+
+/* ── Sección "What I Do" ──
+   Toda la sección va en Kenney Future menos el titular, que se queda en Astro
+   para no romper la jerarquía de encabezados del sitio. La fuente es de caja
+   alta: no tiene minúsculas, así que el texto sale en mayúsculas sin necesidad
+   de `text-transform` — y por eso los cuerpos llevan algo más de interletraje
+   e interlínea, que en mayúsculas continuas es lo que hace legible un párrafo. */
+.wdid-sec {
+  font-family: var(--font-kenney);
+}
+/* El titular ya no necesita excepción: Kenney es la familia de todo el sitio. */
+.wdid-sec .kicker {
+  letter-spacing: 0.2em;
+}
+
+/* ── Tarjetas de "What I Do" ──
+   El recorte y el radio viven en el MISMO elemento: si el radio se queda en el
+   padre y el `overflow` en un hijo, el objeto se escapa por la esquina
+   redondeada en vez de cortarse contra ella. */
+.wdid {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 20px;
+  border: 1px solid rgba(214, 201, 255, 0.14);
+  padding: 28px;
+  /* `width: 100%` no es decorativo: `aspect-ratio` resuelve en los dos
+     sentidos, y con `min-height` fijando 280 px el ancho se derivaba hacia
+     atrás a 373 px — más que la celda de la rejilla — y las tarjetas se
+     solapaban entre sí. Con el ancho anclado manda la celda y la proporción
+     solo decide el alto. */
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  min-height: 280px;
+  background: linear-gradient(135deg, var(--c-a), var(--c-b));
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.wdid:hover {
+  border-color: rgba(214, 201, 255, 0.28);
+  /* halo en vez de sombra: sobre #0B0A18 una sombra no se ve */
+  box-shadow: 0 0 0 1px rgba(214, 201, 255, 0.1), 0 18px 50px rgba(94, 78, 156, 0.35);
+}
+
+/* Velo bajo el texto. No es decorativo: sin él el blanco no llega al AA sobre
+   el astrolabio ni sobre la vela.
+   El eje va a 145deg y no a los 100deg del brief. Con las tarjetas en la
+   columna izquierda miden 284 px, no los ~550 del plato de referencia, y el
+   texto ya no ocupa solo el tercio izquierdo: lo cruza casi entero y se mete
+   en la diagonal clara. Medido con muestreo denso sobre las cajas reales de
+   título, párrafo y etiqueta, el velo a 100deg daba 2.02 en el peor caso.
+   A 145deg el velo corre paralelo al degradado de la tarjeta, así que lo
+   contrarresta punto por punto y solo se abre en el rincón inferior derecho
+   — que es lo que despega el objeto, y por eso no se toca. Peor caso: 5.56. */
+.wdid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    145deg,
+    rgba(11, 10, 24, var(--wdid-velo, 0.62)) 0%,
+    rgba(11, 10, 24, var(--wdid-velo-2, 0.55)) 72%,
+    transparent 95%
+  );
+}
+
+.wdid__obj {
+  position: absolute;
+  z-index: 1;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* El texto SIEMPRE por encima del objeto. */
+.wdid__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.wdid__badge {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(11, 10, 24, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 0.3rem 0.75rem;
+  font-family: var(--font-kenney);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.88);
+}
+.wdid__punto {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+}
+
+.wdid__texto {
+  flex: 1;
+  margin-top: 1rem;
+}
+.wdid__titulo {
+  font-family: var(--font-kenney);
+  font-size: clamp(16px, 1.28vw, 20px);
+  line-height: 1.18;
+  letter-spacing: 0.005em;
+  /* explícito y no `text-foreground`: sobre estos degradados el token del tema
+     no llega al contraste que hace falta */
+  color: #ffffff;
+}
+.wdid__desc {
+  margin-top: 0.6rem;
+  max-width: 30ch;
+  /* 12.5 y no 13.5: en caja alta continua el mismo cuerpo pesa bastante más,
+     y el interletraje suelto compensa que no haya ascendentes ni descendentes
+     que ayuden a distinguir las palabras. */
+  font-size: 12.5px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.wdid__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  width: fit-content;
+  font-family: var(--font-kenney);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+}
+
+/* ── Móvil: superpuestas al astronauta ── */
+.wdid--flota {
+  /* Más velo: encima del astronauta hay mucho más ruido detrás del texto, y
+     además el degradado va al 92%, así que el fondo se cuela por el 8% que
+     queda. Medido contra el peor fondo posible —el blanco del visor— el .72
+     del brief dejaba la vela en 4.28; con .78 la peor de las cuatro sube a
+     4.81 y las cuatro pasan AA. */
+  --wdid-velo: 0.78;
+  --wdid-velo-2: 0.78;
+  min-height: 0;
+  padding: 20px;
+  border-radius: 18px;
+  /* El 92% va en el degradado, no en la tarjeta: con `opacity` en el elemento
+     se apagaría también el texto, justo el contraste que acabamos de asegurar.
+     Y es lo que hace visible el `backdrop-filter` — con un fondo opaco detrás
+     no hay nada que desenfocar y el blur no se nota. */
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--c-a) 92%, transparent),
+    color-mix(in srgb, var(--c-b) 92%, transparent)
+  );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+/* Escala propia de móvil: la caja alta ocupa más y en una tarjeta de 273 px el
+   descriptivo más largo se salía 14 px de la caja. */
+.wdid--flota .wdid__texto {
+  margin-top: 0.7rem;
+}
+.wdid--flota .wdid__titulo {
+  font-size: 15px;
+  line-height: 1.15;
+}
+.wdid--flota .wdid__desc {
+  margin-top: 0.4rem;
+  max-width: none;
+  font-size: 10.5px;
+  line-height: 1.55;
+}
+.wdid--flota .wdid__badge {
+  font-size: 9px;
+  padding: 0.25rem 0.6rem;
+}
+.wdid--flota .wdid__cta {
+  margin-top: 0.75rem;
+  font-size: 10px;
+}
+
+/* Composición superpuesta: el astronauta al fondo ocupando el bloque y las
+   cuatro tarjetas encima, desordenadas. La altura la marca la pila; el
+   astronauta se estira detrás para cubrirla. */
+.wdid-comp {
+  position: relative;
+  /* Aire para las esquinas giradas: sin él el `overflow` recorta la punta de
+     las tarjetas más inclinadas. */
+  padding-block: 16px;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* Selector compuesto a propósito: `.visor` fija su propia altura y su
+   `max-width`, y con una sola clase ganaría por orden de aparición. */
+.visor.wdid-comp__fondo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 0;
+  translate: -50% -50%;
+  /* Llena el alto de la composición; el ancho lo pone la proporción y lo que
+     sobresalga lo recorta el contenedor — que es lo que se quiere de un fondo. */
+  height: 100%;
+  width: auto;
+  max-width: none;
+  opacity: 0.82;
+  pointer-events: none;
+}
+/* Columna con solape ligero. El desplazamiento horizontal, el giro y la
+   profundidad los pone cada tarjeta: aquí solo el apilado vertical. */
+.wdid-pila {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.wdid-pila > * {
+  width: min(76%, 300px);
+}
+.wdid-pila > * + * {
+  margin-top: -26px;
 }
 
 /* ── Bucle del visor (sección "What I Do") ── */
