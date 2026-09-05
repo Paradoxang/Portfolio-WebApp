@@ -87,12 +87,18 @@ export function VisorLoop({ className = "" }: { className?: string }) {
       intervalo = 0;
     };
 
+    /* `rootMargin` generoso: con el umbral pegado al borde, al desplazarse el
+       observer se disparaba justo en el límite y el bucle paraba y arrancaba
+       varias veces seguidas. Cada parada congela el fotograma que hubiera y
+       cada arranque salta al siguiente, y eso es lo que se veía como un tirón
+       al hacer scroll. Con 300 px de margen la conmutación ocurre fuera de la
+       pantalla, donde no se ve. */
     const io = new IntersectionObserver(
       ([e]) => {
         visible = e.isIntersecting;
         visible ? arrancar() : parar();
       },
-      { threshold: 0 }
+      { threshold: 0, rootMargin: "300px 0px" }
     );
     io.observe(fig);
     const onVis = () => (document.hidden ? parar() : arrancar());

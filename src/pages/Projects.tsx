@@ -50,7 +50,7 @@ export function Projects() {
           <Reveal mount>
             <div className="kicker">Proyectos — {String(projects.length).padStart(2, "0")}</div>
           </Reveal>
-          <h1 className="display mt-4 text-[clamp(40px,8.06vw,105px)] leading-[0.86]">
+          <h1 className="display mt-4 text-[clamp(50px,12.1vw,157.5px)] leading-[0.86]">
             <RevealLine delay={0.08} mount>
               Proyec<span className="text-shimmer">tos</span>
             </RevealLine>
@@ -157,11 +157,11 @@ export function Projects() {
                 <div>
                   <Reveal>
                     <div className="flex items-baseline gap-4">
-                      <span className="display text-[clamp(24px,3.1vw,35px)] text-neb">
+                      <span className="display text-[clamp(36px,4.7vw,52.5px)] text-neb">
                         {p.num}
                       </span>
                       <div>
-                        <h2 className="display text-[clamp(16px,2.23vw,25px)] leading-[0.95]">
+                        <h2 className="display text-[clamp(24px,3.3vw,37.5px)] leading-[0.95]">
                           {p.name}
                         </h2>
                         <div className="mt-1.5 font-mono text-[10px] tracking-[0.14em] uppercase text-faint">
@@ -264,7 +264,7 @@ export function Projects() {
                         />
                       </div>
                     ) : (
-                      <span className="display text-[clamp(40px,5.58vw,68px)] text-neb/22">
+                      <span className="display text-[clamp(44px,8.4vw,102px)] text-neb/22">
                         {p.mark}
                       </span>
                     )}
@@ -289,7 +289,7 @@ export function Projects() {
             <div className="scan-line-y" />
             <div className="relative">
               <div className="kicker">Extra — Valor agregado</div>
-              <h2 className="display mt-4 text-[clamp(22px,3.41vw,40px)] leading-[0.94]">
+              <h2 className="display mt-4 text-[clamp(24px,5.1vw,60px)] leading-[0.94]">
                 <RevealLine delay={0.06}>
                   Ciberseguridad en{" "}
                   <span className="text-shimmer">cada entrega</span>

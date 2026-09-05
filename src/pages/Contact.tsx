@@ -82,7 +82,7 @@ export function Contact() {
         <Reveal mount>
           <div className="kicker">Contacto</div>
         </Reveal>
-        <h1 className="display mt-4 text-[clamp(34px,5.58vw,74px)] leading-[0.92]">
+        <h1 className="display mt-4 text-[clamp(51px,8.4vw,111px)] leading-[0.92]">
           <RevealLine delay={0.06} mount>
             Let&apos;s Work
           </RevealLine>

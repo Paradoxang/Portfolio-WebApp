@@ -16,7 +16,7 @@ export function Stats() {
                   <s.icon className="h-4 w-4 text-neb" strokeWidth={1.6} />
                 </div>
               </div>
-              <div className="display text-[clamp(27px,4.34vw,52px)] leading-none text-neb">
+              <div className="display text-[clamp(40.5px,6.5vw,78px)] leading-none text-neb">
                 {"display" in s ? (
                   s.display
                 ) : (

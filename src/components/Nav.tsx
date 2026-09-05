@@ -41,7 +41,7 @@ export function Nav() {
             height="64"
             className="h-12 w-12 rounded-xl ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 md:h-14 md:w-14"
           />
-          <span className="font-astro text-[clamp(16px,2vw,26px)] leading-none tracking-[0.06em] text-ink transition-colors group-hover:text-neb">
+          <span className="font-astro text-[clamp(24px,3vw,39px)] leading-none tracking-[0.06em] text-ink transition-colors group-hover:text-neb">
             DOX DESIGNS
           </span>
         </Link>

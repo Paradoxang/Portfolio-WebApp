@@ -18,7 +18,7 @@ export function SectionHeading({
       <Reveal>
         <div className="kicker">{kicker}</div>
       </Reveal>
-      <h2 className="display mt-3 text-[clamp(26px,4.34vw,50px)] leading-[0.94]">
+      <h2 className="display mt-3 text-[clamp(39px,6.5vw,75px)] leading-[0.94]">
         <RevealLine delay={0.06}>{title}</RevealLine>
       </h2>
       {children}

@@ -34,9 +34,12 @@
      altura óptica dejando la huella en ancho donde estaba— y las etiquetas no
      necesiten tocarse. */
   --font-kenney: "Kenney Future", "Elnath", ui-monospace, monospace;
-  --font-display: var(--font-astro);
+  /* Kenney manda en todo el cromo del sitio: titulares, kickers y etiquetas.
+     Astro y Elnath se quedan definidas porque siguen siendo el respaldo de la
+     cascada y porque el cuerpo de texto no cambia. */
+  --font-display: var(--font-kenney);
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-elnath);
+  --font-mono: var(--font-kenney);
 }
 
 @font-face {
@@ -489,12 +492,11 @@
 }
 
 /* ── Tipografías de la nueva maqueta ── */
-.font-astro {
-  font-family: var(--font-astro);
-  font-weight: 400;
-}
+/* Las dos utilidades se conservan por nombre —están puestas en el marcado— y
+   apuntan ya a Kenney, que es la familia del sitio. */
+.font-astro,
 .font-elnath {
-  font-family: var(--font-elnath);
+  font-family: var(--font-kenney);
   font-weight: 400;
 }
 
@@ -587,8 +589,9 @@
   text-transform: uppercase;
   /* Sube el peso del texto: en la primera versión se perdía contra el fondo y
      no acompañaba al trazo del contenedor. */
-  color: #e4dbff;
-  text-shadow: 0 0 10px rgba(143, 162, 255, 0.5), 0 1px 6px rgba(6, 9, 18, 0.9);
+  color: #f4f0ff;
+  text-shadow: 0 0 10px rgba(143, 162, 255, 0.55), 0 1px 7px rgba(6, 9, 18, 0.98),
+    0 0 22px rgba(6, 9, 18, 0.8);
   text-align: center;
 }
 /* El marco HUD lleva un panel completo, no una etiqueta: el texto ocupa la caja
@@ -679,7 +682,8 @@
 .fx-datos__clave {
   font-size: 0.85em;
   text-align: right;
-  opacity: 0.6;
+  /* 0.6 dejaba las claves casi invisibles sobre el hero. */
+  opacity: 0.82;
 }
 .fx-datos__valor {
   overflow: hidden;
@@ -971,7 +975,12 @@
   position: relative;
   justify-self: center;
   margin: 0;
+  /* `svh` y no `vh`: en móvil la barra de direcciones aparece y desaparece con
+     el scroll, `vh` cambia con ella y la figura se reajustaba a mitad del
+     desplazamiento. `svh` toma siempre el viewport pequeño, que es constante.
+     El `vh` queda de respaldo para navegadores sin unidades dinámicas. */
   height: clamp(320px, 68vh, 700px);
+  height: clamp(320px, 68svh, 700px);
   aspect-ratio: 1792 / 2398;
   max-width: 100%;
 }
@@ -995,6 +1004,11 @@
   position: absolute;
   inset: 0;
   z-index: 1;
+  /* Capa propia de composición: los cuatro fotogramas se conmutan cuatro veces
+     por segundo y, sin promocionarla, el repintado se mezcla con el del scroll
+     y se ve el tirón. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
   -webkit-mask-image: linear-gradient(
     to bottom,
     #000 0%,
@@ -1084,6 +1098,15 @@
   letter-spacing: 0.28em;
   text-transform: uppercase;
   white-space: nowrap;
+  /* Los raíles caen sobre la nebulosa, el enjambre y las piezas: heredaban el
+     gris apagado y quedaban a medio leer. Color propio y sombra para
+     despegarlos del fondo, que es variable y no se puede dar por oscuro. */
+  color: rgba(238, 242, 251, 0.92);
+  text-shadow: 0 1px 10px rgba(6, 9, 18, 0.95), 0 0 26px rgba(6, 9, 18, 0.75);
+}
+.hero-disponible:hover .hero-rail__vertical,
+.hero-rail:hover .hero-rail__vertical {
+  color: #ffffff;
 }
 
 /* El número de sección. En reposo está de lado y apagado; al pasar el ratón
@@ -1097,8 +1120,10 @@
   display: grid;
   place-items: center;
   flex: none;
-  font-family: var(--font-astro);
-  font-size: clamp(84px, 12.5vw, 210px);
+  font-family: var(--font-kenney);
+  /* x1.5, como el resto de titulares: la caja alta de Kenney es 63 frente a
+     los 100 de Astro y el glifo se quedaba nadando dentro de la caja de 1em. */
+  font-size: clamp(126px, 18.75vw, 315px);
   width: 1em;
   height: 1em;
   transform: scale(0.82);
@@ -1167,8 +1192,8 @@
   z-index: 15;
   transform: translateX(-50%);
   padding: 0.5rem clamp(1rem, 4vw, 3rem);
-  font-family: var(--font-astro);
-  font-size: clamp(26px, 5.2vw, 76px);
+  font-family: var(--font-kenney);
+  font-size: clamp(39px, 7.8vw, 114px);
   line-height: 0.92;
   letter-spacing: 0.02em;
   text-align: center;
@@ -1262,7 +1287,7 @@
   .hero-name {
     bottom: 1.5%;
     padding-inline: 0.75rem;
-    font-size: min(clamp(34px, 9.4vw, 76px), 11.2vw);
+    font-size: min(clamp(51px, 14.1vw, 114px), 16.8vw);
   }
 }
 

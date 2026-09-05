@@ -106,7 +106,7 @@ const PIEZAS: Pieza[] = [
   {
     // Bajado: a 64% se metía en la franja del raíl "ESPECIALIDADES".
     // Algo más grande que antes: ahora lleva el panel de telemetría completo.
-    id: "marco_hud", x: 17, y: 79, w: "clamp(178px, 20vw, 280px)", o: 0.88,
+    id: "marco_hud", x: 17, y: 79, w: "clamp(178px, 20vw, 280px)", o: 1,
     capa: "contenedor", desde: "medio", ratio: "1 / 1", detras: true,
     svg: (c) => <FxMarcoHud dibujar><TelemetriaMarco corriendo={c} /></FxMarcoHud>,
   },
@@ -114,12 +114,12 @@ const PIEZAS: Pieza[] = [
     // A todo lo ancho y pegada al borde inferior: es una cinta de datos, y
     // cortada a media pantalla parecía un recorte. También en móvil: el nombre
     // acaba en el 88% de la altura y los 100 px de debajo estaban mudos.
-    id: "tira_datos", x: 50, y: 98.5, w: "100%", o: 0.7,
+    id: "tira_datos", x: 50, y: 98.5, w: "100%", o: 0.92,
     capa: "contenedor", desde: "movil", ratio: "100 / 6", detras: true,
     svg: (c) => <FxTiraDatos dibujar><TelemetriaTira corriendo={c} /></FxTiraDatos>,
   },
   {
-    id: "corchetes", x: 82, y: 22, w: "clamp(130px, 15vw, 205px)", o: 0.72,
+    id: "corchetes", x: 82, y: 22, w: "clamp(130px, 15vw, 205px)", o: 0.95,
     capa: "contenedor", desde: "medio", ratio: "1 / 1",
     svg: (c) => <FxCorchetes dibujar><TelemetriaCorchete corriendo={c} /></FxCorchetes>,
   },
