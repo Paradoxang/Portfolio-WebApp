@@ -25,9 +25,16 @@ interface HeroFusionProps {
   /** La Hero lo usa para anclar el campo de partículas sobre el rostro. */
   figureRef: RefObject<HTMLElement>;
   onFusedChange?: (fused: boolean) => void;
+  /** Posición del cursor normalizada a −1…1 dentro del hero. La capa
+   *  decorativa se alimenta de aquí para no abrir un segundo listener. */
+  onPointer?: (nx: number, ny: number) => void;
 }
 
-export function HeroFusion({ figureRef, onFusedChange }: HeroFusionProps) {
+export function HeroFusion({
+  figureRef,
+  onFusedChange,
+  onPointer,
+}: HeroFusionProps) {
   const { mounted, current } = useHeroPan(figureRef);
   const [fused, setFused] = useState(false);
   const fusedRef = useRef(false);
@@ -64,6 +71,16 @@ export function HeroFusion({ figureRef, onFusedChange }: HeroFusionProps) {
     const onMove = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
       cambiar(cerca(e.clientX, e.clientY));
+      // Mismo evento alimenta el parallax de la capa decorativa: un solo
+      // listener para el paneo, la fusión y las doce piezas.
+      const hero = figureRef.current?.closest(".glow-hero");
+      if (onPointer && hero) {
+        const r = hero.getBoundingClientRect();
+        onPointer(
+          ((e.clientX - r.left) / r.width - 0.5) * 2,
+          ((e.clientY - r.top) / r.height - 0.5) * 2
+        );
+      }
     };
     // Sin disparador táctil a propósito: tocar la pantalla hacía desaparecer la
     // fotografía de golpe. En táctil manda el ciclo lento y nada más.
@@ -78,7 +95,7 @@ export function HeroFusion({ figureRef, onFusedChange }: HeroFusionProps) {
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerleave", salir);
     };
-  }, [figureRef]);
+  }, [figureRef, onPointer]);
 
   return (
     <figure

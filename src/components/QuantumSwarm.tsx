@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
 
 /**
  * Enjambre cuántico del hero: adaptación del componente `QuantumSwarm`.
@@ -36,6 +37,8 @@ interface SwarmParticle {
   norm: number;
   size: number;
   excitation: number;
+  /** Desplazamiento del estallido. Lo escribe GSAP, no el bucle. */
+  imp: { x: number; y: number };
 }
 
 interface Shockwave {
@@ -150,6 +153,7 @@ export function QuantumSwarm({
         norm,
         size: Math.random() * 1.5 + 0.5,
         excitation: 0,
+        imp: { x: 0, y: 0 },
       });
     }
     particlesRef.current = particles;
@@ -211,17 +215,46 @@ export function QuantumSwarm({
       p.y = dentro ? y : -2000;
       p.dentro = dentro;
     };
+    /**
+     * Estallido con física real: las partículas cercanas salen despedidas con
+     * velocidad, ángulo y gravedad, y vuelven luego a su órbita. Sustituye a la
+     * onda de choque que integraba yo a mano en el bucle.
+     */
     const onDown = (e: PointerEvent) => {
       const { x, y, dentro } = local(e);
       if (!dentro) return;
       pointerRef.current.pulsando = true;
-      shockwavesRef.current.push({
-        x,
-        y,
-        radius: 8,
-        maxRadius: 110,
-        strength: 0.38,
-      });
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const RADIO = 150;
+      let alcanzadas = 0;
+      for (const p of particlesRef.current) {
+        const dx = p.x - x, dy = p.y - y;
+        const d = Math.hypot(dx, dy);
+        if (d > RADIO || alcanzadas > 90) continue;
+        alcanzadas++;
+        const fuerza = 1 - d / RADIO;
+        gsap.killTweensOf(p.imp);
+        gsap
+          .timeline()
+          .to(p.imp, {
+            duration: 0.7,
+            physics2D: {
+              // Contenido a propósito: con más velocidad el centro se vaciaba
+              // entero y se leía como una evacuación, no como un impulso.
+              velocity: 40 + fuerza * 120,
+              angle: (Math.atan2(dy, dx) * 180) / Math.PI,
+              gravity: 90,
+            },
+            ease: "none",
+          })
+          .to(p.imp, {
+            duration: 1.3,
+            x: 0,
+            y: 0,
+            ease: "power2.out",
+          });
+      }
     };
     const onUp = () => (pointerRef.current.pulsando = false);
     const salir = () => {
@@ -385,8 +418,8 @@ export function QuantumSwarm({
         const limit = Math.min(particles.length, i + NEIGHBOURS);
         for (let j = i + 1; j < limit; j++) {
           const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
+          const dx = p1.x + p1.imp.x - (p2.x + p2.imp.x);
+          const dy = p1.y + p1.imp.y - (p2.y + p2.imp.y);
           const dsq = dx * dx + dy * dy;
           if (dsq >= LINK_SQ) continue;
           const cercania = 1 - Math.sqrt(dsq) / LINK;
@@ -398,8 +431,8 @@ export function QuantumSwarm({
           );
           ctx.strokeStyle = `rgba(143,162,255,${alpha})`;
           ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
+          ctx.moveTo(p1.x + p1.imp.x, p1.y + p1.imp.y);
+          ctx.lineTo(p2.x + p2.imp.x, p2.y + p2.imp.y);
           ctx.stroke();
         }
       }
@@ -411,14 +444,14 @@ export function QuantumSwarm({
         if (p.excitation > 0.3) {
           ctx.fillStyle = `hsla(230, 100%, ${l}%, ${p.excitation * 0.28})`;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, radius * 3, 0, Math.PI * 2);
+          ctx.arc(p.x + p.imp.x, p.y + p.imp.y, radius * 3, 0, Math.PI * 2);
           ctx.fill();
         }
         ctx.fillStyle = `hsla(230, 100%, ${l}%, ${
           0.45 + energy * 0.25 + p.excitation * 0.5
         })`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        ctx.arc(p.x + p.imp.x, p.y + p.imp.y, radius, 0, Math.PI * 2);
         ctx.fill();
       }
 

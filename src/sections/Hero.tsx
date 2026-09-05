@@ -1,12 +1,20 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+  useMotionValue,
+} from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Letters, Magnetic, Reveal, RevealLine } from "@/lib/anim";
 import { HeroComparison } from "@/components/HeroComparison";
 import { HeroFusion } from "@/components/HeroFusion";
 import { HeroPortrait } from "@/components/HeroPortrait";
 import { QuantumSwarm } from "@/components/QuantumSwarm";
+import { HeroFx } from "@/components/HeroFx";
+import { HeroNombre } from "@/components/HeroNombre";
 import { contact } from "@/data/site";
 import { trackContact } from "@/lib/analytics";
 
@@ -45,6 +53,45 @@ export function Hero() {
   const figureRef = useRef<HTMLElement>(null);
   const [fused, setFused] = useState(false);
   const reduced = useReducedMotion();
+
+  /* ── Capa decorativa ──
+     Un solo par de motion values para las doce piezas, alimentado desde el
+     `pointermove` que HeroFusion ya escucha. */
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const onPointer = useCallback(
+    (nx: number, ny: number) => {
+      mx.set(nx);
+      my.set(ny);
+    },
+    [mx, my]
+  );
+  /** La decoración nunca entra antes que el sujeto. */
+  const [fxListo, setFxListo] = useState(false);
+  /** Bucles solo con el hero en pantalla y la pestaña delante. */
+  const [fxCorriendo, setFxCorriendo] = useState(true);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setFxListo(true), 700);
+    const seccion = ref.current;
+    if (!seccion) return () => window.clearTimeout(t);
+    let enPantalla = true;
+    const revisar = () => setFxCorriendo(enPantalla && !document.hidden);
+    const io = new IntersectionObserver(
+      ([e]) => {
+        enPantalla = e.isIntersecting;
+        revisar();
+      },
+      { threshold: 0 }
+    );
+    io.observe(seccion);
+    document.addEventListener("visibilitychange", revisar);
+    return () => {
+      window.clearTimeout(t);
+      io.disconnect();
+      document.removeEventListener("visibilitychange", revisar);
+    };
+  }, []);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -70,6 +117,10 @@ export function Hero() {
       {/* Enjambre cuántico: cubre toda la sección. Va por encima con `screen`,
           así solo suma luz y nunca tapa el contenido. */}
       <QuantumSwarm energetic={fused} />
+
+      {/* Piezas decorativas. Nunca reciben punteros y no las lee un lector de
+          pantalla. */}
+      <HeroFx mx={mx} my={my} listo={fxListo} corriendo={fxCorriendo} />
 
       {/* Los raíles cuelgan de la sección, no del contenedor centrado: así se
           pegan al borde real de la pantalla y no al del ancho máximo. */}
@@ -115,7 +166,10 @@ export function Hero() {
         </>
       )}
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[1240px] flex-1 items-center px-6 md:px-8">
+      {/* z-30 deja la figura (y el nombre, que va sobre ella dentro de este
+          mismo contexto) por encima del enjambre cuántico, que está en 20: el
+          retrato ya no se lee lavado por las partículas. */}
+      <div className="relative z-30 mx-auto flex w-full max-w-[1240px] flex-1 items-center px-6 md:px-8">
         <div
           className={
             HERO_ISOLATED
@@ -194,18 +248,15 @@ export function Hero() {
               <HeroPortrait figureRef={figureRef} />
             ) : ISOLATED_VIEW === "fusion" ? (
               <div className="hero-stage">
-                <HeroFusion figureRef={figureRef} onFusedChange={setFused} />
+                <HeroFusion
+                figureRef={figureRef}
+                onFusedChange={setFused}
+                onPointer={onPointer}
+              />
 
                 {/* Dos líneas como en el esquema: Astro es muy ancha y en una
                     sola no cabe sin encogerla hasta perder presencia. */}
-                <h1 className="hero-name" aria-label="Santiago Miranda">
-                  <span className="block" aria-hidden="true">
-                    SANTIAGO
-                  </span>
-                  <span className="block" aria-hidden="true">
-                    MIRANDA
-                  </span>
-                </h1>
+                <HeroNombre listo={fxListo} />
               </div>
             ) : (
               <HeroComparison />

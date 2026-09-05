@@ -484,6 +484,210 @@
   font-weight: 400;
 }
 
+/* ── Capa decorativa del hero ──
+   Dos subcapas: el fondo y el medio por detrás del contenido (para que el
+   anillo pase tras la cabeza y la malla bajo el wordmark) y los contenedores y
+   acentos por delante. Nunca recibe punteros. */
+.hero__fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero__fx--detras {
+  z-index: 4;
+}
+.hero__fx--delante {
+  z-index: 50;
+}
+/* Sin `mix-blend-mode`: los ocho assets que venían sobre negro se pasaron a
+   RGBA de verdad (alfa = brillo del píxel), así que el fondo ya no existe y no
+   hay que confiar en que la mezcla alcance el fondo de la página — que era
+   justo lo que fallaba. */
+.fx__pieza {
+  position: absolute;
+  /* el porcentaje sitúa la esquina; esto lleva el centro de la pieza al punto */
+  translate: -50% -50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.fx__orbita {
+  width: 100%;
+  height: 100%;
+}
+.fx__pieza img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* ── Contenedores en SVG: geometría + su telemetría dentro ── */
+.fx-svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.fx-svg > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.fx-svg__texto {
+  position: absolute;
+  inset: 14%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: var(--font-elnath);
+  font-size: clamp(7px, 0.72vw, 10px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  /* Sube el peso del texto: en la primera versión se perdía contra el fondo y
+     no acompañaba al trazo del contenedor. */
+  color: #e4dbff;
+  text-shadow: 0 0 10px rgba(143, 162, 255, 0.5), 0 1px 6px rgba(6, 9, 18, 0.9);
+  text-align: center;
+}
+/* El marco HUD lleva un panel completo, no una etiqueta: el texto ocupa la caja
+   entera menos el chaflán de las esquinas. */
+.fx-svg__texto--bloque {
+  inset: 9% 8%;
+  align-items: stretch;
+  justify-content: stretch;
+  text-align: left;
+  letter-spacing: 0.1em;
+  font-size: clamp(8px, 0.82vw, 11.5px);
+}
+/* La cinta cruza el hero de borde a borde, así que su texto no se recorta a
+   los márgenes de la pieza. */
+.fx-svg--tira .fx-svg__texto--tira {
+  inset: 0 0 38% 0;
+  justify-content: flex-start;
+  white-space: nowrap;
+  font-size: clamp(8px, 0.8vw, 11px);
+}
+/* Panel de telemetría: cabecera arriba, filas repartiéndose el hueco y pie
+   abajo. El `1fr` de la rejilla es lo que hace que el bloque llene el marco sea
+   cual sea su tamaño, en vez de quedar amontonado arriba. */
+.fx-datos {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  gap: 0.5em;
+}
+.fx-datos__cabecera,
+.fx-datos__pie {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6em;
+  padding-bottom: 0.45em;
+  border-bottom: 1px solid rgba(201, 184, 255, 0.28);
+}
+.fx-datos__pie {
+  padding-top: 0.45em;
+  padding-bottom: 0;
+  border-top: 1px solid rgba(201, 184, 255, 0.28);
+  border-bottom: 0;
+}
+/* Latido de la cabecera: es CSS puro sobre `opacity`, no cuenta como bucle de
+   animación en el sentido del presupuesto de la capa. */
+.fx-datos__pulso {
+  flex: none;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: #ff9a5a;
+  box-shadow: 0 0 8px rgba(255, 154, 90, 0.8);
+  animation: titilar-hud 2s ease-in-out infinite;
+}
+@keyframes titilar-hud {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+/* Una sola rejilla para las seis filas, no una por fila: así las claves se
+   alinean entre sí y los valores también, y el bloque entero se centra como una
+   unidad. Con una rejilla por fila el valor se estiraba hasta el borde y dejaba
+   todo el aire a la derecha. */
+.fx-datos__rejilla {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: auto auto;
+  align-content: space-between;
+  justify-content: center;
+  column-gap: 0.7em;
+  min-height: 0;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+/* La fila no pinta caja: sus dos celdas entran en la rejilla del padre. */
+.fx-datos__fila {
+  display: contents;
+}
+.fx-datos__clave {
+  font-size: 0.85em;
+  text-align: right;
+  opacity: 0.6;
+}
+.fx-datos__valor {
+  overflow: hidden;
+  color: #fff;
+  text-overflow: clip;
+}
+/* Barra de progreso del pie. Avanza a saltos con el contador, sin bucle propio. */
+.fx-datos__barra {
+  position: relative;
+  flex: 1 1 auto;
+  height: 0.4em;
+  border: 1px solid rgba(201, 184, 255, 0.4);
+}
+.fx-datos__barra > span {
+  display: block;
+  height: 100%;
+  background: rgba(201, 184, 255, 0.75);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fx-datos__pie-txt {
+  flex: none;
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+.fx-datos__etiqueta {
+  display: block;
+  line-height: 1.3;
+}
+.fx-datos__cinta {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  will-change: transform;
+}
+/* La malla es la única que necesita máscara: su rejilla llega al borde del
+   archivo (p99 del borde en 100/255), así que sin esto se vería el corte recto
+   por muy transparente que sea el resto. */
+.fx__pieza--malla {
+  -webkit-mask-image: radial-gradient(
+    ellipse 62% 70% at 50% 50%,
+    #000 55%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 62% 70% at 50% 50%,
+    #000 55%,
+    transparent 100%
+  );
+}
+
 /* ── Bucle del visor (sección "What I Do") ── */
 .visor {
   position: relative;
@@ -568,7 +772,9 @@
   --borde-hero: clamp(1.4rem, 3vw, 3.5rem);
   position: absolute;
   top: 50%;
-  z-index: 15;
+  /* Por encima de la figura (z-30): en móvil el retrato va a sangre y, si no,
+     taparía los raíles y se comería sus enlaces. */
+  z-index: 40;
   display: flex;
   align-items: center;
   transform: translateY(-50%);
@@ -690,10 +896,16 @@
   text-align: center;
   white-space: nowrap;
   color: var(--color-ink);
+  /* SplitText convierte cada letra en un `inline-block`, y entre dos de esos el
+     navegador sí puede romper: sin este `nowrap` en la línea, "SANTIAGO" se
+     apilaba en tres filas en cuanto la caja se estrechaba. */
   /* sin marco ni fondo: el nombre se apoya directamente sobre la figura, y la
      sombra basta para despegarlo del pecho */
   text-shadow: 0 2px 28px rgba(11, 10, 24, 0.95),
     0 0 60px rgba(11, 10, 24, 0.8);
+}
+.hero-name__linea {
+  white-space: nowrap;
 }
 
 /* Disponibilidad: sin marco, solo el punto luminoso. Va en columna y el punto
@@ -767,10 +979,12 @@
     width: 14px;
     height: 62px;
   }
+  /* Las dos líneas ya son bloques: no hacía falta `white-space: normal` para
+     que se apilaran, y era justo lo que dejaba romper entre letras. */
   .hero-name {
-    white-space: normal;
     bottom: 1.5%;
-    font-size: clamp(38px, 10.5vw, 76px);
+    padding-inline: 0.75rem;
+    font-size: min(clamp(34px, 9.4vw, 76px), 11.2vw);
   }
 }
 
