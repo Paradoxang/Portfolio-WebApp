@@ -25,7 +25,6 @@ export function VisorLoop({ className = "" }: { className?: string }) {
    *  primer render de la sección. */
   const [montado, setMontado] = useState(false);
   const [listo, setListo] = useState(false);
-  const [actual, setActual] = useState(BASE);
   const figRef = useRef<HTMLElement>(null);
 
   // 1) Montar el resto de frames después del primer pintado. El temporizador es
@@ -75,12 +74,21 @@ export function VisorLoop({ className = "" }: { className?: string }) {
      *  entrada, un observer que no la entregue dejaría el bucle sin arrancar. */
     let visible = true;
 
+    /* La conmutación es imperativa, no por estado de React.
+       Con `setActual` cada paso disparaba un render y un recálculo de estilos
+       de todo el subárbol 6,7 veces por segundo. En escritorio no se nota; en
+       un teléfono, con las cuatro tarjetas de la composición animándose encima,
+       era parte del tirón. Aquí solo se mueve una clase entre dos nodos, que es
+       exactamente lo que el render acababa haciendo. */
+    const imgs = Array.from(fig.querySelectorAll<HTMLImageElement>(".visor__f"));
+    let i = BASE;
     const arrancar = () => {
       if (intervalo || !visible || document.hidden) return;
-      intervalo = window.setInterval(
-        () => setActual((i) => (i + 1) % FRAMES.length),
-        PASO_MS
-      );
+      intervalo = window.setInterval(() => {
+        imgs[i]?.classList.remove("is-on");
+        i = (i + 1) % imgs.length;
+        imgs[i]?.classList.add("is-on");
+      }, PASO_MS);
     };
     const parar = () => {
       window.clearInterval(intervalo);
@@ -136,7 +144,9 @@ export function VisorLoop({ className = "" }: { className?: string }) {
                 alt={esBase ? "Casco con un agujero negro girando en el visor" : ""}
                 aria-hidden={esBase ? undefined : true}
                 draggable={false}
-                className={`visor__f${i === actual ? " is-on" : ""}`}
+                /* Solo el primero arranca encendido; a partir de ahí la clase
+                   la mueve el bucle directamente sobre el nodo. */
+                className={`visor__f${esBase ? " is-on" : ""}`}
               />
             </picture>
           );

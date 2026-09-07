@@ -909,8 +909,16 @@
     color-mix(in srgb, var(--c-a) 92%, transparent),
     color-mix(in srgb, var(--c-b) 92%, transparent)
   );
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  /* Sin `backdrop-filter`. Lo pedía el brief, pero aquí sale carísimo y se ve
+     poco: las cuatro tarjetas levitan justo encima del visor, que cambia de
+     fotograma 6,7 veces por segundo. Cada cambio invalida el fondo de las
+     cuatro y obliga a recalcular cuatro desenfoques, y cada paso de la
+     levitación los obliga a remuestrear en una posición nueva. En un teléfono
+     eso es lo que producía el tirón. A cambio se pierde poco: con el degradado
+     al 92% solo pasa un 8% del fondo, así que el desenfoque casi no se veía.
+     La translucidez, que es lo que hace que floten, sigue ahí.
+     Y capa propia para que la levitación no repinte. */
+  will-change: transform;
 }
 /* Escala propia: a este tamaño la tarjeta ya no admite descriptivo —el
    componente no lo pinta— y se queda en etiqueta, título y flecha. */
