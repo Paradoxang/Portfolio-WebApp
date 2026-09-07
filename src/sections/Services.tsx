@@ -24,12 +24,19 @@ import { services } from "@/data/site";
  * cuatro imágenes grandes.
  */
 
-/** Desorden de la composición móvil. Punto de partida del brief. */
-const DESORDEN = [
-  { dx: -6, giro: -4, z: 3 },
-  { dx: 8, giro: 3, z: 4 },
-  { dx: -4, giro: 5, z: 2 },
-  { dx: 6, giro: -2, z: 1 },
+/**
+ * Composición móvil: las cuatro tarjetas rodean al astronauta.
+ *
+ * Las coordenadas están elegidas para que ninguna entre en la banda del 40 al
+ * 65 % de ancho entre el 30 y el 55 % de alto — que es donde cae el visor con
+ * el agujero negro. Esa ventana es el motivo de toda la disposición: el
+ * astronauta tiene que verse entero y por el centro.
+ */
+const RONDA = [
+  { x: 1, y: 3, giro: -4, z: 3 },
+  { x: 56, y: 22, giro: 3, z: 4 },
+  { x: 4, y: 54, giro: 5, z: 2 },
+  { x: 53, y: 70, giro: -2, z: 1 },
 ];
 
 function useEsMovil() {
@@ -63,10 +70,17 @@ export function Services() {
            apretada a propósito, pero respira por arriba y por abajo. */
         <div className="wdid-comp [margin-block:clamp(3rem,8vh,6rem)]">
           <VisorLoop className="wdid-comp__fondo" />
-          <div className="wdid-pila">
-            {services.map((s, i) => (
+          {services.map((s, i) => (
+            <div
+              key={s.title}
+              className="wdid-comp__hueco"
+              style={{
+                left: `${RONDA[i].x}%`,
+                top: `${RONDA[i].y}%`,
+                zIndex: RONDA[i].z,
+              }}
+            >
               <WdidCard
-                key={s.title}
                 variante={s.variante}
                 objeto={s.objeto}
                 etiqueta={s.etiqueta}
@@ -75,14 +89,12 @@ export function Services() {
                 desc={s.desc}
                 cta={s.cta}
                 href={s.href}
-                flotante
-                dx={DESORDEN[i].dx}
-                giro={DESORDEN[i].giro}
-                z={DESORDEN[i].z}
+                suelta
+                giro={RONDA[i].giro}
                 indice={i}
               />
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       ) : (
         /* Tarjetas a la izquierda en cuadro 2x2, astronauta a la derecha. El

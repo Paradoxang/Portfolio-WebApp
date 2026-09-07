@@ -1,7 +1,8 @@
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { gsap, useGSAP } from "@/lib/gsap";
 import type { VarianteWdid } from "@/data/site";
 
 /**
@@ -36,15 +37,11 @@ export interface WdidCardProps {
   desc: string;
   cta: string;
   href: string;
-  /** En móvil las tarjetas flotan superpuestas sobre el astronauta. */
-  flotante?: boolean;
-  /** Rotación base del desorden, en grados. */
+  /** En móvil las tarjetas rodean al astronauta, sueltas y sin descriptivo. */
+  suelta?: boolean;
+  /** Rotación del desorden, en grados. */
   giro?: number;
-  /** Desplazamiento horizontal del desorden, en % del ancho de la tarjeta. */
-  dx?: number;
-  /** Profundidad dentro de la pila. */
-  z?: number;
-  /** Índice, del que salen la duración y el retardo de la flotación. */
+  /** Índice: de él salen la duración y el retardo, distintos en cada tarjeta. */
   indice?: number;
 }
 
@@ -65,8 +62,8 @@ const ENCUADRE: Record<VarianteWdid, { w: string; right: string; bottom: string 
 };
 
 const animTarjeta = {
-  rest: { y: 0, scale: 1 },
-  hover: { y: -4, scale: 1.02 },
+  rest: { scale: 1 },
+  hover: { scale: 1.03 },
 };
 const animObjeto = {
   rest: { scale: 1, rotate: 0 },
@@ -85,10 +82,7 @@ function useNitidez() {
 }
 
 export const WdidCard = forwardRef<HTMLDivElement, WdidCardProps>(function WdidCard(
-  {
-    variante, objeto, etiqueta, color, title, desc, cta, href,
-    flotante, giro = 0, dx = 0, z = 1, indice = 0,
-  },
+  { variante, objeto, etiqueta, color, title, desc, cta, href, suelta, giro = 0, indice = 0 },
   ref
 ) {
   const quieto = useReducedMotion();
@@ -96,35 +90,86 @@ export const WdidCard = forwardRef<HTMLDivElement, WdidCardProps>(function WdidC
   const [a, b] = DEGRADADO[variante];
   const enc = ENCUADRE[variante];
 
-  /* Flotación de móvil. Duraciones primas entre sí (7 · 8,3 · 9,6 · 10,9 s)
-     para que las cuatro no vuelvan a coincidir: si suben a la vez deja de
-     leerse como flotación y parece que se mueve la sección entera. */
-  const flota =
-    flotante && !quieto
-      ? {
-          y: [0, -14, 0],
-          rotate: [giro, giro + 1.2, giro],
-          transition: {
-            duration: 7 + indice * 1.3,
-            repeat: Infinity,
-            ease: "easeInOut" as const,
-            delay: indice * 0.6,
-          },
+  const cajaRef = useRef<HTMLDivElement>(null);
+  const tituloRef = useRef<HTMLSpanElement>(null);
+  /** El título no se descifra hasta que la tarjeta se ve: si no, la animación
+   *  se gasta fuera de pantalla y el usuario llega al texto ya quieto. */
+  const [enVista, setEnVista] = useState(false);
+  /** Cada incremento vuelve a descifrar el título. Sube al pasar el ratón y,
+   *  en táctil —donde no hay hover—, cada cierto tiempo. */
+  const [pulso, setPulso] = useState(0);
+
+  useEffect(() => {
+    const el = cajaRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setEnVista(true);
+          io.disconnect();
         }
-      : undefined;
+      },
+      { threshold: 0.35 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  /* Repetición en táctil. Los periodos se separan por tarjeta para que las
+     cuatro no se descifren a la vez, que se leería como un parpadeo de la
+     sección entera en vez de como cuatro rótulos vivos. */
+  useEffect(() => {
+    if (!suelta || !enVista || quieto) return;
+    if (window.matchMedia("(hover: hover)").matches) return;
+    const id = window.setInterval(() => setPulso((p) => p + 1), 5200 + indice * 900);
+    return () => window.clearInterval(id);
+  }, [suelta, enVista, quieto, indice]);
+
+  useGSAP(
+    () => {
+      if (!enVista || !tituloRef.current || quieto) return;
+      gsap.to(tituloRef.current, {
+        duration: 0.85,
+        delay: pulso === 0 ? indice * 0.12 : 0,
+        scrambleText: {
+          text: title,
+          chars: "01ABCDEF/·<>",
+          speed: 0.6,
+          revealDelay: 0.12,
+        },
+      });
+    },
+    { dependencies: [enVista, pulso, title, quieto] }
+  );
+
+  /* Levitación. En las dos versiones, no solo en móvil: es lo que separa una
+     rejilla de tarjetas de una composición que respira. Duraciones distintas
+     y sin divisores comunes para que no se sincronicen. */
+  const flota = quieto
+    ? undefined
+    : {
+        y: suelta ? [0, -14, 0] : [0, -9, 0],
+        rotate: [giro, giro + (suelta ? 1.2 : 0.5), giro],
+        transition: {
+          duration: (suelta ? 7 : 8.5) + indice * 1.3,
+          repeat: Infinity,
+          ease: "easeInOut" as const,
+          delay: indice * 0.6,
+        },
+      };
 
   return (
     <motion.div
       ref={ref}
-      className={`wdid${flotante ? " wdid--flota" : ""}`}
+      className={`wdid${suelta ? " wdid--suelta" : ""}`}
       style={
         {
           "--c-a": a,
           "--c-b": b,
-          /* El desorden va en `style`, no en la animación: así con
-             `prefers-reduced-motion` la composición sigue siendo la misma y
-             solo desaparece el movimiento. */
-          ...(flotante ? { rotate: `${giro}deg`, x: `${dx}%`, zIndex: z } : null),
+          /* El giro va en `style` y no solo en la animación: así con
+             `prefers-reduced-motion` la composición desordenada se mantiene y
+             lo único que desaparece es el movimiento. */
+          ...(giro ? { rotate: `${giro}deg` } : null),
         } as React.CSSProperties
       }
       initial="rest"
@@ -132,7 +177,10 @@ export const WdidCard = forwardRef<HTMLDivElement, WdidCardProps>(function WdidC
       whileHover="hover"
       variants={animTarjeta}
       transition={muelle}
+      onHoverStart={() => setPulso((p) => p + 1)}
     >
+      <div ref={cajaRef} className="wdid__medida" aria-hidden="true" />
+
       {/* El objeto va por debajo del texto y nunca recibe punteros. */}
       <motion.img
         src={`/wdid/${carpeta}/${objeto}.webp`}
@@ -154,12 +202,18 @@ export const WdidCard = forwardRef<HTMLDivElement, WdidCardProps>(function WdidC
         </span>
 
         <div className="wdid__texto">
-          <h3 className="wdid__titulo">{title}</h3>
-          <p className="wdid__desc">{desc}</p>
+          {/* El texto real vive en el `aria-label`: dentro, GSAP reescribe el
+              span carácter a carácter y un lector lo deletrearía. */}
+          <h3 className="wdid__titulo" aria-label={title}>
+            <span ref={tituloRef} aria-hidden="true">
+              {title}
+            </span>
+          </h3>
+          {!suelta && <p className="wdid__desc">{desc}</p>}
         </div>
 
-        <Link to={href} className="wdid__cta group">
-          {cta}
+        <Link to={href} className="wdid__cta group" aria-label={`${cta}: ${title}`}>
+          {!suelta && cta}
           <ArrowRight
             className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
             aria-hidden="true"

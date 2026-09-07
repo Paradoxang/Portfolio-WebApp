@@ -802,6 +802,12 @@
   );
 }
 
+/* Ancla del observador de entrada. Absoluta para no contar como ítem flex. */
+.wdid__medida {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
 .wdid__obj {
   position: absolute;
   z-index: 1;
@@ -879,18 +885,21 @@
   color: #ffffff;
 }
 
-/* ── Móvil: superpuestas al astronauta ── */
-.wdid--flota {
-  /* Más velo: encima del astronauta hay mucho más ruido detrás del texto, y
-     además el degradado va al 92%, así que el fondo se cuela por el 8% que
-     queda. Medido contra el peor fondo posible —el blanco del visor— el .72
-     del brief dejaba la vela en 4.28; con .78 la peor de las cuatro sube a
-     4.81 y las cuatro pasan AA. */
-  --wdid-velo: 0.78;
-  --wdid-velo-2: 0.78;
+/* ── Móvil: las cuatro rodeando al astronauta ── */
+.wdid--suelta {
+  /* Al quitarse el descriptivo el velo puede aflojarse: solo quedan título y
+     etiqueta, los dos grandes y sobre blanco. A 0.78 el peor caso daba 8.8
+     —muy por encima del 4.5— y el objeto 3D quedaba enterrado. A 0.55 sigue
+     en 5.49 y la pieza se ve, que es para lo que está. Medido contra el peor
+     fondo posible, el blanco del visor colándose por el 8% del degradado. */
+  --wdid-velo: 0.55;
+  --wdid-velo-2: 0.55;
   min-height: 0;
-  padding: 20px;
-  border-radius: 18px;
+  /* Escala atada al ancho, no fija: la tarjeta mide un 43% del hueco, así que
+     a 360 px sale 12 px más estrecha que a 390 y con medidas fijas el texto
+     desbordaba 7 px. */
+  padding: clamp(10px, 3.3vw, 14px);
+  border-radius: 14px;
   /* El 92% va en el degradado, no en la tarjeta: con `opacity` en el elemento
      se apagaría también el texto, justo el contraste que acabamos de asegurar.
      Y es lo que hace visible el `backdrop-filter` — con un fondo opaco detrás
@@ -903,39 +912,45 @@
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
-/* Escala propia de móvil: la caja alta ocupa más y en una tarjeta de 273 px el
-   descriptivo más largo se salía 14 px de la caja. */
-.wdid--flota .wdid__texto {
-  margin-top: 0.7rem;
+/* Escala propia: a este tamaño la tarjeta ya no admite descriptivo —el
+   componente no lo pinta— y se queda en etiqueta, título y flecha. */
+.wdid--suelta .wdid__texto {
+  margin-top: 0.55rem;
 }
-.wdid--flota .wdid__titulo {
-  font-size: 15px;
-  line-height: 1.15;
+.wdid--suelta .wdid__titulo {
+  font-size: clamp(10.5px, 3.2vw, 12.5px);
+  line-height: 1.16;
 }
-.wdid--flota .wdid__desc {
-  margin-top: 0.4rem;
-  max-width: none;
-  font-size: 10.5px;
-  line-height: 1.55;
+/* `nowrap`: la etiqueta más larga («Sistemas de diseño») se partía en dos
+   líneas dentro de la píldora y empujaba el resto 10 px fuera de la tarjeta. */
+.wdid--suelta .wdid__badge {
+  font-size: clamp(6.8px, 1.95vw, 7.5px);
+  gap: 0.3rem;
+  padding: 0.2rem 0.45rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  max-width: 100%;
 }
-.wdid--flota .wdid__badge {
-  font-size: 9px;
-  padding: 0.25rem 0.6rem;
+.wdid--suelta .wdid__punto {
+  width: 5px;
+  height: 5px;
 }
-.wdid--flota .wdid__cta {
-  margin-top: 0.75rem;
-  font-size: 10px;
+.wdid--suelta .wdid__cta {
+  margin-top: 0.45rem;
+  font-size: clamp(9px, 2.6vw, 10px);
 }
 
-/* Composición superpuesta: el astronauta al fondo ocupando el bloque y las
-   cuatro tarjetas encima, desordenadas. La altura la marca la pila; el
-   astronauta se estira detrás para cubrirla. */
+/* ── Composición móvil ──
+   El astronauta entero y centrado, y las cuatro tarjetas alrededor. Antes iban
+   apiladas en columna encima de él: el bloque crecía a lo alto, la figura se
+   estiraba detrás para cubrirlo y acababa recortada por los lados y con el
+   visor tapado. Ahora manda la figura y las tarjetas se cuelgan de ella. */
 .wdid-comp {
   position: relative;
-  /* Aire para las esquinas giradas: sin él el `overflow` recorta la punta de
-     las tarjetas más inclinadas. */
-  padding-block: 16px;
-  overflow: hidden;
+  /* La caja la fija la figura: el lienzo del visor es 0.747 de ancho a alto, y
+     sobre eso hay que dejar sitio para las tarjetas que asoman por arriba y
+     por abajo. De ahí 0.645, que deja la figura entera y con aire. */
+  aspect-ratio: 0.645;
   isolation: isolate;
 }
 /* Selector compuesto a propósito: `.visor` fija su propia altura y su
@@ -946,28 +961,19 @@
   top: 50%;
   z-index: 0;
   translate: -50% -50%;
-  /* Llena el alto de la composición; el ancho lo pone la proporción y lo que
-     sobresalga lo recorta el contenedor — que es lo que se quiere de un fondo. */
-  height: 100%;
-  width: auto;
+  /* `contain` por proporción: la figura entra entera, sin recorte. Es el
+     cambio de fondo: antes cubría y se comía los bordes. */
+  height: auto;
+  width: 100%;
   max-width: none;
-  opacity: 0.82;
+  opacity: 0.95;
   pointer-events: none;
 }
-/* Columna con solape ligero. El desplazamiento horizontal, el giro y la
-   profundidad los pone cada tarjeta: aquí solo el apilado vertical. */
-.wdid-pila {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.wdid-pila > * {
-  width: min(76%, 300px);
-}
-.wdid-pila > * + * {
-  margin-top: -26px;
+/* Cada hueco sitúa una tarjeta. El ancho, al 43%, es lo que deja libre la
+   ventana central donde cae el visor. */
+.wdid-comp__hueco {
+  position: absolute;
+  width: 43%;
 }
 
 /* ── Bucle del visor (sección "What I Do") ── */
