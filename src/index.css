@@ -1105,16 +1105,13 @@
   text-transform: uppercase;
   white-space: nowrap;
   /* Los raíles caen sobre la nebulosa, el enjambre y las piezas: heredaban el
-     gris apagado y quedaban a medio leer. Color propio y sombra para
-     despegarlos del fondo, que es variable y no se puede dar por oscuro. */
-  color: rgba(238, 242, 251, 0.92);
-  text-shadow: 0 1px 10px rgba(6, 9, 18, 0.95), 0 0 26px rgba(6, 9, 18, 0.75);
-}
-.hero-disponible:hover .hero-rail__vertical,
-.hero-rail:hover .hero-rail__vertical {
+     gris apagado y quedaban a medio leer. Blanco pleno y una sombra en tres
+     capas —cerca, media y ancha— para despegarlos de un fondo que es variable
+     y no se puede dar por oscuro. */
   color: #ffffff;
+  text-shadow: 0 1px 4px rgba(6, 9, 18, 1), 0 0 14px rgba(6, 9, 18, 0.95),
+    0 0 32px rgba(6, 9, 18, 0.85);
 }
-
 /* El número de sección. En reposo está de lado y apagado; al pasar el ratón
    entra en vórtice: gira vuelta y cuarto mientras crece y se enfoca, y acaba
    derecho y encendido.
@@ -1126,10 +1123,12 @@
   display: grid;
   place-items: center;
   flex: none;
-  font-family: var(--font-kenney);
-  /* x1.5, como el resto de titulares: la caja alta de Kenney es 63 frente a
-     los 100 de Astro y el glifo se quedaba nadando dentro de la caja de 1em. */
-  font-size: clamp(126px, 18.75vw, 315px);
+  /* El "01" se queda en Astro. Es la única excepción del sitio y tiene motivo:
+     a este cuerpo el cero y el uno de Kenney se leen juntos como un 6 —sus
+     glifos comparten demasiada silueta al ampliarse tanto—, y aquí el número
+     es el contenido, no decoración. Con Astro vuelve el tamaño de antes. */
+  font-family: var(--font-astro);
+  font-size: clamp(84px, 12.5vw, 210px);
   width: 1em;
   height: 1em;
   transform: scale(0.82);
@@ -1160,14 +1159,16 @@
   text-shadow: 0 0 12px rgba(143, 162, 255, 0.75),
     0 0 44px rgba(143, 162, 255, 0.45);
 }
-/* La etiqueta acompaña al encendido, más discreta. */
+/* La etiqueta acompaña al encendido. Ya no arranca apagada: al 70% de `mute`
+   sobre la nebulosa y el enjambre no se leía, y esta regla es la que ganaba
+   por especificidad al blanco de `.hero-rail__vertical`. */
 .hero-rail--left .hero-rail__vertical {
-  color: color-mix(in srgb, var(--color-mute) 70%, transparent);
+  color: #ffffff;
   transition: color 380ms ease;
 }
 .hero-rail--left:hover .hero-rail__vertical,
 .hero-rail--left:focus-within .hero-rail__vertical {
-  color: var(--color-mute);
+  color: var(--color-neb);
 }
 
 /* Flecha de descenso bajo el número. */
