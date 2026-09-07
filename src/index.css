@@ -932,6 +932,12 @@
 /* `nowrap`: la etiqueta más larga («Sistemas de diseño») se partía en dos
    líneas dentro de la píldora y empujaba el resto 10 px fuera de la tarjeta. */
 .wdid--suelta .wdid__badge {
+  /* Sin desenfoque de fondo en móvil: lo único que tiene detrás es el degradado
+     liso de su propia tarjeta, así que desenfocarlo no cambia nada — pero como
+     la tarjeta levita, hay que remuestrearlo en cada fotograma. Cuatro capas
+     compuestas de más que no aportan nada. */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   font-size: clamp(6.8px, 1.95vw, 7.5px);
   gap: 0.3rem;
   padding: 0.2rem 0.45rem;
@@ -1018,11 +1024,11 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  /* Capa propia de composición: los cuatro fotogramas se conmutan cuatro veces
-     por segundo y, sin promocionarla, el repintado se mezcla con el del scroll
-     y se ve el tirón. */
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  /* Sin promoción forzada. La puse para que el repintado no se mezclara con el
+     del scroll, pero `translateZ(0)` resolvía a la matriz identidad —o sea que
+     ni siquiera promovía de forma fiable— y a cambio dejaba permanentemente
+     compuesta una capa con máscara, que es justo la combinación que en móvil
+     se corrompe al desalojarse y volver. */
   -webkit-mask-image: linear-gradient(
     to bottom,
     #000 0%,
@@ -1052,7 +1058,12 @@
   /* Corte seco a propósito: un fundido emborrona el disco y le quita la
      sensación de rotación. */
   transition: none;
-  will-change: opacity;
+  /* Sin `will-change: opacity`. Aquí la opacidad no se anima: se conmuta una
+     clase, que es un cambio discreto. Lo único que hacía era obligar al
+     navegador a mantener las cuatro imágenes promovidas a capa propia para
+     siempre — y son de 896x1199, unos 4,3 MB de textura cada una, 17 MB
+     retenidos. En un teléfono eso se desaloja al salir de la sección y hay que
+     resubirlo al volver, que es cuando se veía la figura rota. */
   user-select: none;
   -webkit-user-drag: none;
 }
