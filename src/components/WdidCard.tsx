@@ -35,9 +35,11 @@ export interface WdidCardProps {
   color: string;
   title: string;
   desc: string;
+  /** El descriptivo de bolsillo que se pinta cuando la tarjeta va suelta. */
+  resumen: string;
   cta: string;
   href: string;
-  /** En móvil las tarjetas rodean al astronauta, sueltas y sin descriptivo. */
+  /** En móvil las tarjetas rodean al astronauta, sueltas y con el resumen. */
   suelta?: boolean;
   /** Rotación del desorden, en grados. */
   giro?: number;
@@ -82,7 +84,7 @@ function useNitidez() {
 }
 
 export const WdidCard = forwardRef<HTMLDivElement, WdidCardProps>(function WdidCard(
-  { variante, objeto, etiqueta, color, title, desc, cta, href, suelta, giro = 0, indice = 0 },
+  { variante, objeto, etiqueta, color, title, desc, resumen, cta, href, suelta, giro = 0, indice = 0 },
   ref
 ) {
   const quieto = useReducedMotion();
@@ -209,7 +211,12 @@ export const WdidCard = forwardRef<HTMLDivElement, WdidCardProps>(function WdidC
               {title}
             </span>
           </h3>
-          {!suelta && <p className="wdid__desc">{desc}</p>}
+          {/* Las dos versiones llevan descriptivo; en la suelta es el corto.
+              No es el largo recortado por CSS: a dos líneas de 20 caracteres
+              un truncado partiría todas las frases por la mitad. */}
+          <p className={suelta ? "wdid__desc wdid__desc--corto" : "wdid__desc"}>
+            {suelta ? resumen : desc}
+          </p>
         </div>
 
         <Link to={href} className="wdid__cta group" aria-label={`${cta}: ${title}`}>

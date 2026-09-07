@@ -58,6 +58,10 @@ export interface Service {
   icon: LucideIcon;
   title: string;
   desc: string;
+  /** Versión de bolsillo del descriptivo, para la tarjeta suelta de móvil.
+      Ahí la caja mide unos 147x147 px y el `desc` completo no cabe: se
+      recorta el concepto a una línea, no se trunca la frase larga. */
+  resumen: string;
   variante: VarianteWdid;
   objeto: string;
   etiqueta: string;
@@ -71,6 +75,7 @@ export const services: Service[] = [
     icon: Code2,
     title: "Desarrollo full-stack",
     desc: "APIs y aplicaciones de extremo a extremo con .NET, Next.js y SQL Server.",
+    resumen: ".NET, Next.js y SQL Server.",
     variante: "modulo",
     objeto: "wdid_01_modulo",
     etiqueta: "Backend & API",
@@ -82,6 +87,7 @@ export const services: Service[] = [
     icon: PenTool,
     title: "Diseño de interfaz",
     desc: "UI oscura y editorial: sistemas de diseño con tipografía protagonista.",
+    resumen: "Sistemas oscuros y editoriales.",
     variante: "astrolabio",
     objeto: "wdid_02_astrolabio",
     etiqueta: "Sistemas de diseño",
@@ -93,6 +99,7 @@ export const services: Service[] = [
     icon: LayoutTemplate,
     title: "Landings & web",
     desc: "Sitios rápidos, responsive y accesibles con React + Tailwind.",
+    resumen: "Rápidas, responsive, accesibles.",
     variante: "cristal",
     objeto: "wdid_03_cristal",
     etiqueta: "Rendimiento",
@@ -104,6 +111,7 @@ export const services: Service[] = [
     icon: Bot,
     title: "Integración de IA",
     desc: "Chat-bots y asistentes con entrenamiento enfocado al negocio.",
+    resumen: "Chat-bots enfocados al negocio.",
     variante: "vela",
     objeto: "wdid_04_vela",
     etiqueta: "Automatización",

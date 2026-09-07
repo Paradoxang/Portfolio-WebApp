@@ -32,21 +32,76 @@ function fuentesDelHero(): string[] {
   ];
 }
 
+/**
+ * Segunda tanda: "What I Do".
+ *
+ * Son once piezas gráficas, cuatro objetos de tarjeta y cuatro fotogramas del
+ * visor, y todas iban con `loading="lazy"`. Eso significa que empezaban a
+ * descargarse y a decodificarse justo cuando el visitante llegaba a la sección
+ * — o sea, en mitad del scroll, que es cuando peor sienta. Calentadas antes, al
+ * llegar ya están decodificadas y el scroll no tropieza.
+ *
+ * Solo en la portada: la sección no existe en las otras rutas y esto es un
+ * megabyte que no hay por qué gastar donde no se va a usar.
+ */
+const PIEZAS_WDID = [
+  "wdid_01_nodo", "wdid_02_destello", "wdid_03_sello", "wdid_04_fibra",
+  "wdid_05_guijarro", "wdid_06_cinta", "wdid_07_diagrama", "wdid_08_esfera",
+  "wdid_09_lente", "wdid_10_nebulosa", "wdid_11_velo_izq",
+];
+const ECO_WDID = [
+  "elem_02_reticula", "elem_04_esfera_b", "elem_04_esfera_c",
+  "elem_05_fragmento_a", "elem_05_fragmento_b", "elem_05_fragmento_c",
+];
+const OBJETOS_TARJETA = [
+  "wdid_01_modulo", "wdid_02_astrolabio", "wdid_03_cristal", "wdid_04_vela",
+];
+
+function fuentesDeWdid(): string[] {
+  // Mismo criterio que `useNitidez` en la sección: por debajo de 2 dppx, x1.
+  const n = (window.devicePixelRatio || 1) >= 2 ? "x2" : "x1";
+  const visor =
+    window.innerWidth < 1024 || (window.devicePixelRatio || 1) < 2
+      ? (k: string) => `/hero/visor/w896/${k}.webp`
+      : (k: string) => `/hero/visor/${k}.webp`;
+  return [
+    ...PIEZAS_WDID.map((k) => `/wdid/fx/${n}/${k}.webp`),
+    ...ECO_WDID.map((k) => `/hero/fx/${n}/${k}.webp`),
+    ...OBJETOS_TARJETA.map((k) => `/wdid/${n}/${k}.webp`),
+    ...["visor_0", "visor_1", "visor_2", "visor_3"].map(visor),
+  ];
+}
+
 export function Prefetch() {
   useEffect(() => {
     let cancelado = false;
     let idle = 0;
     let respaldo = 0;
 
-    const calentar = () => {
-      if (cancelado) return;
-      for (const url of fuentesDelHero()) {
+    const pedir = (urls: string[]) => {
+      for (const url of urls) {
         const img = new Image();
         // Baja prioridad: esto es adelanto de trabajo, no camino crítico.
         img.fetchPriority = "low";
         img.decoding = "async";
         img.onload = () => void img.decode().catch(() => undefined);
         img.src = url;
+      }
+    };
+
+    const calentar = () => {
+      if (cancelado) return;
+      pedir(fuentesDelHero());
+      /* La sección va en una segunda tanda, en el siguiente hueco ocioso: si
+         entrara con la primera competiría con el hero, que es lo que el
+         visitante está mirando. */
+      if (window.location.pathname === "/") {
+        const seguir = () => {
+          if (!cancelado) pedir(fuentesDeWdid());
+        };
+        const ric = window.requestIdleCallback;
+        if (ric) ric(seguir, { timeout: 6000 });
+        else window.setTimeout(seguir, 1200);
       }
     };
 

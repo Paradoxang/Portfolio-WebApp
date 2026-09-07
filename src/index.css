@@ -748,6 +748,199 @@
   letter-spacing: 0.2em;
 }
 
+/* ── Cursor de mirilla ──
+   `cursor: none` pide DOS condiciones, no una: el media query de puntero fino
+   y la clase `.mirilla-on`, que pone el propio componente al montarse. Con
+   solo el media query bastaba con que el componente no montara —JS caído o
+   desactivado— para dejar al usuario sin cursor ninguno: el media query se
+   aplica igual, el componente no. Es el fallo clásico de esta técnica y deja
+   el sitio inusable.
+   Los campos de texto conservan el suyo, que comunica dónde se puede escribir
+   mejor que cualquier dibujo. */
+@media (pointer: fine) {
+  html.mirilla-on,
+  .mirilla-on body,
+  .mirilla-on a,
+  .mirilla-on button,
+  .mirilla-on [role="button"],
+  .mirilla-on summary,
+  .mirilla-on label {
+    cursor: none;
+  }
+  .mirilla-on input,
+  .mirilla-on textarea,
+  .mirilla-on select,
+  .mirilla-on [contenteditable="true"] {
+    cursor: auto;
+  }
+}
+.mirilla {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  will-change: transform;
+}
+.mirilla--anillo svg {
+  display: block;
+  overflow: visible;
+  /* El centrado va aquí y no en un `translate` del contenedor: ahí lo usan los
+     motion values y se pisarían. */
+  margin: -50% 0 0 -50%;
+}
+.mirilla--punto span {
+  display: block;
+  width: 3px;
+  height: 3px;
+  margin: -1.5px 0 0 -1.5px;
+  border-radius: 50%;
+}
+
+/* ── Capa gráfica de "What I Do" ──
+   Sin `mix-blend-mode` en ninguna capa. Las ocho piezas que el brief entregaba
+   sobre negro para componerse con `screen` se pasaron a RGBA de verdad —alfa =
+   canal máximo, RGB intacto—, que es la misma receta del brief 6 y por el
+   mismo motivo: `screen` obliga a que el blend alcance un fondo, y el `<main>`
+   del layout lleva `z-index` y transiciones de Framer, así que ya es un
+   contexto de apilado que lo atrapa. La salida era darle fondo propio a la
+   sección, y eso tapaba el campo de estrellas global.
+   Con alfa la composición es normal: nada que atrapar, nada que tapar. */
+.wdid-fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.wdid-fx > * {
+  pointer-events: none;
+}
+.wdid-fx__pieza,
+.wdid-fx > img {
+  position: absolute;
+  height: auto;
+  translate: -50% -50%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* z0 · velo lateral izquierdo. Sangra por la izquierda a propósito: la máscara
+   cierra solo por la derecha, y por arriba y abajo recorta la sección. */
+.wdid-fx--velo-izq {
+  z-index: 0;
+}
+.wdid-fx--velo-izq > img {
+  left: -4%;
+  top: 0;
+  width: 46%;
+  height: 100%;
+  translate: none;
+  object-fit: cover;
+  object-position: left center;
+  opacity: 0.34;
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, #000 55%, transparent 100%);
+}
+
+/* z1 · eco del hero. Sin blend: los seis archivos ya son RGBA de verdad. */
+.wdid-fx--eco {
+  z-index: 1;
+}
+
+/* z2 · fondos y z3 · sueltas. */
+.wdid-fx--fondos {
+  z-index: 2;
+}
+.wdid-fx--sueltas-screen {
+  z-index: 3;
+}
+.wdid-fx--sueltas {
+  z-index: 3;
+}
+
+/* z5 · velo de nebulosa: por encima de la figura, por debajo de las tarjetas.
+   Pluma en los cuatro lados — el asset es 16:9 con el gas cortado a escuadra y
+   sobre `screen` ese corte aparece como una línea recta en mitad del fondo. */
+/* Se posiciona por su CENTRO y sobre el CASCO, no por su esquina ni sobre la
+   caja de la figura. Con `left/top` a secas el gas quedaba centrado en el 30 %
+   de la altura; centrado en la caja del visor seguía cayendo bajo, porque esa
+   caja incluye hombros y torso. El casco está en el 82.4 / 49.4 % de la
+   sección —su centroide en el archivo es el 52.9 / 35.1 %— y ahí va el claro
+   central del velo, que es lo que pide el brief. */
+.wdid-fx__nebulosa {
+  position: absolute;
+  /* El ancla la publica la sección al medir el casco; los valores fijos son
+     el respaldo para el primer pintado y para el prerender. */
+  left: var(--casco-x, 82.4%);
+  top: var(--casco-y, 49.4%);
+  width: 82%;
+  height: auto;
+  z-index: 5;
+  /* -44.6/-47.6 y no -50/-50. El gas del archivo NO está centrado en su
+     lienzo: medido sobre el propio webp, ponderando luminancia por alfa, su
+     centroide cae en el 44.6 / 47.6 % del ancho y del alto, con el lóbulo
+     denso hacia el 25 %. Centrando la CAJA en el casco, el gas quedaba unos
+     60 px a la izquierda de la silueta. Con estos valores lo que aterriza
+     sobre el casco es el centro de masa de la nube, que es lo que se ve. */
+  translate: -44.6% -47.6%;
+  opacity: 0.32;
+  pointer-events: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 22%,
+      #000 78%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 22%,
+      #000 78%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-composite: intersect;
+}
+
+/* En móvil la nebulosa vive dentro del bloque superpuesto y se centra sobre la
+   figura, no sobre la sección: ahí el astronauta está centrado y el gas tiene
+   que caer sobre el casco. z1 dentro de ese contexto — la figura es 0 y las
+   tarjetas van de 2 en adelante. */
+.wdid-fx__nebulosa--movil {
+  left: 50%;
+  top: 46%;
+  width: 132%;
+  z-index: 1;
+  /* Misma corrección de centroide que en escritorio: el asset es el mismo. */
+  translate: -44.6% -47.6%;
+}
+
+@media (max-width: 1279px) {
+  .wdid-fx--velo-izq > img {
+    opacity: 0.3;
+  }
+  .wdid-fx__nebulosa {
+    opacity: 0.3;
+  }
+}
+@media (max-width: 767px) {
+  /* Fondo puro y no estorba, así que se queda — más ancho y más tenue. */
+  .wdid-fx--velo-izq > img {
+    width: 70%;
+    opacity: 0.24;
+  }
+  /* Más baja porque ahí las tarjetas van superpuestas al astronauta y hay
+     cuatro capas apiladas. */
+  .wdid-fx__nebulosa {
+    opacity: 0.22;
+  }
+}
+
 /* ── Tarjetas de "What I Do" ──
    El recorte y el radio viven en el MISMO elemento: si el radio se queda en el
    padre y el `overflow` en un hijo, el objeto se escapa por la esquina
@@ -887,14 +1080,23 @@
 
 /* ── Móvil: las cuatro rodeando al astronauta ── */
 .wdid--suelta {
-  /* Al quitarse el descriptivo el velo puede aflojarse: solo quedan título y
-     etiqueta, los dos grandes y sobre blanco. A 0.78 el peor caso daba 8.8
-     —muy por encima del 4.5— y el objeto 3D quedaba enterrado. A 0.55 sigue
-     en 5.49 y la pieza se ve, que es para lo que está. Medido contra el peor
-     fondo posible, el blanco del visor colándose por el 8% del degradado. */
-  --wdid-velo: 0.55;
-  --wdid-velo-2: 0.55;
+  /* El velo sube de 0.55 a 0.68 porque la tarjeta recupera descriptivo, y el
+     resumen es el elemento débil: a 9 px y sobre los dos degradados claros
+     —astrolabio y vela— el peor caso medido caía en 4.17, por debajo del 4.5.
+     Muestreado punto a punto sobre las cajas reales de etiqueta, título y
+     resumen, calculando el alfa del velo con la geometría del gradiente a
+     145deg y contra el peor fondo posible: el blanco del visor colándose por
+     el 8 % translúcido. A 0.68 con el resumen en blanco puro el peor caso sube
+     a 5.12 y el objeto 3D sigue viéndose. */
+  --wdid-velo: 0.68;
+  --wdid-velo-2: 0.64;
   min-height: 0;
+  /* Cuadrada y no 4/3. Con el resumen de vuelta son cuatro bloques —etiqueta,
+     título, descriptivo y flecha— y en 4/3 la caja daba 84 px de contenido
+     para unos 90: el recorte se comía la flecha. Cuadrada da 121 y
+     sobra aire. Sigue sin tapar la ventana central: el hueco mide el 43 % y
+     las cuatro posiciones se comprobaron de nuevo contra la figura. */
+  aspect-ratio: 1;
   /* Escala atada al ancho, no fija: la tarjeta mide un 43% del hueco, así que
      a 360 px sale 12 px más estrecha que a 390 y con medidas fijas el texto
      desbordaba 7 px. */
@@ -920,8 +1122,8 @@
      Y capa propia para que la levitación no repinte. */
   will-change: transform;
 }
-/* Escala propia: a este tamaño la tarjeta ya no admite descriptivo —el
-   componente no lo pinta— y se queda en etiqueta, título y flecha. */
+/* Escala propia. La tarjeta sí lleva descriptivo, pero el corto: a este ancho
+   —unos 121 px de caja de texto— el largo salía a seis líneas. */
 .wdid--suelta .wdid__texto {
   margin-top: 0.55rem;
 }
@@ -952,6 +1154,17 @@
 .wdid--suelta .wdid__cta {
   margin-top: 0.45rem;
   font-size: clamp(9px, 2.6vw, 10px);
+}
+/* Resumen de la tarjeta suelta. Blanco puro, no el 0.78 del descriptivo de
+   escritorio: el cuerpo es la mitad y es el texto que peor mide de la
+   tarjeta. Con el velo a 0.68 el peor caso queda en 5.12. */
+.wdid--suelta .wdid__desc--corto {
+  margin-top: 0.35rem;
+  max-width: none;
+  font-size: clamp(8.4px, 2.45vw, 9.4px);
+  line-height: 1.45;
+  letter-spacing: 0.015em;
+  color: #ffffff;
 }
 
 /* ── Composición móvil ──

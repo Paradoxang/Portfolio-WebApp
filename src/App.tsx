@@ -7,6 +7,7 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Prefetch } from "@/components/Prefetch";
 import { Starfield } from "@/components/Starfield";
+import { Mirilla } from "@/components/Mirilla";
 import { useLenis, scrollToTarget, EASE } from "@/lib/anim";
 import { loadAnalytics, trackPageView } from "@/lib/analytics";
 import { Home } from "@/pages/Home";
@@ -49,6 +50,10 @@ function Layout() {
       {/* Calienta los assets del hero en tiempo ocioso. No pinta nada: un velo
           de carga se convertiría en el LCP y penalizaría el SEO. */}
       <Prefetch />
+
+      {/* Mirilla global: una sola instancia para todo el sitio, y solo con
+          puntero fino. Vive aquí y no por sección para que no haya dos. */}
+      <Mirilla />
 
       {/* Barra de progreso de scroll */}
       <motion.div
