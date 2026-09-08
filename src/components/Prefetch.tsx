@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { FRAMES } from "@/components/heroPan";
+import { modoActual } from "@/lib/perf";
 
 /**
  * Precarga en segundo plano, sin tapar nada.
@@ -19,15 +20,20 @@ import { FRAMES } from "@/components/heroPan";
 const RESPALDO_MS = 2500;
 
 /** Solo el set que este dispositivo vaya a usar de verdad. */
+/** Los tres ángulos del núcleo. Los otros cuatro no se precargan: solo se
+ *  piden si el visitante lleva el cursor a los bordes de la ventana, y
+ *  adelantarlos costaba ocho descargas de 1792x2398 antes de poder interactuar. */
+const NUCLEO = FRAMES.filter((k) => k === "pan_l30" || k === "pan_00" || k === "pan_r30");
+
 function fuentesDelHero(): string[] {
   const ancho = window.innerWidth;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const ligero = ancho < 1024 || dpr < 2;
+  const chico = ancho < 1024 || dpr < 2;
   const ruta = (set: string, key: string) =>
-    ligero ? `/hero/${set}w896/${key}.webp` : `/hero/${set}${key}.webp`;
+    chico ? `/hero/${set}w896/${key}.webp` : `/hero/${set}${key}.webp`;
   return [
-    ...FRAMES.map((k) => ruta("", k)),
-    ...FRAMES.map((k) => ruta("astro/", k)),
+    ...NUCLEO.map((k) => ruta("", k)),
+    ...NUCLEO.map((k) => ruta("astro/", k)),
     "/nebula-banner.webp",
   ];
 }
@@ -91,6 +97,10 @@ export function Prefetch() {
 
     const calentar = () => {
       if (cancelado) return;
+      /* En modo ligero no se calienta nada. La precarga es trabajo adelantado,
+         y en una máquina que va justa el adelanto se le quita a lo que el
+         visitante está mirando ahora mismo. */
+      if (modoActual() === "low") return;
       pedir(fuentesDelHero());
       /* La sección va en una segunda tanda, en el siguiente hueco ocioso: si
          entrara con la primera competiría con el hero, que es lo que el

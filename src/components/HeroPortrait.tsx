@@ -22,12 +22,12 @@ interface HeroPortraitProps {
 export function HeroPortrait({ solo = false, figureRef }: HeroPortraitProps) {
   const propio = useRef<HTMLElement>(null);
   const figRef = figureRef ?? propio;
-  const { mounted, current } = useHeroPan(figRef);
+  const { etapa, current } = useHeroPan(figRef);
 
   return (
     <figure ref={figRef} className={`hero-fig${solo ? " hero-fig--solo" : ""}`}>
       {/* La máscara vive dentro de la pila; los chips quedan fuera a propósito. */}
-      <PanStack alt="Santiago Miranda" mounted={mounted} current={current} preload />
+      <PanStack alt="Santiago Miranda" etapa={etapa} current={current} preload />
 
       {/* Chips de tecnología — fuera del stack para que la máscara no los corte. */}
       {!solo &&

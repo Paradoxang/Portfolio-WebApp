@@ -135,8 +135,14 @@ const PIEZAS: Pieza[] = [
      que ni el radio de la órbita la devuelva. */
   { id: "elem_04_esfera_a", x: 11, y: 27, w: "clamp(64px, 7.5vw, 104px)", o: 0.95, capa: "acento", desde: "medio", orbita: { r: 16, dur: 18 } },
   { id: "esfera_a_movil", src: "elem_04_esfera_a", x: 26, y: 22, w: "64px", o: 0.95, capa: "acento", desde: "movil", hasta: "movil", orbita: { r: 16, dur: 18 } },
-  // Apartada del raíl derecho: a 92% se le montaba encima al texto vertical.
-  { id: "elem_04_esfera_c", x: 86, y: 46, w: "clamp(48px, 5.4vw, 74px)", o: 0.9, capa: "acento", desde: "medio", orbita: { r: 12, dur: 23 } },
+  /* Sube por encima del raíl derecho. El 86 valía cuando ese raíl era solo
+     una etiqueta fina; al entrar el "02" el grupo pasó a medir 242 px y llega
+     hasta el 79 % del ancho, así que la esfera quedó dentro y por delante:
+     114x103 px sobre el número y 16x132 sobre la etiqueta, medidos contra la
+     tinta y no contra la caja.
+     El pasillo del raíl va del 35 al 65 % de alto; a y=22, sumando su radio de
+     órbita y los 30 px de parallax, la envolvente termina 34 px por encima. */
+  { id: "elem_04_esfera_c", x: 90, y: 22, w: "clamp(48px, 5.4vw, 74px)", o: 0.9, capa: "acento", desde: "medio", orbita: { r: 12, dur: 23 } },
   /* Los dos cristales bajan a móvil: eran lo que más se echaba en falta ahí.
      Uno sobre el hombro izquierdo y otro en el hueco de arriba a la derecha,
      los dos por delante de la figura, que es donde se leen como esquirlas
@@ -145,13 +151,20 @@ const PIEZAS: Pieza[] = [
      de solape medidos, y la órbita lo empeoraba. A x=24 entra en el pasillo
      que queda entre el raíl y la figura, que estaba vacío. */
   { id: "elem_05_fragmento_c", x: 24, y: 56, w: "clamp(50px, 5.2vw, 72px)", o: 0.85, capa: "acento", desde: "movil", orbita: { r: 14, dur: 26 } },
-  { id: "elem_05_fragmento_a", x: 76, y: 15, w: "clamp(46px, 4.4vw, 60px)", o: 0.8, capa: "acento", desde: "movil", orbita: { r: 10, dur: 20 } },
+  /* En móvil baja fuera de la banda superior. Del 0 al 18 % del alto es zona
+     prohibida: ahí va la píldora de estado, y a y=15 este cristal le pisaba el
+     final de la palabra —17x7 px medidos—. La regla del brief 8 es que ninguna
+     pieza estética tape texto, y vale también en móvil. */
+  { id: "elem_05_fragmento_a", x: 76, y: 15, w: "clamp(46px, 4.4vw, 60px)", o: 0.8, capa: "acento", desde: "medio", orbita: { r: 10, dur: 20 } },
+  { id: "frag_a_movil", src: "elem_05_fragmento_a", x: 84, y: 30, w: "46px", o: 0.8, capa: "acento", desde: "movil", hasta: "movil", orbita: { r: 10, dur: 20 } },
   /* Esquina inferior derecha. Es la única zona del hero que quedaba muda: el
      wordmark acaba antes, el raíl va más arriba y la cinta de datos empieza
      más abajo. Los dos van de tablet en adelante — en móvil ese rincón es del
      nombre, que ocupa el ancho entero. */
-  // La esfera sirve igual en móvil: a esa altura cae entre el raíl y el nombre.
-  { id: "elem_12_esfera_d", x: 89, y: 70, w: "clamp(70px, 8vw, 115px)", o: 0.92, capa: "acento", desde: "movil", orbita: { r: 13, dur: 21 } },
+  /* Baja del 70 al 75: a 70 su envolvente subía hasta el 63.7 % y rozaba la
+     etiqueta del raíl —13x37 px—. La esfera sirve igual en móvil: a esa altura
+     cae entre el raíl y el nombre. */
+  { id: "elem_12_esfera_d", x: 89, y: 75, w: "clamp(70px, 8vw, 115px)", o: 0.92, capa: "acento", desde: "movil", orbita: { r: 13, dur: 21 } },
   // x 82 y no 79: a 79 quedaba a 5 px del wordmark y la órbita se le echaba encima.
   { id: "elem_13_fragmento_d", x: 82, y: 84, w: "clamp(58px, 6.4vw, 92px)", o: 0.82, capa: "acento", desde: "medio", giro: -12, orbita: { r: 11, dur: 24 } },
   /* El cristal nuevo sí necesita sitio propio en móvil: en el 82/84 del

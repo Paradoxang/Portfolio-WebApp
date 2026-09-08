@@ -76,7 +76,7 @@ function Tarjeta({ p, activo }: { p: Project; activo: boolean }) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const raiz = el.closest(".projects__viewport, .projects__pantalla-suelta");
+    const raiz = el.closest(".projects__viewport, .phone__viewport");
     const io = new IntersectionObserver(([e]) => setEnPantalla(e.isIntersecting), {
       root: raiz instanceof Element ? raiz : null,
       threshold: 0,
@@ -185,18 +185,49 @@ function Fila({
 }
 
 /**
- * @param unaFila  Por debajo de 768 px el carrusel es de una sola fila a ancho
- *                 completo: la tableta no cabe y el marco desaparece.
+ * Columna vertical, para el móvil.
+ *
+ * En una pantalla casi tres veces más alta que ancha un carril horizontal
+ * enseña un proyecto y medio. Bajando, entran unas 3.7 tarjetas y la última
+ * queda cortada por el borde inferior, que es lo que hace que se lea como
+ * bucle y no como lista.
+ *
+ * Pausa al TOCAR, no en hover: en un móvil no hay hover, así que la pausa del
+ * carril horizontal aquí no existiría.
+ */
+function Columna({ items, activo }: { items: Project[]; activo: boolean }) {
+  const [pausa, setPausa] = useState(false);
+  const doble = [...items, ...items];
+  return (
+    <div
+      className="carrusel__fila carrusel__fila--v"
+      onTouchStart={() => setPausa(true)}
+      onTouchEnd={() => setPausa(false)}
+      onTouchCancel={() => setPausa(false)}
+    >
+      <div className={`carrusel__columna${pausa ? " esta-pausado" : ""}`}>
+        {doble.map((p, i) => (
+          <Tarjeta key={`${p.slug}-v-${i}`} p={p} activo={activo} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * @param vertical En móvil los proyectos bajan por la pantalla del teléfono,
+ *                 que es lo único que cabe en una pantalla tres veces más alta
+ *                 que ancha.
  * @param quieto   Con `prefers-reduced-motion` no se elimina el carrusel: se
  *                 detiene y pasa a ser una fila con scroll manual y
  *                 `scroll-snap`. Los proyectos siguen siendo accesibles.
  */
 export function CarruselProyectos({
-  unaFila = false,
+  vertical = false,
   quieto = false,
   activo = true,
 }: {
-  unaFila?: boolean;
+  vertical?: boolean;
   quieto?: boolean;
   /** La sección está en pantalla y en marcha. */
   activo?: boolean;
@@ -217,10 +248,10 @@ export function CarruselProyectos({
     );
   }
 
-  if (unaFila) {
+  if (vertical) {
     return (
-      <div className="carrusel carrusel--una">
-        <Fila items={conPreview} hacia="izq" indice={0} activo={activo} />
+      <div className="carrusel carrusel--columna">
+        <Columna items={conPreview} activo={activo} />
       </div>
     );
   }

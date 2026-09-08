@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { useModoLigero } from "@/lib/perf";
 
 /**
  * Cursor de mirilla. Global: se monta una sola vez en el layout raíz.
@@ -47,7 +48,11 @@ const SELECTOR_ACTIVO =
 const SELECTOR_TEXTO = "input, textarea, [contenteditable=\"true\"]";
 
 export function Mirilla() {
-  const fino = usePunteroFino();
+  /* En modo ligero, cursor nativo. La mirilla son dos capas que se repintan en
+     cada movimiento del puntero; sin aceleración eso se nota más que cualquier
+     otra cosa que haga el sitio. */
+  const ligero = useModoLigero();
+  const fino = usePunteroFino() && !ligero;
   const quieto = !!useReducedMotion();
 
   const x = useMotionValue(-100);

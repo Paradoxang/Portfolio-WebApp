@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
+import { usePerf } from "@/lib/perf";
 import { Head } from "vite-react-ssg";
 
 /**
@@ -45,9 +46,25 @@ const SWEEP_MS = 1400;
  * Devuelve el frame activo. `containerRef` debe envolver *todas* las pilas:
  * la decodificación se espera sobre el conjunto, no capa por capa.
  */
+/**
+ * Cuánto de la pila está montado.
+ *
+ *   0 · solo `pan_00`  ·  1 · los tres centrales  ·  2 · los siete
+ *
+ * Antes se pasaba de uno a siete de golpe en el primer hueco tras pintar, y
+ * eran catorce imágenes de 1792x2398 —siete por set— descargándose y
+ * decodificándose antes de que el visitante pudiera tocar nada. Los ángulos
+ * extremos solo hacen falta si el cursor llega a los bordes de la ventana, así
+ * que esperan a que haya un puntero de verdad moviéndose.
+ */
+const NUCLEO = [CENTER - 1, CENTER, CENTER + 1];
+
 export function useHeroPan(containerRef: RefObject<HTMLElement>) {
-  /** El resto de frames se montan tras el primer render para no competir con el LCP. */
-  const [mounted, setMounted] = useState(false);
+  /* En modo ligero la pila no crece nunca: un solo fotograma, sin decodificar
+     los demás y sin listener de puntero. Es el punto 3 del presupuesto —unos
+     19 MB de RAM por set y todos los repintados de una imagen enorme. */
+  const ligero = usePerf() === "low";
+  const [etapa, setEtapa] = useState(0);
   /** Seguimiento activo solo cuando todos están decodificados. */
   const [ready, setReady] = useState(false);
   const [current, setCurrent] = useState(CENTER);
@@ -59,19 +76,31 @@ export function useHeroPan(containerRef: RefObject<HTMLElement>) {
   //    el respaldo: en una pestaña en segundo plano el rAF queda en pausa y sin
   //    él el retrato se quedaría congelado en pan_00.
   useEffect(() => {
-    const raf = requestAnimationFrame(() => setMounted(true));
-    const timer = window.setTimeout(() => setMounted(true), 300);
+    if (ligero) return;
+    const raf = requestAnimationFrame(() => setEtapa(1));
+    const timer = window.setTimeout(() => setEtapa(1), 300);
     return () => {
       cancelAnimationFrame(raf);
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [ligero]);
+
+  /* Los cuatro ángulos extremos, bajo demanda: al primer movimiento real del
+     puntero. Sin cursor fino no se piden nunca — el barrido automático usa
+     solo los del núcleo. */
+  useEffect(() => {
+    if (ligero || etapa !== 1) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    const abrir = () => setEtapa(2);
+    window.addEventListener("pointermove", abrir, { once: true, passive: true });
+    return () => window.removeEventListener("pointermove", abrir);
+  }, [ligero, etapa]);
 
   // 2) Decodificar todo; solo entonces se habilita el seguimiento. `decode()`
   //    puede no resolver nunca en un documento que no se está rasterizando, así
   //    que la carrera contra el temporizador evita que el efecto quede muerto.
   useEffect(() => {
-    if (!mounted) return;
+    if (!etapa) return;
     let cancelled = false;
     const imgs = Array.from(containerRef.current?.querySelectorAll("img") ?? []);
     const done = () => {
@@ -88,7 +117,7 @@ export function useHeroPan(containerRef: RefObject<HTMLElement>) {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [mounted, containerRef]);
+  }, [etapa, containerRef]);
 
   // 3) Seguimiento del cursor (o barrido automático sin cursor fino).
   useEffect(() => {
@@ -126,9 +155,12 @@ export function useHeroPan(containerRef: RefObject<HTMLElement>) {
     if (fine) {
       window.addEventListener("pointermove", onMove, { passive: true });
     } else {
+      /* Solo los ángulos del núcleo: sin cursor fino los extremos no llegan a
+         montarse, así que barrer hacia ellos dejaría el retrato en blanco. */
+      const ruta = SWEEP.filter((i) => NUCLEO.includes(i));
       let k = 0;
       sweepTimer = window.setInterval(
-        () => show(SWEEP[k++ % SWEEP.length]),
+        () => show((ruta.length ? ruta : NUCLEO)[k++ % (ruta.length || NUCLEO.length)]),
         SWEEP_MS
       );
     }
@@ -147,7 +179,7 @@ export function useHeroPan(containerRef: RefObject<HTMLElement>) {
     };
   }, [ready]);
 
-  return { mounted, current };
+  return { etapa, current };
 }
 
 interface PanStackProps {
@@ -155,7 +187,8 @@ interface PanStackProps {
   set?: string;
   /** Texto alternativo del frame central; vacío deja la pila entera decorativa. */
   alt: string;
-  mounted: boolean;
+  /** 0 solo el central, 1 los tres del núcleo, 2 los siete. */
+  etapa: number;
   current: number;
   /** Solo la capa que hace de LCP declara el preload en el head. */
   preload?: boolean;
@@ -167,7 +200,7 @@ interface PanStackProps {
 export function PanStack({
   set = "",
   alt,
-  mounted,
+  etapa,
   current,
   preload = false,
   className = "",
@@ -180,9 +213,10 @@ export function PanStack({
       }${className ? ` ${className}` : ""}`}
       aria-hidden={alt ? undefined : true}
     >
-      {/* Solo el frame central se precarga desde el head: es el LCP. Los otros
-          seis los monta el efecto 1, ya pasado el primer pintado. Las dos
-          entradas replican el <picture> de abajo para no descargar dos veces. */}
+      {/* Solo el frame central se precarga desde el head: es el LCP. Los dos
+          vecinos entran ya pasado el primer pintado, y los cuatro extremos al
+          primer movimiento del puntero. Las dos entradas replican el <picture>
+          de abajo para no descargar dos veces. */}
       {preload && (
         <Head>
           <link
@@ -203,7 +237,8 @@ export function PanStack({
       )}
 
       {FRAMES.map((key, i) => {
-        if (!mounted && i !== CENTER) return null;
+        if (etapa === 0 && i !== CENTER) return null;
+        if (etapa === 1 && !NUCLEO.includes(i)) return null;
         const isCenter = i === CENTER;
         return (
           <picture key={key}>

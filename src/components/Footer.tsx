@@ -1,5 +1,6 @@
 import { Facebook, Github, Instagram } from "lucide-react";
 import { contact } from "@/data/site";
+import { ModoLigero } from "@/components/ModoLigero";
 
 export function Footer() {
   return (
@@ -43,6 +44,7 @@ export function Footer() {
             <Facebook className="h-3.5 w-3.5" /> Facebook
           </a>
           <span>{contact.domain}</span>
+          <ModoLigero />
         </div>
       </div>
     </footer>

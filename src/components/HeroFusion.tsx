@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { PanStack, useHeroPan } from "@/components/heroPan";
+import { modoActual } from "@/lib/perf";
 
 /**
  * Capa 3: la fotografía y el astronauta en la misma caja.
@@ -35,7 +36,7 @@ export function HeroFusion({
   onFusedChange,
   onPointer,
 }: HeroFusionProps) {
-  const { mounted, current } = useHeroPan(figureRef);
+  const { etapa, current } = useHeroPan(figureRef);
   const [fused, setFused] = useState(false);
   const fusedRef = useRef(false);
 
@@ -86,7 +87,9 @@ export function HeroFusion({
     // fotografía de golpe. En táctil manda el ciclo lento y nada más.
     const salir = () => cambiar(false);
 
-    if (fino) {
+    /* Modo ligero: sin seguimiento de puntero. Es el punto 5 del presupuesto
+       —un listener y su rAF menos— y ademas la capa que movia ya no se pinta. */
+    if (fino && modoActual() !== "low") {
       window.addEventListener("pointermove", onMove, { passive: true });
       document.addEventListener("pointerleave", salir);
     }
@@ -104,7 +107,7 @@ export function HeroFusion({
     >
       <PanStack
         alt="Santiago Miranda"
-        mounted={mounted}
+        etapa={etapa}
         current={current}
         preload
         className="hero-fusion__capa hero-fusion__capa--foto"
@@ -112,7 +115,7 @@ export function HeroFusion({
       <PanStack
         set="astro"
         alt=""
-        mounted={mounted}
+        etapa={etapa}
         current={current}
         className="hero-fusion__capa hero-fusion__capa--astro"
       />

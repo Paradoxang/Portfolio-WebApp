@@ -166,11 +166,15 @@ export function Hero() {
 
             {/* En móvil el número no entra: queda la etiqueta con su flecha,
                 espejo de "Especialidades" en el lado izquierdo. */}
+            {/* Espejo del izquierdo: allí la etiqueta va pegada al borde y la
+                flecha hacia dentro, así que aquí la flecha va primero —hacia
+                dentro también— y la etiqueta al borde. Con el orden invertido
+                las dos flechas caían del mismo lado y el par no se leía. */}
             <Link to="/proyectos" className="hero-rail__enlace hero-rail__enlace--espejo hero-solo-movil">
+              <FlechaLarga />
               <span className="hero-rail__vertical font-elnath text-[13px]">
                 Misiones completadas
               </span>
-              <FlechaLarga />
             </Link>
           </div>
 

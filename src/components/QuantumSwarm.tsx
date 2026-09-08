@@ -101,6 +101,8 @@ function rhoUnidad(angle: number) {
   return 1 / Math.sqrt(Math.sqrt(c2 * c2 + s2 * s2));
 }
 
+import { modoActual } from "@/lib/perf";
+
 export function QuantumSwarm({
   energetic = false,
   density = 3.2,
@@ -302,6 +304,10 @@ export function QuantumSwarm({
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    /* En modo ligero no arranca el bucle. Ocultarlo por CSS no basta: el
+       canvas seguiria pintando cientos de particulas en cada fotograma, que es
+       exactamente el trabajo que hay que quitarle a una maquina sin GPU. */
+    if (modoActual() === "low") return;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;

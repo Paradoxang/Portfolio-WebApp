@@ -1382,9 +1382,13 @@
   --borde-hero: clamp(1.4rem, 3vw, 3.5rem);
   position: absolute;
   top: 50%;
-  /* Por encima de la figura (z-30): en móvil el retrato va a sangre y, si no,
-     taparía los raíles y se comería sus enlaces. */
-  z-index: 40;
+  /* Por encima de la figura (z-30) y también de la capa delantera de la
+     decoración, que va en 50. A 40 los cristales y las esferas le pasaban por
+     encima al texto: medido a 1024, un cristal cubría 13x94 px de
+     «Especialidades». Mover cada pieza que estorbe es un parche que hay que
+     repetir en cada ancho; con el texto por delante, la decoración pasa por
+     detrás y el problema no puede volver. */
+  z-index: 51;
   display: flex;
   align-items: center;
   transform: translateY(-50%);
@@ -1565,7 +1569,11 @@
      Aqui queda a la derecha del retrato y por debajo del 02: los tres huecos
      libres de esa banda. */
   bottom: clamp(5.5rem, 11vh, 8rem);
-  z-index: 40;
+  /* 51 y no 40: la capa delantera de la decoración va en 50, así que a 40 los
+     cristales y las esferas le pasaban por encima al texto. Es el mismo
+     defecto que había sobre el "02", y aquí se arregla por capa en vez de por
+     coordenada porque el rincón ya no da para mover nada más. */
+  z-index: 51;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1648,17 +1656,26 @@
     height: 8px;
   }
 
-  /* Los raíles suben para dejarle sitio a la figura. */
+  /* Los dos raíles comparten EJE, no borde superior.
+     Anclados por arriba —que es como estaban, los dos a top: 15 %— parecían
+     alineados y no lo estaban: «MISIONES COMPLETADAS» tiene 20 caracteres y
+     «ESPECIALIDADES» 14, así que con la misma cota superior sus centros
+     quedaban a 6.7 puntos porcentuales, y la página se leía torcida.
+     Con el centro compartido la longitud del texto deja de importar. El eje va
+     al 34 % y no al 50: por debajo empieza la figura, y ahí los raíles se le
+     montarían encima. */
   .hero-rail {
     --borde-hero: 0.9rem;
-    top: 15%;
-    transform: none;
+    top: 34%;
+    transform: translateY(-50%);
     gap: 0.55rem;
   }
   .hero-rail--left,
   .hero-rail__enlace {
     flex-direction: row;
     align-items: center;
+    /* La misma separación en los dos: antes una flecha quedaba pegada al texto
+       y la otra suelta, porque cada raíl heredaba un gap distinto. */
     gap: 0.55rem;
   }
   .hero-arrow {
@@ -1940,6 +1957,20 @@ html.lenis body {
    desplazamiento y rompe cualquier `position: sticky` que haya por encima en
    la página. `clip` recorta sin ese efecto secundario, y además deja el
    `overflow-y` en `visible` de verdad. */
+/* ── El alto del hero en móvil ──
+   `100dvh` y nunca `100vh`. Con la barra del navegador visible, `vh` mide el
+   viewport GRANDE —el que habría sin barra—, así que el hero sale más alto que
+   la pantalla real y lo último que contiene, el wordmark, se va fuera por
+   abajo. `dvh` sigue a la barra mientras aparece y desaparece.
+   El respaldo en `vh` es para navegadores sin unidades dinámicas; el orden
+   importa, la segunda declaración gana donde se entiende. */
+@media (max-width: 767px) {
+  .hero-cursor {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+}
+
 .projects {
   overflow-x: clip;
   /* El relleno vertical vive aquí y no en una clase de Tailwind. Estaba escrito
@@ -1977,12 +2008,6 @@ html.lenis body {
 }
 /* En móvil no hay tableta: el fondo pasa a ser un telón detrás de la sección
    entera en vez de un bloque que añade alto. */
-.projects__escena--movil {
-  position: absolute;
-  inset: 0;
-  aspect-ratio: auto;
-  margin-top: 0;
-}
 
 /* Las capas. Ninguna crea contexto de apilado por sí sola salvo por su propio
    `z-index`, que es lo que permite que el eco —que vive fuera del escenario,
@@ -2129,9 +2154,6 @@ html.lenis body {
      cada tarjeta. */
   container-type: size;
 }
-.carrusel--una .carrusel__fila {
-  flex: 1 1 100%;
-}
 
 .carrusel__carril {
   display: flex;
@@ -2232,19 +2254,6 @@ html.lenis body {
 /* ── Móvil: sin tableta ──
    El carrusel a ancho completo, con esquinas redondeadas y un borde hairline
    para que siga leyéndose como una pantalla. */
-.projects__pantalla-suelta {
-  position: relative;
-  z-index: 3;
-  margin-top: clamp(1.5rem, 5vh, 2.5rem);
-  height: clamp(150px, 44vw, 260px);
-  overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid rgba(214, 201, 255, 0.14);
-  /* Mismo panel que el hueco de la tableta: aquí no hay marco, pero los
-     proyectos necesitan igual algo contra lo que recortarse. */
-  background: radial-gradient(120% 100% at 50% 0%, rgba(143, 162, 255, 0.13), transparent 62%),
-    linear-gradient(168deg, #151b30, #080b15);
-}
 
 /* ── Movimiento reducido ──
    El carrusel no desaparece: se detiene y pasa a ser una fila con scroll
@@ -2279,4 +2288,370 @@ html.lenis body {
   .carrusel__carril {
     animation: none;
   }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Modo ligero — [data-perf="low"]
+   ════════════════════════════════════════════════════════════════════════
+
+   Todo lo que se apaga vive aquí, en un bloque, y no repartido por los
+   componentes. Es la única forma de poder auditarlo después.
+
+   El orden es el del impacto medido. Las dos primeras reglas son la mayor
+   parte de la ganancia:
+
+    1 · `mix-blend-mode`. Con GPU, mezclar capas es casi gratis. Sin GPU, cada
+        capa con `screen` obliga a componer en CPU el rectángulo entero que
+        ocupa, en cada frame. Pasan a `normal` con la opacidad a la mitad, que
+        es lo que mantiene el efecto reconocible sin el coste.
+    2 · `backdrop-filter`. Sin GPU se calcula píxel a píxel sobre todo lo que
+        hay detrás, cada frame. Un solo desenfoque a pantalla completa puede
+        costar más que el resto junto. Se sustituye por color sólido con alfa.
+
+   Lo que NO se cae nunca: el contenido, la tipografía, la navegación, los
+   enlaces a los proyectos y el retrato del hero. El modo ligero es un sitio
+   más sobrio, no un sitio roto. */
+
+/* ── 1 · Ni un blend vivo ── */
+[data-perf="low"] .noise-overlay,
+[data-perf="low"] .hero-quantum,
+[data-perf="low"] .cta-neb,
+[data-perf="low"] [class*="mix-blend"] {
+  mix-blend-mode: normal !important;
+}
+[data-perf="low"] .noise-overlay {
+  opacity: 0.12 !important;
+}
+[data-perf="low"] .hero-quantum {
+  opacity: 0.5;
+}
+
+/* ── 2 · Ni un desenfoque de fondo ── */
+[data-perf="low"] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── 3 · El paneo del hero se queda en un fotograma ──
+   Los otros seis ángulos ni se descargan (lo decide `heroPan`), y aquí se
+   ocultan por si alguno llegó a montarse. Ahorra los repintados de una imagen
+   de 1975x2428 en cada movimiento del cursor. */
+[data-perf="low"] .hero-pan__frame:not(.hero-pan__frame--base) {
+  display: none !important;
+}
+
+/* ── 4 y 10 · La decoración se queda quieta y se adelgaza ──
+   Sobreviven los fondos; el eco y las piezas sueltas se van. No es solo el
+   coste de animarlas: son capas de composición que en software se pintan
+   enteras. */
+[data-perf="low"] .hero__fx--delante,
+[data-perf="low"] .wdid-fx--eco,
+[data-perf="low"] .wdid-fx--sueltas,
+[data-perf="low"] .wdid-fx--sueltas-screen,
+[data-perf="low"] .projects__capa--eco,
+[data-perf="low"] .projects__capa--delanteras,
+[data-perf="low"] .hero-quantum {
+  display: none !important;
+}
+[data-perf="low"] .fx__orbita--activa,
+[data-perf="low"] .fx__pieza--gira,
+[data-perf="low"] .fx__pieza--respira,
+[data-perf="low"] .fx-datos__cinta--corre,
+[data-perf="low"] .carrusel__carril,
+[data-perf="low"] .marquee-track,
+[data-perf="low"] .text-shimmer,
+[data-perf="low"] .glow-pulse,
+[data-perf="low"] .float-y,
+[data-perf="low"] .spin-slow,
+[data-perf="low"] .spin-slow-rev,
+[data-perf="low"] .twinkle,
+[data-perf="low"] .scan-line-y,
+[data-perf="low"] .scroll-line,
+[data-perf="low"] .hero-arrow,
+[data-perf="low"] .fx-datos__pulso,
+[data-perf="low"] .hero-disponible__punto {
+  animation: none !important;
+}
+
+/* ── 8 · Cursor nativo ──
+   La mirilla es un elemento que sigue al puntero: dos capas repintadas en cada
+   movimiento. Aquí no compensa. */
+[data-perf="low"] .mirilla {
+  display: none !important;
+}
+@media (pointer: fine) {
+  html[data-perf="low"].mirilla-on,
+  html[data-perf="low"].mirilla-on * {
+    cursor: auto !important;
+  }
+  html[data-perf="low"].mirilla-on a,
+  html[data-perf="low"].mirilla-on button {
+    cursor: pointer !important;
+  }
+}
+
+/* ── `will-change` fuera ──
+   Cada declaración permanente mantiene viva una capa de composición. En una
+   máquina sin memoria de vídeo eso es justo lo que hay que evitar. */
+[data-perf="low"] * {
+  will-change: auto !important;
+}
+
+/* Sombras y filtros caros de la decoración. El texto conserva las suyas: son
+   las que lo despegan del fondo y sin ellas no se lee. */
+[data-perf="low"] .glow-hero,
+[data-perf="low"] .glow-cta,
+[data-perf="low"] .glow-quote {
+  background: none !important;
+}
+[data-perf="low"] .hero-index-box {
+  filter: none !important;
+}
+
+/* ── El conmutador del pie ── */
+.modo-ligero {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  transition: color 0.25s ease;
+}
+.modo-ligero:hover {
+  color: var(--color-neb);
+}
+.modo-ligero__via {
+  display: inline-flex;
+  align-items: center;
+  width: 26px;
+  height: 14px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 9999px;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.modo-ligero__punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+.modo-ligero[aria-checked="true"] {
+  color: var(--color-neb);
+}
+.modo-ligero[aria-checked="true"] .modo-ligero__via {
+  border-color: var(--color-neb);
+  background: rgba(143, 162, 255, 0.16);
+}
+.modo-ligero[aria-checked="true"] .modo-ligero__punto {
+  transform: translateX(12px);
+}
+
+/* ── Fuera del modo bajo: mejoras para todos ──
+   `content-visibility` es la de mejor relación esfuerzo/resultado de la lista:
+   el navegador se salta el layout y el pintado de lo que no se ve. El
+   `contain-intrinsic-size` es obligatorio junto a ella — sin él la barra de
+   desplazamiento salta mientras se recorre la página, porque el navegador
+   asume alto cero para lo que no ha pintado. Las alturas son las medidas. */
+.projects,
+.wdid-sec,
+.seccion-diferida {
+  content-visibility: auto;
+}
+.wdid-sec {
+  contain-intrinsic-size: auto 1100px;
+}
+.projects {
+  contain-intrinsic-size: auto 1140px;
+}
+.seccion-diferida {
+  contain-intrinsic-size: auto 700px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Móvil de "Selected Projects" — el teléfono y la columna
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* El velo, en lugar de los tres fondos grandes. Al .22 y no al .3 de "What I
+   Do": aquí el teléfono ocupa el centro y el velo solo tiene que dar
+   atmósfera al margen. */
+.projects__velo {
+  position: absolute;
+  left: -12%;
+  top: 0;
+  z-index: 0;
+  width: 80%;
+  height: 100%;
+  opacity: 0.22;
+  object-fit: cover;
+  object-position: left center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, #000 50%, transparent 100%);
+}
+
+.projects__movil {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(1.5rem, 5vh, 2.5rem);
+}
+
+/* El marco. Su proporción es la del archivo, 361x953.
+   El tope de 380 px no es estético: el original venía a 459 px de ancho y se
+   subió a 722 con Lanczos; por encima de ese tamaño en CSS empieza a verse
+   blando. */
+.phone {
+  position: relative;
+  width: min(78%, 380px);
+  margin-inline: auto;
+  aspect-ratio: 361 / 953;
+}
+
+/* El hueco de la pantalla. Porcentajes sobre el marco, medidos sobre el asset.
+   `container-type: size` para que las tarjetas se midan contra el hueco y no
+   contra la columna, que es `max-content`. */
+.phone__viewport {
+  position: absolute;
+  left: 21.05%;
+  top: 4.93%;
+  width: 57.89%;
+  height: 57.71%;
+  z-index: 1;
+  border-radius: 2%;
+  overflow: hidden;
+  container-type: size;
+  background: radial-gradient(120% 100% at 50% 0%, rgba(143, 162, 255, 0.13), transparent 62%),
+    linear-gradient(168deg, #151b30, #080b15);
+}
+.phone__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: auto;
+  /* Los clics pasan al proyecto que hay detrás. */
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── La columna ── */
+.carrusel--columna {
+  height: 100%;
+}
+.carrusel__fila--v {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  container-type: size;
+}
+@keyframes carrusel-abajo {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+.carrusel__columna {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: max-content;
+  animation: carrusel-abajo 38s linear infinite;
+}
+.carrusel__columna.esta-pausado,
+.projects.no-corre .carrusel__columna {
+  animation-play-state: paused;
+}
+
+/* Mismo truco que en horizontal: la separación va DENTRO de la tarjeta. Con
+   `gap` en la columna, el -50 % se queda medio hueco corto y cada vuelta pega
+   un salto.
+   94 % de ancho a 16:10 con 12 % de separación deja unas 3.7 tarjetas a la
+   vista, con la última cortada por el borde inferior. */
+.carrusel__columna .carrusel__tarjeta {
+  flex: none;
+  width: 94cqw;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  margin-inline-end: 0;
+  margin-block-end: 12cqw;
+  border-radius: 3cqw;
+}
+.carrusel__columna .carrusel__rotulo {
+  gap: 3cqw;
+  padding: 5cqw 5cqw 4cqw;
+  font-size: 5cqw;
+}
+
+/* ── Las dos piezas que sobreviven, al 45 % ── */
+.projects__suelta {
+  position: absolute;
+  z-index: 4;
+  opacity: 0.45;
+  pointer-events: none;
+  user-select: none;
+}
+.projects__suelta--cartucho {
+  left: 4%;
+  top: 2%;
+  width: 16%;
+}
+.projects__suelta--guijarro {
+  right: 5%;
+  bottom: 4%;
+  width: 18%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrusel__columna {
+    animation: none;
+  }
+}
+
+/* ── `will-change` solo mientras algo se mueve ──
+   Cada declaración permanente mantiene viva una capa de composición. Con
+   veinte puestas todo el rato, el navegador se queda sin memoria de vídeo y
+   empieza a descartar y rehacer capas, que es peor que no tener ninguna.
+   Las secciones ya saben cuándo están fuera de pantalla —`fx-parado` en el
+   hero, `no-corre` en proyectos—, así que basta con colgar de ahí la retirada:
+   lo que no se ve tampoco reserva capa. En modo ligero se van todas. */
+.hero__fx.fx-parado .fx__pieza,
+.hero__fx.fx-parado .fx-datos__cinta,
+.projects.no-corre .carrusel__carril,
+.projects.no-corre .carrusel__columna,
+.projects.no-corre .projects__tableta__flota {
+  will-change: auto;
+}
+
+/* El carrusel manual dentro del teléfono va en vertical.
+   Heredado en horizontal, se quedaba en un scroll lateral dentro de un hueco
+   de 176 px: legible a duras penas y nada natural en un móvil. La pantalla es
+   tres veces más alta que ancha, así que se recorre hacia abajo, que es como
+   se recorre todo lo demás. */
+.phone__viewport .carrusel--manual {
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+.phone__viewport .carrusel--manual .carrusel__hueco {
+  width: 94cqw;
+  height: auto;
+  margin-inline: auto;
+}
+.phone__viewport .carrusel--manual .carrusel__tarjeta {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 3cqw;
+}
+.phone__viewport .carrusel--manual .carrusel__rotulo {
+  gap: 3cqw;
+  padding: 5cqw 5cqw 4cqw;
+  font-size: 5cqw;
 }

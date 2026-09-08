@@ -10,6 +10,7 @@ import { Starfield } from "@/components/Starfield";
 import { Mirilla } from "@/components/Mirilla";
 import { useLenis, scrollToTarget, EASE } from "@/lib/anim";
 import { loadAnalytics, trackPageView } from "@/lib/analytics";
+import { arrancarPerf } from "@/lib/perf";
 import { Home } from "@/pages/Home";
 import { About } from "@/pages/About";
 import { Contact } from "@/pages/Contact";
@@ -23,6 +24,13 @@ function Layout() {
   const firstRender = useRef(true);
   useEffect(() => {
     firstRender.current = false;
+  }, []);
+
+  /* El modo de rendimiento. El script en línea de index.html ya dejó puesto
+     `data-perf` antes de pintar; esto termina la detección —el rasterizador y
+     la sonda de fotogramas— y solo puede degradar a `low`. */
+  useEffect(() => {
+    arrancarPerf();
   }, []);
 
   // Google Analytics: carga el tag una vez y registra cada cambio de ruta

@@ -155,6 +155,35 @@
         ]
       }
     </script>
+
+    <!-- Modo de rendimiento, antes del primer pintado.
+         Aquí va SOLO la parte barata —la preferencia guardada y las señales que
+         no cuestan nada de leer—, para que el primer frame ya salga en el modo
+         correcto y no haya un salto visual al hidratar. El resto de la
+         detección (el rasterizador y la sonda de fotogramas) vive en
+         src/lib/perf.ts y corre después: no se duplica nada, cada señal está
+         en un solo sitio. -->
+    <script>
+      (function () {
+        var d = document.documentElement;
+        var guardada = null;
+        try {
+          guardada = localStorage.getItem("dox:perf");
+        } catch (e) {
+          /* modo privado */
+        }
+        if (guardada === "low" || guardada === "high") {
+          d.dataset.perf = guardada;
+          return;
+        }
+        var n = navigator;
+        var bajo =
+          (n.hardwareConcurrency || 8) <= 2 ||
+          (n.deviceMemory || 8) <= 2 ||
+          (n.connection && n.connection.saveData === true);
+        d.dataset.perf = bajo ? "low" : "high";
+      })();
+    </script>
   </head>
   <body>
     <!-- Meta Pixel — fallback para navegadores sin JS. El pixel principal se

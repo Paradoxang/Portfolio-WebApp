@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { CarruselProyectos } from "@/components/CarruselProyectos";
 import { ProjectsFondo, ProjectsDelanteras, ProjectsEco, ENTRADA } from "@/components/ProjectsFx";
 import { useNitidez, useTramo } from "@/components/WdidFx";
+import { useModoLigero } from "@/lib/perf";
 
 /**
  * "Selected Projects".
@@ -38,7 +39,11 @@ export function SelectedProjects() {
   const tramo = useTramo();
   const movil = tramo === "movil";
   const carpeta = useNitidez();
-  const quieto = !!useReducedMotion();
+  /* El modo ligero entra por la misma puerta que `prefers-reduced-motion`: el
+     carrusel se para y pasa a ser una fila con scroll manual y `scroll-snap`.
+     Los proyectos siguen siendo accesibles, que es la línea que no se cruza. */
+  const ligero = useModoLigero();
+  const quieto = !!useReducedMotion() || ligero;
   const ref = useRef<HTMLElement>(null);
 
   /* Nada se anima con la sección fuera de pantalla: ni las seis piezas, ni el
@@ -110,11 +115,57 @@ export function SelectedProjects() {
            carrusel se muestra a ancho completo con esquinas redondeadas y un
            borde hairline, para que siga leyéndose como una pantalla. */
         <>
-          <div className="projects__escena projects__escena--movil" aria-hidden="true">
-            <ProjectsFondo tramo={tramo} corriendo={corriendo} />
-          </div>
-          <div className="projects__pantalla-suelta">
-            <CarruselProyectos unaFila quieto={quieto} activo={corriendo} />
+          {/* El velo sustituye a los tres fondos grandes. Los escombros son una
+              banda horizontal que en vertical no dice nada —y es la pieza más
+              pesada del set—, y el cono y el brazo estaban compuestos para una
+              escena apaisada.
+              Va por alfa y no con `screen`: la pieza ya se convirtió a RGBA en
+              su día, y el blend además es lo primero que se cae en modo ligero. */}
+          <img
+            src={`/wdid/fx/${carpeta}/wdid_11_velo_izq.webp`}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+            loading="lazy"
+            className="projects__velo"
+          />
+
+          <div className="projects__movil">
+            {/* El teléfono: marco con el hueco ya perforado y la columna
+                corriendo por detrás. Los dedos del guante entran por delante
+                del borde derecho del hueco, y eso es lo que se busca — el marco
+                va encima, así que las tarjetas pasan tras ellos. */}
+            <div className="phone">
+              <div className="phone__viewport">
+                <CarruselProyectos vertical quieto={quieto} activo={corriendo} />
+              </div>
+              <img
+                src={`/projects/${carpeta}/sp_phone.webp`}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                decoding="async"
+                className="phone__frame"
+              />
+            </div>
+
+            {/* De las piezas pequeñas sobreviven dos, al 45 %. */}
+            <img
+              src={`/projects/${carpeta}/sp_21_cartucho.webp`}
+              alt=""
+              aria-hidden="true"
+              decoding="async"
+              loading="lazy"
+              className="projects__suelta projects__suelta--cartucho"
+            />
+            <img
+              src={`/wdid/fx/${carpeta}/wdid_05_guijarro.webp`}
+              alt=""
+              aria-hidden="true"
+              decoding="async"
+              loading="lazy"
+              className="projects__suelta projects__suelta--guijarro"
+            />
           </div>
         </>
       ) : (

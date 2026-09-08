@@ -17,7 +17,7 @@ const rows = [
 
 export function HeroComparison() {
   const ref = useRef<HTMLDivElement>(null);
-  const { mounted, current } = useHeroPan(ref);
+  const { etapa, current } = useHeroPan(ref);
 
   return (
     <div ref={ref} className="flex w-full min-w-0 flex-col gap-10">
@@ -31,7 +31,7 @@ export function HeroComparison() {
               <PanStack
                 set={row.set}
                 alt={row.alt}
-                mounted={mounted}
+                etapa={etapa}
                 current={current}
                 preload={row.preload}
               />

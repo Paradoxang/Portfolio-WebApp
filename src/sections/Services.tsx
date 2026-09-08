@@ -6,6 +6,7 @@ import { Constellation } from "@/components/Cosmic";
 import { VisorLoop } from "@/components/VisorLoop";
 import { WdidCard } from "@/components/WdidCard";
 import { WdidFx, WdidNebulosa, useTramo } from "@/components/WdidFx";
+import { modoActual } from "@/lib/perf";
 import { services } from "@/data/site";
 
 /**
@@ -134,7 +135,7 @@ export function Services() {
   const my = useMotionValue(0);
   const onPointer = useCallback(
     (e: React.PointerEvent<HTMLElement>) => {
-      if (e.pointerType !== "mouse") return;
+      if (e.pointerType !== "mouse" || modoActual() === "low") return;
       const r = ref.current?.getBoundingClientRect();
       if (!r) return;
       mx.set(((e.clientX - r.left) / r.width - 0.5) * 2);

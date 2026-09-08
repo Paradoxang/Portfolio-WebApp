@@ -1,5 +1,6 @@
 import { motion, useReducedMotion, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useEffect, useState } from "react";
+import { modoActual } from "@/lib/perf";
 
 /**
  * Capa gráfica de "What I Do".
@@ -202,7 +203,8 @@ const ESCALA_ECO: Record<Tramo, number> = { ancho: 1, medio: 1, movil: 2.6 };
 export function useNitidez() {
   const [x2, setX2] = useState(false);
   useEffect(() => {
-    setX2((window.devicePixelRatio || 1) >= 2);
+    // En modo ligero siempre el set ligero: la mitad de píxeles que decodificar.
+    setX2(modoActual() !== "low" && (window.devicePixelRatio || 1) >= 2);
   }, []);
   return x2 ? "x2" : "x1";
 }
