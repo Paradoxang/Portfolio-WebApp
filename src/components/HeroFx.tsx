@@ -5,8 +5,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   FxCorchetes,
   FxMarcoHud,
@@ -189,20 +188,18 @@ function useTramo(): Tramo {
   return tramo;
 }
 
-/** Los bucles continuos de los bitmaps. */
-const BUCLES: Record<
-  string,
-  { animate: Record<string, number[]>; transition: Record<string, unknown> }
-> = {
-  elem_09_anillo: {
-    animate: { rotate: [0, 360] },
-    // lineal a propósito: es un objeto girando, no una transición de interfaz
-    transition: { duration: 28, repeat: Infinity, ease: "linear" },
-  },
-  elem_10_vortice: {
-    animate: { rotate: [0, 8], scale: [1, 1.04] },
-    transition: { duration: 34, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" },
-  },
+/**
+ * Los dos bucles continuos de los bitmaps, ahora como clases CSS.
+ *
+ * Iban con `animate` de Framer y el problema era el mismo que en las órbitas:
+ * al salir el hero de pantalla se quitaban las claves del bucle y la pieza
+ * volvía de golpe a su estado base. Como `@keyframes` se congelan donde estén.
+ * El anillo gira lineal a propósito —es un objeto girando, no una transición de
+ * interfaz— y el vórtice respira con ida y vuelta.
+ */
+const BUCLES_CSS: Record<string, string> = {
+  elem_09_anillo: "fx__pieza--gira",
+  elem_10_vortice: "fx__pieza--respira",
 };
 
 interface HeroFxProps {
@@ -248,47 +245,40 @@ export function HeroFx({ mx, my, listo, corriendo }: HeroFxProps) {
 
   /* Dos capas, no cuatro: al pasar los assets a RGBA desapareció la necesidad
      de separar por modo de mezcla. */
+  /* `fx-parado` es el interruptor de toda la decoración: órbitas, los dos
+     bucles de bitmap y la cinta de datos son animaciones CSS, y esta clase las
+     congela donde estén en vez de devolverlas al principio. Antes se les
+     quitaba el `animate` de Framer y por eso saltaban al salir el hero de
+     pantalla. */
+  const parado = !corriendo || !!quieto ? " fx-parado" : "";
+
   return (
     <>
-      {capa(detras, "hero__fx hero__fx--detras")}
-      {capa(delante, "hero__fx hero__fx--delante")}
+      {capa(detras, `hero__fx hero__fx--detras${parado}`)}
+      {capa(delante, `hero__fx hero__fx--delante${parado}`)}
     </>
   );
 }
 
 /**
- * Recorrido elíptico continuo con `motionPath`.
+ * Recorrido elíptico continuo.
  *
- * Va en un nodo propio, anidado dentro del que mueve Framer: los dos motores
- * escriben `transform`, y compartir elemento sería una pelea. Framer lleva el
- * parallax fuera; GSAP, la órbita dentro.
+ * Va en un nodo propio, anidado dentro del que mueve Framer: los dos escriben
+ * transformaciones y compartir elemento sería una pelea. Framer lleva el
+ * parallax fuera; la órbita va dentro, ahora con `@keyframes`.
+ *
+ * **Ya no usa GSAP.** El `motionPath` recorría una lista de puntos que empezaba
+ * y acababa en el origen, pero GSAP no sabía que era cerrada: la tangente del
+ * final no casaba con la del principio y cada vuelta se veía un cambio de
+ * dirección en seco. Y `useGSAP` revierte su animación al cambiar una
+ * dependencia —una de ellas era «el hero está en pantalla»—, así que al volver
+ * de otra sección la pieza saltaba a su origen.
+ *
+ * La elipse está muestreada en el CSS a partir de x = r·sen0, y = -0.55r·(1-cos0),
+ * que es exactamente la misma figura. El fotograma final coincide con el
+ * inicial en posición y en velocidad, y parar es `animation-play-state`, que
+ * congela donde esté.
  */
-function useOrbita(orbita: Pieza["orbita"], activa: boolean) {
-  const ref = useRef<HTMLDivElement>(null);
-  useGSAP(
-    () => {
-      if (!orbita || !activa || !ref.current) return;
-      const { r, dur } = orbita;
-      gsap.to(ref.current, {
-        motionPath: {
-          path: [
-            { x: 0, y: 0 },
-            { x: r, y: -r * 0.55 },
-            { x: 0, y: -r * 1.1 },
-            { x: -r, y: -r * 0.55 },
-            { x: 0, y: 0 },
-          ],
-          curviness: 1.7,
-        },
-        duration: dur,
-        repeat: -1,
-        ease: "none",
-      });
-    },
-    { dependencies: [activa, orbita?.r, orbita?.dur] }
-  );
-  return ref;
-}
 
 interface PiezaProps {
   p: Pieza;
@@ -307,8 +297,6 @@ function PiezaFx({ p, sx, sy, quieto, listo, corriendo, dpr2, orden }: PiezaProp
   const x = useTransform(sx, [-1, 1], quieto ? [0, 0] : [-d, d]);
   const y = useTransform(sy, [-1, 1], quieto ? [0, 0] : [-d * 0.6, d * 0.6]);
 
-  const bucle = corriendo ? BUCLES[p.id] : undefined;
-  const orbitaRef = useOrbita(p.orbita, corriendo);
   const entrada = { opacity: p.o, scale: 1 };
   const curva = { duration: 0.8, delay: orden * 0.07, ease: [0.16, 1, 0.3, 1] };
 
@@ -318,6 +306,8 @@ function PiezaFx({ p, sx, sy, quieto, listo, corriendo, dpr2, orden }: PiezaProp
         "fx__pieza",
         p.src === "elem_08_malla" || p.id === "elem_08_malla" ? "fx__pieza--malla" : "",
         p.lleno ? "fx__pieza--lleno" : "",
+        // Los dos bucles de bitmap son CSS: se pausan, no se desmontan.
+        BUCLES_CSS[p.id] ?? "",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -333,14 +323,17 @@ function PiezaFx({ p, sx, sy, quieto, listo, corriendo, dpr2, orden }: PiezaProp
         y,
       }}
       initial={{ opacity: 0, scale: 0.94 }}
-      animate={listo ? (bucle ? { ...entrada, ...bucle.animate } : entrada) : { opacity: 0, scale: 0.94 }}
-      transition={
-        bucle
-          ? { opacity: curva, scale: curva, ...bucle.transition }
-          : curva
-      }
+      animate={listo ? entrada : { opacity: 0, scale: 0.94 }}
+      transition={curva}
     >
-      <div ref={orbitaRef} className="fx__orbita">
+      <div
+        className={`fx__orbita${p.orbita ? " fx__orbita--activa" : ""}`}
+        style={
+          p.orbita
+            ? ({ "--orb-r": `${p.orbita.r}px`, "--orb-dur": `${p.orbita.dur}s` } as React.CSSProperties)
+            : undefined
+        }
+      >
         {p.svg ? (
           p.svg(corriendo)
         ) : (

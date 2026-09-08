@@ -9,16 +9,23 @@ export function SectionHeading({
   title,
   children,
 }: {
-  kicker: string;
+  /** Opcional: hay secciones donde el titular va solo. */
+  kicker?: string;
   title: string;
   children?: ReactNode;
 }) {
   return (
     <div>
-      <Reveal>
-        <div className="kicker">{kicker}</div>
-      </Reveal>
-      <h2 className="display mt-3 text-[clamp(39px,6.5vw,75px)] leading-[0.94]">
+      {kicker && (
+        <Reveal>
+          <div className="kicker">{kicker}</div>
+        </Reveal>
+      )}
+      <h2
+        className={`display text-[clamp(39px,6.5vw,75px)] leading-[0.94]${
+          kicker ? " mt-3" : ""
+        }`}
+      >
         <RevealLine delay={0.06}>{title}</RevealLine>
       </h2>
       {children}

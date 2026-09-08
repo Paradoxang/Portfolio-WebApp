@@ -527,10 +527,90 @@
   pointer-events: none;
   will-change: transform, opacity;
 }
+/* ── Órbita de las piezas del hero ──
+   Elipse paramétrica en CSS, doce muestras: x = r·sen0, y = -0.55r·(1-cos0).
+   Antes esto era un `motionPath` de GSAP sobre una lista de puntos. Dos
+   problemas, y los dos se veían:
+     · GSAP no sabía que la lista era cerrada, así que la tangente al final no
+       casaba con la del principio: cada vuelta la pieza cambiaba de dirección
+       de golpe justo en la costura.
+     · `useGSAP` revierte su animación cuando cambia una dependencia, y una de
+       ellas era «el hero está en pantalla». Al volver de otra sección la
+       pieza saltaba a su origen y empezaba de cero.
+   Paramétrica y en CSS, el fotograma 100 % es idéntico al 0 % y la velocidad
+   también, así que no hay costura; y se para con `animation-play-state`, que
+   congela donde esté en vez de devolverla al principio. De paso son siete
+   tweens menos en el hilo principal. */
+@keyframes fx-orbita {
+  0% { translate: calc(var(--orb-r) * 0) calc(var(--orb-r) * 0); }
+  8.33% { translate: calc(var(--orb-r) * 0.5) calc(var(--orb-r) * -0.0737); }
+  16.67% { translate: calc(var(--orb-r) * 0.866) calc(var(--orb-r) * -0.275); }
+  25.00% { translate: calc(var(--orb-r) * 1) calc(var(--orb-r) * -0.55); }
+  33.33% { translate: calc(var(--orb-r) * 0.866) calc(var(--orb-r) * -0.825); }
+  41.67% { translate: calc(var(--orb-r) * 0.5) calc(var(--orb-r) * -1.0263); }
+  50.00% { translate: calc(var(--orb-r) * 0) calc(var(--orb-r) * -1.1); }
+  58.33% { translate: calc(var(--orb-r) * -0.5) calc(var(--orb-r) * -1.0263); }
+  66.67% { translate: calc(var(--orb-r) * -0.866) calc(var(--orb-r) * -0.825); }
+  75.00% { translate: calc(var(--orb-r) * -1) calc(var(--orb-r) * -0.55); }
+  83.33% { translate: calc(var(--orb-r) * -0.866) calc(var(--orb-r) * -0.275); }
+  91.67% { translate: calc(var(--orb-r) * -0.5) calc(var(--orb-r) * -0.0737); }
+  100% { translate: calc(var(--orb-r) * 0) calc(var(--orb-r) * 0); }
+}
 .fx__orbita {
   width: 100%;
   height: 100%;
 }
+.fx__orbita--activa {
+  animation: fx-orbita var(--orb-dur) linear infinite;
+}
+
+/* Los dos bucles de bitmap, por el mismo motivo: con el `animate` de Framer,
+   quitar las claves del bucle devolvía la pieza a su estado base de golpe. */
+@keyframes fx-gira {
+  from { rotate: 0deg; }
+  to { rotate: 360deg; }
+}
+@keyframes fx-respira {
+  0%, 100% { rotate: 0deg; scale: 1; }
+  50% { rotate: 8deg; scale: 1.04; }
+}
+.fx__pieza--gira {
+  animation: fx-gira 28s linear infinite;
+}
+.fx__pieza--respira {
+  animation: fx-respira 34s ease-in-out infinite;
+}
+
+/* Un solo interruptor para toda la decoración del hero: fuera de pantalla o
+   con la pestaña detrás, todo se congela donde está. */
+.fx-parado .fx__orbita--activa,
+.fx-parado .fx__pieza--gira,
+.fx-parado .fx__pieza--respira,
+.fx-parado .fx-datos__cinta {
+  animation-play-state: paused;
+}
+
+/* La cinta de datos del hero: marquesina con el contenido duplicado, así que
+   el -50 % cae clavado. Antes iba con Framer y al salir el hero de pantalla el
+   `animate` pasaba a `x: 0%` con duración cero: volvía al principio de un
+   tirón, que es justo lo que se veía en la banda de abajo. */
+@keyframes fx-cinta {
+  from { translate: 0 0; }
+  to { translate: -50% 0; }
+}
+.fx-datos__cinta--corre {
+  animation: fx-cinta 26s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx__orbita--activa,
+  .fx__pieza--gira,
+  .fx__pieza--respira,
+  .fx-datos__cinta--corre {
+    animation: none;
+  }
+}
+
 .fx__pieza img {
   display: block;
   width: 100%;
@@ -1324,11 +1404,31 @@
 }
 .hero-rail--right {
   right: var(--borde-hero);
+  /* El raíl mide SOLO el grupo del número. Con la disponibilidad dentro del
+     flujo, la columna centraba el conjunto y el "02" acababa 160 px más alto
+     que el "01": los dos raíles dejaban de leerse como un par. La
+     disponibilidad cuelga ahora en absoluto por debajo, así que no arrastra al
+     número. */
+  flex-direction: column;
+  align-items: flex-end;
 }
 .hero-index-group {
   display: flex;
   align-items: center;
   gap: 0.9rem;
+}
+/* El derecho va en espejo: flecha y etiqueta primero, el número pegado al
+   borde. La flecha apunta hacia fuera, no hacia abajo. */
+.hero-index-group--espejo .hero-arrow {
+  rotate: 180deg;
+}
+/* Y el número gira en el otro sentido. En reposo el "01" está tumbado a -90
+   grados; el "02" a +90, que es su reflejo. Sin esto los dos caían del mismo
+   lado y el par se leía torcido.
+   Especificidad (0,2,0): por debajo de la regla de hover, que es (0,3,0), así
+   que al pasar el ratón sigue mandando el enderezado. */
+.hero-index-group--espejo .hero-index {
+  transform: rotate(450deg);
 }
 .hero-rail__vertical {
   writing-mode: vertical-rl;
@@ -1379,13 +1479,13 @@
   transition: transform 900ms cubic-bezier(0.22, 1, 0.28, 1),
     color 520ms ease, text-shadow 520ms ease;
 }
-.hero-rail--left:hover .hero-index-box,
-.hero-rail--left:focus-within .hero-index-box {
+.hero-indice:hover .hero-index-box,
+.hero-indice:focus-within .hero-index-box {
   transform: scale(1);
   filter: blur(0);
 }
-.hero-rail--left:hover .hero-index,
-.hero-rail--left:focus-within .hero-index {
+.hero-indice:hover .hero-index,
+.hero-indice:focus-within .hero-index {
   transform: rotate(0deg);
   color: var(--color-ink);
   text-shadow: 0 0 12px rgba(143, 162, 255, 0.75),
@@ -1394,12 +1494,12 @@
 /* La etiqueta acompaña al encendido. Ya no arranca apagada: al 70% de `mute`
    sobre la nebulosa y el enjambre no se leía, y esta regla es la que ganaba
    por especificidad al blanco de `.hero-rail__vertical`. */
-.hero-rail--left .hero-rail__vertical {
+.hero-indice .hero-rail__vertical {
   color: #ffffff;
   transition: color 380ms ease;
 }
-.hero-rail--left:hover .hero-rail__vertical,
-.hero-rail--left:focus-within .hero-rail__vertical {
+.hero-indice:hover .hero-rail__vertical,
+.hero-indice:focus-within .hero-rail__vertical {
   color: var(--color-neb);
 }
 
@@ -1452,13 +1552,27 @@
 
 /* Disponibilidad: sin marco, solo el punto luminoso. Va en columna y el punto
    primero, que es donde acaba la frase — el texto se lee de abajo arriba. */
+/* Indicador de estado, en la esquina inferior derecha del hero.
+   Cuelga de la sección y no del raíl: dentro del raíl volvería a descentrar el
+   número, y colgando de él se salía de la ventana. En horizontal ocupa 20 px de
+   alto en vez de 295 y cabe en cualquier pantalla. */
 .hero-disponible {
+  position: absolute;
+  right: var(--borde-hero, clamp(1.4rem, 3vw, 3.5rem));
+  bottom: clamp(1rem, 3.5vh, 2.5rem);
+  z-index: 40;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.6rem;
   padding: 0.4rem 0.2rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--color-mute);
+  /* Mismo despegue que los raíles: el fondo de aquí abajo tampoco se puede dar
+     por oscuro. */
+  text-shadow: 0 1px 4px rgba(6, 9, 18, 1), 0 0 14px rgba(6, 9, 18, 0.95);
   transition: color 0.25s ease;
 }
 .hero-disponible:hover {
@@ -1504,6 +1618,29 @@
     padding-top: 2.5rem;
     padding-bottom: 1rem;
   }
+  /* El chip de disponibilidad sí entra en móvil, ahora que es horizontal.
+     Va centrado y no pegado a la derecha —a 390 px ocupa dos tercios del ancho
+     y alineado a un lado se lee torcido—, y por encima de la tira de datos,
+     que ocupa los últimos 25 px de la sección. */
+  .hero-disponible {
+    right: auto;
+    left: 50%;
+    translate: -50% 0;
+    /* Arriba y no abajo. Abajo lo pisaba el nombre: es tipografia grande
+       anclada al pie, y su alto cambia con el ancho, asi que a 360x640 se lo
+       comia entero y en tablet le quitaba 15 px. La banda de arriba es la
+       unica de alto estable —queda entre la barra de navegacion y el arranque
+       de los railes— y ahi el chip nunca pisa nada. */
+    top: 5.2rem;
+    bottom: auto;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  .hero-disponible__punto {
+    width: 8px;
+    height: 8px;
+  }
+
   /* Los raíles suben para dejarle sitio a la figura. */
   .hero-rail {
     --borde-hero: 0.9rem;
@@ -1528,6 +1665,12 @@
     padding-inline: 0.75rem;
     font-size: min(clamp(51px, 14.1vw, 114px), 16.8vw);
   }
+}
+
+/* El enlace móvil del lado derecho va en espejo: la etiqueta primero y la
+   flecha apuntando hacia fuera, igual que el "02" en escritorio. */
+.hero-rail__enlace--espejo .hero-arrow {
+  rotate: 180deg;
 }
 
 /* Sin `display` a propósito: lo pone `.hero-solo-movil` dentro de la media
@@ -1776,3 +1919,357 @@ html.lenis body {
   overflow: hidden;
 }
 
+
+/* ════════════════════════════════════════════════════════════════════════
+   "Selected Projects" — la tableta con el carrusel dentro
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* La sección va a sangre. No lleva `width:100vw` ni `margin-inline:calc(50% -
+   50vw)`: las secciones cuelgan del `<main>` del layout, que no tiene tope de
+   ancho, así que basta con no ponérselo. Y `100vw` incluye la barra de
+   desplazamiento —unos 15 px en escritorio—, que es justo el scroll
+   horizontal que hay que evitar.
+   `overflow-x: clip` y no `hidden`: `hidden` crea un contexto de
+   desplazamiento y rompe cualquier `position: sticky` que haya por encima en
+   la página. `clip` recorta sin ese efecto secundario, y además deja el
+   `overflow-y` en `visible` de verdad. */
+.projects {
+  overflow-x: clip;
+  /* El relleno vertical vive aquí y no en una clase de Tailwind. Estaba escrito
+     como `[padding-block:...]` dentro de una plantilla, pegado al `${...}` que
+     añade `no-corre`: el escáner de Tailwind corta el candidato en la
+     interpolación, nunca generaba la utilidad y la sección se quedaba con cero
+     relleno arriba y abajo. */
+  padding-block: clamp(5rem, 10vh, 8rem);
+}
+
+/* El titular. Va bajo y pegado al borde izquierdo, y la composición sube a
+   meterse por debajo: entre los dos cerraban un hueco de unos 400 px de aire
+   muerto, porque el escenario es 16:9 y la tableta se centra en su 60 % de
+   alto — todo lo que hay encima es cono de proyección y no pesa nada.
+   El sangrado es algo menor que el de "What I Do" a propósito: el titular de
+   esta sección no compite con nada a su izquierda. */
+.projects__inner {
+  padding-inline: clamp(1.25rem, 3.6vw, 3.6rem);
+  padding-top: clamp(2.5rem, 7vh, 6rem);
+}
+
+/* ── El escenario ──
+   16:9 porque las seis piezas del brief están medidas sobre un montaje de
+   1920x1080. Con un alto que dependiera del contenido, cada porcentaje
+   significaría algo distinto en cada pantalla. */
+.projects__escena {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  /* Margen NEGATIVO: la composición sube por debajo del titular. Lo que se
+     solapa es la banda alta del escenario, que solo contiene el cono, y para
+     eso está su máscara —desvanece antes de llegar al texto—. El titular va en
+     z6 y la escena como mucho en z5, así que nunca lo tapa. */
+  margin-top: clamp(-10rem, -11vh, -3rem);
+}
+/* En móvil no hay tableta: el fondo pasa a ser un telón detrás de la sección
+   entera en vez de un bloque que añade alto. */
+.projects__escena--movil {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+  margin-top: 0;
+}
+
+/* Las capas. Ninguna crea contexto de apilado por sí sola salvo por su propio
+   `z-index`, que es lo que permite que el eco —que vive fuera del escenario,
+   porque mide contra la sección— se cuele entre el fondo y la maquinaria. */
+.projects__capa {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.projects__capa--fondo {
+  z-index: 0;
+}
+.projects__capa--maquinaria {
+  z-index: 2;
+}
+.projects__capa--delanteras {
+  z-index: 5;
+}
+/* El eco cuelga de la SECCIÓN, no del escenario. */
+.projects__capa--eco {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.projects__capa--eco > img {
+  position: absolute;
+  height: auto;
+  translate: -50% -50%;
+  user-select: none;
+}
+
+.projects__pieza {
+  position: absolute;
+  height: auto;
+  /* El preflight de Tailwind pone `img { max-width: 100% }`, y estas piezas
+     están pensadas para sangrar: el cinturón de escombros se declara al 128 %
+     y salía recortado a exactamente el 100 %, terminando a ras del borde de la
+     ventana con su canto recto a la vista. Es el corte que se veía a la
+     izquierda. */
+  max-width: none;
+  translate: -50% -50%;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* El cono se abre hacia arriba y su parte ancha llega a la altura del titular.
+   Sin esta máscara pasa por detrás de «SELECTED PROJECTS» y le come el
+   contraste. */
+/* El cinturón de escombros termina en seco por los dos lados: medido sobre el
+   archivo, su alfa medio en la primera columna es 39 sobre 255, no cero. A 105 %
+   de ancho solo sangraba un 2.5 % por lado y ese canto recto se veía como una
+   línea vertical en el borde izquierdo de la pantalla.
+   Se ensancha a 128 % y se le pluma por los lados: el desvanecido ocurre ya
+   fuera de la ventana, así que lo que entra en pantalla es cinturón continuo. */
+.projects__escombros {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 11%, #000 89%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 11%, #000 89%, transparent 100%);
+}
+
+.projects__cono {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 26%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 26%, #000 100%);
+}
+
+/* ── La tableta ──
+   Proporción del marco 1.6816, medida sobre el archivo (1900x1130). */
+.projects__tableta {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  z-index: 3;
+  width: 72%;
+  aspect-ratio: 1900 / 1130;
+  translate: -50% -50%;
+}
+.projects__tableta__flota {
+  position: absolute;
+  inset: 0;
+}
+/* Entre 768 y 1279 la tableta sube al 88 %: la ventana es más estrecha pero la
+   pantalla de la tableta tiene que seguir siendo legible, y ahí ya no compite
+   con el cartucho —que desaparece— por el margen izquierdo. */
+@media (max-width: 1279px) {
+  .projects__tableta {
+    width: 88%;
+  }
+}
+
+/* El hueco de la pantalla. Porcentajes sobre el marco, medidos sobre el
+   asset, válidos a cualquier escala. */
+.projects__viewport {
+  position: absolute;
+  left: 23.28%;
+  top: 7.94%;
+  width: 53.48%;
+  height: 61.06%;
+  z-index: 3;
+  /* Del ancho del propio contenedor. Importa aunque el bisel tape las
+     esquinas: sin él, en el instante en que una tarjeta pasa por una esquina
+     se ve asomar su pico cuadrado por el filo. */
+  border-radius: 3.15%;
+  /* No es opcional: sin esto las tarjetas se salen del hueco y aparecen fuera
+     de la tableta, en la zona transparente del marco. */
+  overflow: hidden;
+  /* La pantalla tiene fondo propio. Sin él, entre tarjeta y tarjeta se veía el
+     campo de estrellas de la página a través del agujero y la tableta no
+     parecía encendida: parecía un marco vacío. Con el panel detrás, las
+     capturas de los proyectos tienen contra qué recortarse.
+     El halo de arriba no es adorno: da el gradiente de una pantalla
+     retroiluminada, que es lo que separa esto de un rectángulo gris. */
+  background: radial-gradient(120% 100% at 50% 0%, rgba(143, 162, 255, 0.13), transparent 62%),
+    linear-gradient(168deg, #151b30, #080b15);
+  box-shadow: inset 0 0 0 1px rgba(214, 201, 255, 0.09), inset 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+.projects__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: auto;
+  /* Los clics atraviesan el marco y llegan al carrusel. */
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── El carrusel ──
+   Dos filas al 46 % de alto con un 8 % de separación. */
+.carrusel {
+  display: flex;
+  flex-direction: column;
+  gap: 8%;
+  height: 100%;
+}
+.carrusel__fila {
+  position: relative;
+  flex: 0 0 46%;
+  overflow: hidden;
+  /* Contenedor de tamaño para que las tarjetas se midan contra el ALTO de la
+     fila y no contra el ancho del carril, que es `max-content` y haría
+     circular cualquier porcentaje. De aquí salen `cqh` y el ancho exacto de
+     cada tarjeta. */
+  container-type: size;
+}
+.carrusel--una .carrusel__fila {
+  flex: 1 1 100%;
+}
+
+.carrusel__carril {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  will-change: transform;
+}
+/* Las dos filas van en sentidos opuestos: es lo que hace que se lea como
+   movimiento y no como que la página se arrastra. Duraciones distintas y sin
+   divisor común para que no se acompasen nunca.
+   `linear` es obligatorio: cualquier otra curva acelera y frena en la costura
+   del bucle y el salto se ve. */
+@keyframes carrusel-izq {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@keyframes carrusel-der {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+.carrusel__carril--izq {
+  animation: carrusel-izq 42s linear infinite;
+}
+.carrusel__carril--der {
+  animation: carrusel-der 55s linear infinite;
+}
+/* Pausa al pasar el puntero, para poder leer y clicar; y pausa con la sección
+   fuera de pantalla, que es lo que de verdad libera al compositor. */
+.carrusel__carril.esta-pausado,
+.projects.no-corre .carrusel__carril {
+  animation-play-state: paused;
+}
+
+/* La separación va como margen DENTRO de la tarjeta y no como `gap` del
+   carril. Con `gap`, el carril mide 2n·T + (2n-1)·G y el -50 % se queda medio
+   hueco corto de la vuelta exacta: cada ciclo pega un salto. Con el margen
+   dentro, cada tarjeta ocupa T+G, el carril mide 2n·(T+G) y el -50 % cae
+   clavado. */
+.carrusel__tarjeta {
+  position: relative;
+  flex: none;
+  height: 100%;
+  /* 108.9cqh = 34 % del ancho del hueco. El brief propone 16:10, pero con la
+     fila al 46 % de un hueco de proporción 1.4727 eso da tarjetas del 50 % de
+     ancho: dos por fila, no las ~2.9 que pide el propio brief ni las que se
+     ven en el montaje de referencia, donde miden 232x215 px. A 1.089 salen
+     las dos cifras a la vez. */
+  aspect-ratio: 1.089;
+  margin-inline-end: 7cqh;
+  overflow: hidden;
+  border-radius: 6cqh;
+  background: #0b1120;
+  border: 1px solid rgba(214, 201, 255, 0.12);
+}
+.carrusel__medio {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.carrusel__medio--video {
+  z-index: 1;
+}
+/* Rótulo del proyecto, con su propio velo: sobre una captura clara el blanco
+   no llega solo. */
+.carrusel__rotulo {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 5cqh;
+  padding: 7cqh 8cqh 6cqh;
+  background: linear-gradient(to top, rgba(6, 9, 18, 0.92), rgba(6, 9, 18, 0));
+  font-family: var(--font-kenney);
+  font-size: 11cqh;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+}
+.carrusel__num {
+  color: var(--color-neb);
+}
+.carrusel__tarjeta:hover {
+  border-color: rgba(143, 162, 255, 0.45);
+}
+
+/* ── Móvil: sin tableta ──
+   El carrusel a ancho completo, con esquinas redondeadas y un borde hairline
+   para que siga leyéndose como una pantalla. */
+.projects__pantalla-suelta {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(1.5rem, 5vh, 2.5rem);
+  height: clamp(150px, 44vw, 260px);
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(214, 201, 255, 0.14);
+  /* Mismo panel que el hueco de la tableta: aquí no hay marco, pero los
+     proyectos necesitan igual algo contra lo que recortarse. */
+  background: radial-gradient(120% 100% at 50% 0%, rgba(143, 162, 255, 0.13), transparent 62%),
+    linear-gradient(168deg, #151b30, #080b15);
+}
+
+/* ── Movimiento reducido ──
+   El carrusel no desaparece: se detiene y pasa a ser una fila con scroll
+   manual y `scroll-snap`. Los proyectos siguen siendo accesibles. */
+.carrusel--manual {
+  display: flex;
+  gap: 12px;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.carrusel--manual .carrusel__hueco {
+  flex: none;
+  height: 100%;
+  scroll-snap-align: start;
+}
+.carrusel--manual .carrusel__tarjeta {
+  margin-inline-end: 0;
+  /* Fuera de una fila con `container-type`, los `cqh` no tienen contra qué
+     medirse: aquí las medidas van en unidades absolutas. */
+  aspect-ratio: 1.089;
+  border-radius: 10px;
+}
+.carrusel--manual .carrusel__rotulo {
+  gap: 6px;
+  padding: 14px 12px 10px;
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrusel__carril {
+    animation: none;
+  }
+}

@@ -1,33 +1,174 @@
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Reveal } from "@/lib/anim";
+import { Reveal, SSR } from "@/lib/anim";
 import { SectionHeading } from "@/components/SectionHeading";
-import { ProjectCard } from "@/components/ProjectCard";
-import { featuredProjects } from "@/data/site";
+import { CarruselProyectos } from "@/components/CarruselProyectos";
+import { ProjectsFondo, ProjectsDelanteras, ProjectsEco, ENTRADA } from "@/components/ProjectsFx";
+import { useNitidez, useTramo } from "@/components/WdidFx";
 
+/**
+ * "Selected Projects".
+ *
+ * Deja de ser una rejilla de tarjetas: es **una tableta sostenida por dos
+ * guantes**, con los proyectos corriendo dentro en dos filas que se desplazan
+ * en sentidos opuestos.
+ *
+ * La tableta no lleva pantalla puesta. Es un marco con un agujero, y lo que se
+ * ve por él es DOM real —el carrusel—, no una textura. El marco va por encima
+ * con `pointer-events: none`, así que los clics lo atraviesan y llegan a los
+ * proyectos.
+ *
+ * ── La sección va a sangre ──
+ * El brief propone `width:100vw; margin-inline:calc(50% - 50vw)`. Aquí no hace
+ * falta y además sería peor: las secciones cuelgan directamente del `<main>`
+ * del layout, que **no tiene `max-width`** —el tope lo pone cada sección por
+ * dentro—, así que basta con no ponérselo. Y `100vw` incluye el ancho de la
+ * barra de desplazamiento: en escritorio la sección quedaría unos 15 px más
+ * ancha que el hueco disponible, que es exactamente el scroll horizontal que
+ * el criterio 2 prohíbe. Mismo patrón que ya usa "What I Do".
+ *
+ * ── Dos sistemas de coordenadas ──
+ * Las seis piezas gráficas están medidas sobre el montaje de 1920x1080, así
+ * que viven dentro de `.projects__escena`, que es 16:9. El titular y el enlace
+ * se quedan en la rejilla normal del sitio, en `.projects__inner`.
+ */
 export function SelectedProjects() {
+  const tramo = useTramo();
+  const movil = tramo === "movil";
+  const carpeta = useNitidez();
+  const quieto = !!useReducedMotion();
+  const ref = useRef<HTMLElement>(null);
+
+  /* Nada se anima con la sección fuera de pantalla: ni las seis piezas, ni el
+     eco, ni las dos filas del carrusel. Con dos carriles corriendo fuera de
+     vista se nota en el frame rate de toda la página. 200 px de margen para
+     que arranquen justo antes de entrar y nunca se vea el momento. */
+  const [enPantalla, setEnPantalla] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setEnPantalla(e.isIntersecting), {
+      threshold: 0,
+      rootMargin: "200px 0px",
+    });
+    io.observe(el);
+    const onVis = () => setEnPantalla((v) => v && !document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
+
+  const corriendo = enPantalla && !quieto;
+
+  /* ── La entrada NO va con `whileInView` ──
+     El brief la propone así, pero este sitio se prerenderiza: con
+     `initial="hidden"` el HTML estático se queda con la sección entera a
+     `opacity: 0` y solo se ve si el observador de Framer llega a dispararse
+     tras la hidratación. Es el patrón que ya usa `Reveal` en `lib/anim`: el
+     prerender pinta el estado final y la animación es cosa del cliente. Así,
+     si algo falla, lo que se ve de más es la sección, no un hueco negro. */
+  const visto = useInView(ref, { once: true, margin: "-80px" });
+  const mostrar = SSR || quieto || visto;
+
   return (
-    <section className="mx-auto max-w-[1200px] px-6 py-20 md:px-8 md:py-28">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <SectionHeading kicker="02 — Trabajo seleccionado" title="Selected Projects" />
-        <Reveal delay={0.15}>
-          <Link
-            to="/proyectos"
-            className="group flex items-center gap-2 font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-neb transition-colors hover:text-ink"
-          >
-            Ver todos
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-          </Link>
-        </Reveal>
+    <section
+      ref={ref}
+      id="proyectos-destacados"
+      /* `no-corre` para las dos filas del carrusel: la animacion es CSS y se
+         para con `animation-play-state`, que es lo que hace que el compositor
+         deje de trabajar de verdad con la seccion fuera de vista. */
+      className={`projects relative w-full${corriendo ? "" : " no-corre"}`}
+    >
+      {/* z1 · mide contra la sección entera, incluida la banda del titular. */}
+      <ProjectsEco tramo={tramo} corriendo={corriendo} />
+
+      {/* Mismo tope y mismo sangrado lateral que "What I Do": los dos
+          titulares caen sobre la misma vertical, que es lo que hace que la
+          portada se lea como una rejilla y no como dos secciones sueltas. */}
+      <div className="projects__inner relative z-[6] mx-auto w-full max-w-[1600px]">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <SectionHeading kicker="02 — Trabajo seleccionado" title="Selected Projects" />
+          <Reveal delay={0.15}>
+            <Link
+              to="/proyectos"
+              className="group flex items-center gap-2 font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-neb transition-colors hover:text-ink"
+            >
+              Ver todos
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </Reveal>
+        </div>
       </div>
 
-      <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {featuredProjects.map((p, i) => (
-          <Reveal key={p.slug} delay={i * 0.1}>
-            <ProjectCard project={p} />
-          </Reveal>
-        ))}
-      </div>
+      {movil ? (
+        /* ── Móvil: sin tableta ──
+           El marco con las manos ocupa demasiado por debajo de 768 px. El
+           carrusel se muestra a ancho completo con esquinas redondeadas y un
+           borde hairline, para que siga leyéndose como una pantalla. */
+        <>
+          <div className="projects__escena projects__escena--movil" aria-hidden="true">
+            <ProjectsFondo tramo={tramo} corriendo={corriendo} />
+          </div>
+          <div className="projects__pantalla-suelta">
+            <CarruselProyectos unaFila quieto={quieto} activo={corriendo} />
+          </div>
+        </>
+      ) : (
+        <motion.div
+          className="projects__escena"
+          initial={SSR || quieto ? false : "hidden"}
+          animate={mostrar ? "show" : "hidden"}
+        >
+          <ProjectsFondo tramo={tramo} corriendo={corriendo} />
+
+          {/* Dos envoltorios y no uno. El de fuera lleva la entrada por
+              variantes y el agarre del hover; el de dentro, la flotación
+              continua. En un solo elemento no caben: un `animate` explícito
+              anula la propagación de variantes del padre, así que la tableta
+              se quedaría sin entrada, y el `y` del hover pelearía con los
+              fotogramas clave de la flotación. Separados, las dos
+              transformaciones se componen. */}
+          <motion.div
+            className="projects__tableta"
+            variants={ENTRADA}
+            custom={1}
+            whileHover={{ scale: 1.015, y: 2 }}
+            transition={{ type: "spring", stiffness: 260, damping: 26 }}
+          >
+            {/* La flotación va en el contenedor COMÚN de hueco y marco, no en
+                el marco solo: si el marco flota y el hueco no, el carrusel se
+                descuadra respecto al bisel y se ve en el filo. */}
+            <motion.div
+              className="projects__tableta__flota"
+              animate={
+                corriendo
+                  ? { y: [-6, 6], transition: { duration: 9, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" } }
+                  : undefined
+              }
+            >
+              {/* z3 · el carrusel, visto a través del agujero. */}
+              <div className="projects__viewport">
+                <CarruselProyectos quieto={quieto} activo={corriendo} />
+              </div>
+              {/* z4 · el marco. `pointer-events:none` para que los clics pasen. */}
+              <img
+                src={`/projects/${carpeta}/sp_tablet.webp`}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                decoding="async"
+                className="projects__frame"
+              />
+            </motion.div>
+          </motion.div>
+
+          <ProjectsDelanteras tramo={tramo} corriendo={corriendo} />
+        </motion.div>
+      )}
     </section>
   );
 }

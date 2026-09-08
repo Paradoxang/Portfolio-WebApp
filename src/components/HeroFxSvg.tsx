@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
@@ -285,20 +284,21 @@ export function TelemetriaCorchete({ corriendo }: { corriendo: boolean }) {
   return <span className="fx-datos__etiqueta" ref={ref} />;
 }
 
-/** Cinta continua de la tira de datos. */
+/**
+ * Cinta continua de la tira de datos.
+ *
+ * Marquesina de manual: el contenido va duplicado y se desplaza un -50 %, así
+ * que la costura cae clavada. Lo que fallaba no era el bucle sino cómo se
+ * paraba: con Framer, al salir el hero de pantalla el `animate` pasaba a
+ * `x: "0%"` con duración cero y la banda volvía al principio de un tirón. En
+ * CSS se congela donde esté, y el interruptor es la clase `fx-parado` que
+ * cuelga del contenedor de toda la decoración.
+ */
 export function TelemetriaTira({ corriendo }: { corriendo: boolean }) {
   return (
-    <motion.div
-      className="fx-datos__cinta"
-      animate={corriendo ? { x: ["0%", "-50%"] } : { x: "0%" }}
-      transition={
-        corriendo
-          ? { duration: 26, repeat: Infinity, ease: "linear" }
-          : { duration: 0 }
-      }
-    >
+    <div className={`fx-datos__cinta${corriendo ? " fx-datos__cinta--corre" : ""}`}>
       <span>{TIRA}</span>
       <span aria-hidden="true">{TIRA}</span>
-    </motion.div>
+    </div>
   );
 }

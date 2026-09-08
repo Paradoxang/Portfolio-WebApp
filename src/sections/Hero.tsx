@@ -128,7 +128,7 @@ export function Hero() {
         <>
           {/* Izquierda: el "01" solo en escritorio; en móvil queda la etiqueta
               con su flecha, como enlace a servicios. */}
-          <Link to="/servicios" className="hero-rail hero-rail--left">
+          <Link to="/servicios" className="hero-rail hero-rail--left hero-indice">
             {/* El número a la izquierda de la etiqueta; la flecha, a su derecha. */}
             <span className="hero-index-group">
               <span className="hero-index-box hero-solo-escritorio">
@@ -142,27 +142,56 @@ export function Hero() {
           </Link>
 
           <div className="hero-rail hero-rail--right">
-            <a
-              href={contact.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackContact("whatsapp")}
-              className="hero-disponible hero-solo-escritorio"
+            {/* Gemelo del "01 — Especialidades", en espejo: aquí la flecha y la
+                etiqueta van primero y el número queda pegado al borde derecho,
+                que es lo que hace que los dos raíles se lean como un par y no
+                como dos cosas distintas. Comparte `hero-indice` con el de la
+                izquierda, así que hereda el remolino del número en hover sin
+                duplicar una sola regla. */}
+            <Link
+              to="/proyectos"
+              className="hero-indice hero-solo-escritorio"
+              aria-label="Ver misiones completadas: proyectos"
             >
-              <span className="hero-disponible__punto" aria-hidden="true" />
-              <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
-                Disponible para misiones
-              </span>
-            </a>
-
-            {/* En móvil el lado derecho lleva a proyectos, como en el esquema. */}
-            <Link to="/proyectos" className="hero-rail__enlace hero-solo-movil">
-              <FlechaLarga />
-              <span className="hero-rail__vertical font-elnath text-[13px]">
-                Proyectos
+              <span className="hero-index-group hero-index-group--espejo">
+                <FlechaLarga />
+                <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
+                  Misiones completadas
+                </span>
+                <span className="hero-index-box">
+                  <span className="hero-index">02</span>
+                </span>
               </span>
             </Link>
+
+            {/* En móvil el número no entra: queda la etiqueta con su flecha,
+                espejo de "Especialidades" en el lado izquierdo. */}
+            <Link to="/proyectos" className="hero-rail__enlace hero-rail__enlace--espejo hero-solo-movil">
+              <span className="hero-rail__vertical font-elnath text-[13px]">
+                Misiones completadas
+              </span>
+              <FlechaLarga />
+            </Link>
           </div>
+
+          {/* La disponibilidad ya no cuelga del raíl derecho.
+              Vertical y colgando del "02" se salía de la ventana por abajo en
+              todo lo que no fuera 1080 de alto: son 295 px de rótulo más los
+              180 del número, y en un borde de 700 a 900 px no caben los dos.
+              Aquí abajo, en horizontal, es lo que siempre fue —un indicador de
+              estado— y no compite con nada. */}
+          <a
+            href={contact.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackContact("whatsapp")}
+            className="hero-disponible"
+          >
+            <span className="hero-disponible__punto" aria-hidden="true" />
+            <span className="font-elnath text-[clamp(10px,0.85vw,12px)]">
+              Disponible para misiones
+            </span>
+          </a>
         </>
       )}
 
