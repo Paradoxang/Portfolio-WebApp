@@ -1559,14 +1559,21 @@
 .hero-disponible {
   position: absolute;
   right: var(--borde-hero, clamp(1.4rem, 3vw, 3.5rem));
-  bottom: clamp(1rem, 3.5vh, 2.5rem);
+  /* Por encima de la tira de datos, no pegado al borde inferior. Abajo del
+     todo se solapaban 294x22 px —la tira ocupa los ultimos 80 px de la seccion
+     y encima se sale 27 por debajo de la ventana—, y el chip salia cortado.
+     Aqui queda a la derecha del retrato y por debajo del 02: los tres huecos
+     libres de esa banda. */
+  bottom: clamp(5.5rem, 11vh, 8rem);
   z-index: 40;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.6rem;
   padding: 0.4rem 0.2rem;
-  letter-spacing: 0.24em;
+  /* Mas pequeno que los railes: es un indicador de estado, no un rotulo. */
+  font-size: clamp(9px, 0.68vw, 11px);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--color-mute);

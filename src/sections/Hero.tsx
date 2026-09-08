@@ -188,7 +188,7 @@ export function Hero() {
             className="hero-disponible"
           >
             <span className="hero-disponible__punto" aria-hidden="true" />
-            <span className="font-elnath text-[clamp(10px,0.85vw,12px)]">
+            <span className="font-elnath">
               Disponible para misiones
             </span>
           </a>
