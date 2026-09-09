@@ -116,7 +116,13 @@ function Tarjeta({ p, activo }: { p: Project; activo: boolean }) {
         src={poster}
         alt=""
         aria-hidden="true"
-        loading="lazy"
+        /* Carga inmediata, no perezosa. Dentro del hueco del telefono las
+           tarjetas van en un contenedor recortado y transformado, y ahi el
+           aplazamiento no es fiable: se quedaban siete de dieciocho sin pedir y
+           media pantalla del movil en negro. Son nueve WebP distintos, de 7 a
+           76 KB, y con prioridad baja no le quitan ancho de banda a lo que el
+           visitante esta mirando. */
+        fetchPriority="low"
         decoding="async"
         draggable={false}
         className="carrusel__medio"

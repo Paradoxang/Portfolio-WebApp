@@ -2524,7 +2524,14 @@ html.lenis body {
    blando. */
 .phone {
   position: relative;
-  width: min(78%, 380px);
+  /* 96 % y no 78 %. La pantalla del asset es solo el 58 % del alto del marco y
+     el 58 % de su ancho —el resto es bisel y guantes—, asi que a 78 % de un
+     movil de 390 la ventana util se quedaba en 176x463: los proyectos
+     ocupaban un recuadro pequeno en medio de una ilustracion grande.
+     El tope de 380 px se mantiene y es el que manda en pantallas mas anchas:
+     el original venia a 459 px y se subio a 722 con Lanczos, asi que por
+     encima de ahi empieza a verse blando. */
+  width: min(96%, 380px);
   margin-inline: auto;
   aspect-ratio: 361 / 953;
 }
