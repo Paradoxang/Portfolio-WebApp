@@ -2202,6 +2202,13 @@ html.lenis body {
    clavado. */
 .carrusel__tarjeta {
   position: relative;
+  /* `block` explícito. La tarjeta es un <a>, y un <a> es `inline` de fábrica.
+     En los carriles animados da igual —son contenedores flex, y un ítem flex se
+     bloquifica solo—, pero el carrusel manual del modo ligero la mete en un div
+     normal: ahí se quedaba en línea, donde `height`, `width` y `aspect-ratio`
+     no hacen absolutamente nada. Medida real: 2x24 px. Los proyectos
+     desaparecían de la tableta sin que nada estuviera oculto. */
+  display: block;
   flex: none;
   height: 100%;
   /* 108.9cqh = 34 % del ancho del hueco. El brief propone 16:10, pero con la
@@ -2260,13 +2267,24 @@ html.lenis body {
    manual y `scroll-snap`. Los proyectos siguen siendo accesibles. */
 .carrusel--manual {
   display: flex;
+  /* `row` explicito. El `.carrusel` base va en columna —apila las dos filas del
+     carril animado— y esta variante lo heredaba sin querer: las nueve tarjetas
+     salian una debajo de otra, cada una del ancho entero del hueco, con solo la
+     primera a la vista y el resto fuera por abajo. */
+  flex-direction: row;
   gap: 12px;
   height: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
+/* `flex` y no bloque. La tarjeta lleva `aspect-ratio` con el alto al 100 %, y
+   eso solo deriva el ancho si el ancho queda indefinido; como bloque dentro de
+   un div normal se estiraba al ancho del contenedor y las nueve acababan
+   apiladas en la misma posición, una encima de otra. Como ítem flex vuelve al
+   ajuste al contenido, igual que en el carril animado. */
 .carrusel--manual .carrusel__hueco {
+  display: flex;
   flex: none;
   height: 100%;
   scroll-snap-align: start;
@@ -2549,12 +2567,15 @@ html.lenis body {
   overflow: hidden;
   container-type: size;
 }
+/* De -50 % a 0, no al revés: así el carril se desplaza hacia ABAJO y los
+   proyectos entran por arriba y salen por abajo, que es como se pidió. Con
+   0 -> -50 % el contenido sube y se lee como que la lista se va. */
 @keyframes carrusel-abajo {
   from {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, -50%, 0);
   }
   to {
-    transform: translate3d(0, -50%, 0);
+    transform: translate3d(0, 0, 0);
   }
 }
 .carrusel__columna {

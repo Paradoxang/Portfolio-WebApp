@@ -106,7 +106,22 @@ function Tarjeta({ p, activo }: { p: Project; activo: boolean }) {
       className="carrusel__tarjeta"
       aria-label={`Ver caso: ${p.name}`}
     >
-      {p.preview ? (
+      {/* El póster va SIEMPRE como imagen propia, además de como atributo del
+          vídeo. El `poster` de un <video> con `preload="none"` no siempre se
+          pinta antes de que el vídeo arranque, y en la columna del móvil eso
+          dejaba media pantalla del teléfono en negro mientras las tarjetas de
+          abajo esperaban su turno. Es la misma URL, así que no son bytes de
+          más: la segunda petición sale de la caché. */}
+      <img
+        src={poster}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        className="carrusel__medio"
+      />
+      {p.preview && (
         <video
           ref={vid}
           muted
@@ -116,21 +131,11 @@ function Tarjeta({ p, activo }: { p: Project; activo: boolean }) {
           poster={poster}
           aria-hidden="true"
           tabIndex={-1}
-          className="carrusel__medio"
+          className="carrusel__medio carrusel__medio--video"
         >
           <source src={mini(p.preview.webm)} type="video/webm" />
           <source src={mini(p.preview.mp4)} type="video/mp4" />
         </video>
-      ) : (
-        <img
-          src={poster}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          decoding="async"
-          draggable={false}
-          className="carrusel__medio"
-        />
       )}
       <span className="carrusel__rotulo">
         <span className="carrusel__num">{p.num}</span>

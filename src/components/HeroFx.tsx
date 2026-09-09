@@ -6,6 +6,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
+import { useModoLigero } from "@/lib/perf";
 import {
   FxCorchetes,
   FxMarcoHud,
@@ -223,7 +224,9 @@ interface HeroFxProps {
 }
 
 export function HeroFx({ mx, my, listo, corriendo }: HeroFxProps) {
-  const quieto = useReducedMotion();
+  /* El modo ligero entra por la misma puerta que reduced-motion. */
+  const ligero = useModoLigero();
+  const quieto = useReducedMotion() || ligero;
   const tramo = useTramo();
   const dpr2 =
     typeof window !== "undefined" && (window.devicePixelRatio || 1) >= 2;
@@ -311,7 +314,14 @@ function PiezaFx({ p, sx, sy, quieto, listo, corriendo, dpr2, orden }: PiezaProp
   const y = useTransform(sy, [-1, 1], quieto ? [0, 0] : [-d * 0.6, d * 0.6]);
 
   const entrada = { opacity: p.o, scale: 1 };
-  const curva = { duration: 0.8, delay: orden * 0.07, ease: [0.16, 1, 0.3, 1] };
+  /* Sin entrada cuando esta quieto: la pieza se pinta ya en su sitio.
+     No es solo ahorrarse la animacion — es que la VISIBILIDAD dependia de que
+     esa animacion llegase a correr. Si algo la impide, la decoracion entera se
+     queda a opacidad cero, y que desaparezca la visualizacion es justo lo que
+     no puede pasar en el modo que existe para las maquinas que van justas. */
+  const curva = quieto
+    ? { duration: 0 }
+    : { duration: 0.8, delay: orden * 0.07, ease: [0.16, 1, 0.3, 1] };
 
   return (
     <motion.div
@@ -335,8 +345,8 @@ function PiezaFx({ p, sx, sy, quieto, listo, corriendo, dpr2, orden }: PiezaProp
         x,
         y,
       }}
-      initial={{ opacity: 0, scale: 0.94 }}
-      animate={listo ? entrada : { opacity: 0, scale: 0.94 }}
+      initial={quieto ? false : { opacity: 0, scale: 0.94 }}
+      animate={quieto || listo ? entrada : { opacity: 0, scale: 0.94 }}
       transition={curva}
     >
       <div

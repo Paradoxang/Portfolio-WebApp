@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { gsap, useGSAP, SplitText } from "@/lib/gsap";
+import { modoActual } from "@/lib/perf";
 
 /**
  * El nombre, descifrándose al entrar.
@@ -22,6 +23,11 @@ export function HeroNombre({ listo }: { listo: boolean }) {
     () => {
       if (!listo || !ref.current) return;
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      /* En modo ligero, el nombre tal cual. El descifrado reescribe el texto
+         caracter a caracter en cada fotograma —de lo mas caro que puede hacerse
+         sin aceleracion— y si el temporizador se atasca a medias el titular se
+         queda en letras sueltas. */
+      if (modoActual() === "low") return;
 
       const lineas = ref.current.querySelectorAll<HTMLElement>(".hero-name__linea");
       const partes = Array.from(lineas).map(
