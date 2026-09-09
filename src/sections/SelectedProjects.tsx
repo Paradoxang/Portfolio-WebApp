@@ -54,12 +54,24 @@ export function SelectedProjects() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setEnPantalla(e.isIntersecting), {
+    /* La interseccion se guarda aparte y las dos senales se recombinan en cada
+       cambio. Antes el manejador de visibilidad era
+       `setEnPantalla(v => v && !document.hidden)`, que solo sabia APAGAR: si el
+       navegador disparaba `visibilitychange` con la seccion ya visible —al
+       restaurar la pestana, al volver de otra app en el movil— quedaba en
+       falso, y el observador no volvia a disparar porque la interseccion no
+       habia cambiado. El carrusel se quedaba parado para siempre. */
+    let intersecta = false;
+    const revisar = () => setEnPantalla(intersecta && !document.hidden);
+    const io = new IntersectionObserver(([e]) => {
+      intersecta = e.isIntersecting;
+      revisar();
+    }, {
       threshold: 0,
       rootMargin: "200px 0px",
     });
     io.observe(el);
-    const onVis = () => setEnPantalla((v) => v && !document.hidden);
+    const onVis = revisar;
     document.addEventListener("visibilitychange", onVis);
     return () => {
       io.disconnect();

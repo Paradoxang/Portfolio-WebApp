@@ -2570,6 +2570,12 @@ html.lenis body {
 }
 .carrusel__fila--v {
   position: relative;
+  /* `flex` explicito, y no solo `height: 100%`. `.carrusel__fila` trae
+     `flex: 0 0 46%` del diseno de dos filas horizontales, y como `.carrusel`
+     va en columna ese 46 % fija la ALTURA y gana sobre el `height`: la fila
+     medía 262 px dentro de un hueco de 570 y todo lo que caía por debajo se
+     recortaba. Es la mitad de pantalla vacía del telefono. */
+  flex: 0 0 100%;
   height: 100%;
   overflow: hidden;
   container-type: size;
