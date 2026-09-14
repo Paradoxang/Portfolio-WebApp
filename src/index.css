@@ -2689,3 +2689,338 @@ html.lenis body {
   padding: 5cqw 5cqw 4cqw;
   font-size: 5cqw;
 }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   "Security First" — la nave, la estela y las capas de fondo
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* La sección va a sangre. Como en "Selected Projects", sin `width: 100vw` ni
+   `margin-inline: calc(50% - 50vw)`: las secciones cuelgan del `<main>` del
+   layout, que no tiene tope de ancho, así que basta con no ponérselo. Y
+   `100vw` incluye la barra de desplazamiento —unos 15 px en escritorio—, que
+   es justo el scroll horizontal que el criterio 2 prohíbe.
+   `overflow-x: clip` y no `hidden`: `hidden` crea un contexto de
+   desplazamiento y rompe cualquier `position: sticky` de la página. */
+.security {
+  /* Las tres medidas de las que cuelga todo lo demás, declaradas una sola vez.
+     · `--sf-banda` es el relleno vertical, y por tanto el alto exacto de las
+       dos franjas limpias que quedan arriba y abajo de la tarjeta. Las tres
+       piezas de seguridad se dimensionan CONTRA esta variable, no contra el
+       alto de la sección: es lo único que garantiza que no entren en la
+       tarjeta cuando la ventana cambia de proporción.
+     · `--sf-card` repite el ancho de la tarjeta, y `--sf-margen` es el margen
+       lateral libre que sobra a cada lado. Con ellos, la llave y la bóveda se
+       anclan al borde de la tarjeta en vez de a un porcentaje de la sección;
+       el porcentaje del brief solo vale en un lienzo de 1920x900. */
+  --sf-banda: clamp(6.5rem, 17vh, 12rem);
+  --sf-card: min(1240px, 100% - clamp(2.5rem, 7vw, 6rem));
+  --sf-margen: calc((100% - var(--sf-card)) / 2);
+  position: relative;
+  overflow-x: clip;
+  padding-block: var(--sf-banda);
+}
+
+/* Los dos lienzos gráficos: uno por debajo de la tarjeta y otro por encima.
+   Son dos y no uno porque la tarjeta se interpone: está en el flujo normal, y
+   lo que tiene que quedar por delante de ella necesita su propio contenedor.
+   `overflow: clip` en los dos ejes y no solo en el horizontal. En móvil el
+   grupo de la estela gira 90° y su lado largo pasa a medir más que la sección:
+   sin recorte vertical se derramaría sobre "Selected Projects" y sobre el pie. */
+.security__lienzo,
+.security__delante {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+  user-select: none;
+}
+.security__lienzo {
+  z-index: 0;
+}
+.security__delante {
+  z-index: 5;
+}
+.security__lienzo img,
+.security__delante img {
+  position: absolute;
+  /* Preflight de Tailwind pone `max-width: 100%` a toda imagen, y aquí hay
+     tres que sangran por los lados a propósito: la nebulosa al 106 %, las
+     partículas al 102 % y la estela al 114 %. Con el tope puesto se quedaban
+     clavadas al ancho de la sección y perdían el sangrado.
+     Aquí NO va `height: auto`, aunque sea el valor que llevan casi todas: este
+     selector tiene más peso que una clase suelta, así que anularía el `height`
+     con el que las tres piezas de seguridad se miden contra la franja. Y
+     `auto` es el valor inicial de todas formas. */
+  max-width: none;
+}
+
+/* La tarjeta SÍ se queda en la rejilla del sitio: mismo tope y mismo sangrado
+   que el resto. Solo el lienzo gráfico va a pantalla completa. */
+.security__card {
+  position: relative;
+  z-index: 4;
+  width: min(1240px, 100% - clamp(2.5rem, 7vw, 6rem));
+  margin-inline: auto;
+}
+
+/* El panel pasa de `bg-space/60` a casi opaco. Con la estela por detrás —el
+   objeto más brillante de la página, medido— un 60 % dejaba pasar el núcleo
+   por debajo del párrafo. El fondo de la sección está en 9.6 de luminancia y
+   el interior de la tarjeta en 43.5: esa diferencia es lo que mantiene el
+   texto legible, y solo se sostiene si la tarjeta tapa de verdad. */
+.security__panel {
+  /* El resplandor magenta de la esquina va aquí dentro y no por `glow-quote`
+     aparte: las dos reglas pintan `background`, tienen el mismo peso y esta va
+     después en el archivo, así que la de `glow-quote` se perdía entera. Como
+     capas del mismo fondo sí conviven, el degradado opaco debajo. */
+  background:
+    radial-gradient(120% 120% at 100% 0%, rgba(255, 143, 189, 0.12), transparent 60%),
+    linear-gradient(180deg, rgba(9, 13, 26, 0.965), rgba(4, 6, 13, 0.975));
+}
+
+/* ── z0 · nebulosa · z1 · partículas ──
+   Centradas en vertical. Sangran por los dos lados: son las que exigen que la
+   sección vaya a pantalla completa. */
+.sf-nebulosa {
+  z-index: 0;
+  left: -3%;
+  top: 50%;
+  width: 106%;
+  opacity: 0.34;
+  transform: translateY(-50%);
+}
+.sf-particulas {
+  z-index: 1;
+  left: -1%;
+  top: 52%;
+  width: 102%;
+  opacity: 0.5;
+  transform: translateY(-50%);
+}
+
+/* ── z1 · eco de otras secciones ── */
+.sf-eco {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ── z2 y z3 · la estela y la nave ──
+   Van juntas en un grupo que ES la caja de la estela. La nave se posiciona en
+   porcentajes de ESE grupo, no de la sección, y por eso la tobera queda clavada
+   sobre la punta del núcleo a cualquier altura de sección — que aquí cambia,
+   porque el alto lo pone la tarjeta. El brief da los dos números por separado
+   (`left:86.68%; top:62.28%` sobre la sección) y solo coinciden en un lienzo
+   de 1920x900.
+   La proporción del grupo es la del archivo, 3168x1344. */
+.sf-grupo {
+  position: absolute;
+  z-index: 2;
+  left: -13%;
+  width: 113.96%;
+  aspect-ratio: 3168 / 1344;
+  /* En vertical NO va el `top: 20%` del brief, y es el segundo ajuste de
+     coordenadas de esta sección. Ese 20 % también está tomado sobre 1920x900,
+     donde la tarjeta ocupa el 56 % del alto; aquí la tarjeta crece al
+     estrecharse la ventana —a 1440 ya ocupa el 59 %— y con el grupo anclado
+     arriba el núcleo de la estela se queda ENTERO detrás de la tarjeta. Medido
+     a 1440: la punta caía 164 px por encima del borde inferior de la tarjeta,
+     contra los 75 de la referencia, y de la estela no se veía nada.
+     Anclado abajo sí se sostiene: `bottom: var(--sf-banda)` deja el borde
+     inferior del grupo exactamente sobre el de la tarjeta —la franja es la
+     distancia entre la tarjeta y el borde de la sección—, y el `translateY`,
+     que mide contra la propia caja del grupo, lo baja hasta que la punta queda
+     esos 75 px por encima. La estela pasa por debajo de la tarjeta a cualquier
+     proporción, que es lo único que la hace visible. */
+  top: auto;
+  bottom: var(--sf-banda);
+  transform: translateY(50.9%);
+}
+.sf-estela {
+  left: 0;
+  top: 0;
+  width: 100%;
+  opacity: 0.8;
+}
+
+/* La punta del núcleo está en el 87.47 % / 41.00 % del asset de la estela, y
+   el plano de salida de las toberas en el 0.71 % / 46.48 % del de la nave.
+   · `left/top` llevan la esquina de la nave a la punta del núcleo.
+   · `translate(-0.71%, -46.48%)` —porcentajes de la propia nave— corrige esa
+     esquina hasta la tobera, así que es la TOBERA la que cae sobre la punta.
+   · `rotate` gira alrededor de ese mismo punto (`transform-origin`), de modo
+     que la tobera no se mueve. El ángulo es la diferencia entre el eje del
+     núcleo en la punta (−26.7°) y el del fuselaje en el asset (−1.1°).
+   · el `translateX(-4.5%)` final mete la nave hacia atrás sobre su propio eje
+     para que la punta quede DENTRO de las toberas; sin ese solape se ve la
+     costura.
+   El 18.83 % es el 21.46 % del ancho de la sección expresado en ancho de
+   grupo: 21.46 / 113.96. */
+.sf-nave {
+  z-index: 1;
+  left: 87.47%;
+  top: 41%;
+  width: 18.83%;
+  transform-origin: 0.71% 46.48%;
+  transform: translate(-0.71%, -46.48%) rotate(-25.6deg) translateX(-4.5%);
+}
+
+/* ── z5 · las tres piezas de seguridad ──
+   Son las únicas por encima de la tarjeta, así que son las únicas que tienen
+   prohibido entrar en ella y en sus 24 px de margen. Medido: con los
+   porcentajes del brief tal cual, las tres invadían.
+
+   El motivo es que esos porcentajes están tomados sobre el montaje de
+   1920x900, donde la tarjeta mide 505 px y quedan 197 de franja arriba y
+   abajo. Aquí la tarjeta mide lo que mide su contenido —443 px— y la franja la
+   pone el `padding-block`, así que ni el tamaño ni la posición se pueden dar
+   como fracción del alto de la sección.
+
+   De ahí el planteamiento: **las tres se dimensionan y se colocan contra la
+   franja**, no contra la sección. `--sf-banda - 2.5rem` reserva los 24 px de
+   margen prohibido más la separación al borde; el factor 0.86 descuenta lo que
+   la caja envolvente crece al girar la pieza (una caja de 80x83 girada 8°
+   ocupa 10 px más de alto). El tope en píxeles evita que en un monitor muy
+   alto la llave acabe del tamaño de un icono de la tarjeta. */
+.sf-llave,
+.sf-boveda,
+.sf-escudo {
+  opacity: 0.9;
+  width: auto;
+}
+.sf-llave,
+.sf-boveda {
+  top: 1rem;
+  height: min(96px, calc((var(--sf-banda) - 2.5rem) * 0.86));
+}
+.sf-llave {
+  left: 6%;
+  transform: rotate(-8deg);
+}
+.sf-boveda {
+  right: 6%;
+}
+/* El escudo se queda SIEMPRE en la franja de abajo, en los tres tramos: es la
+   única de las tres que sobrevive en móvil y la franja es el único sitio con
+   sitio garantizado. */
+.sf-escudo {
+  left: 8%;
+  bottom: 1rem;
+  height: min(112px, calc((var(--sf-banda) - 2.5rem) * 0.88));
+  transform: rotate(6deg);
+}
+
+/* ── ≥1500 px · la llave y la bóveda bajan a flanquear la tarjeta ──
+   Que es donde las pone la referencia. Solo a partir de aquí, porque es donde
+   el margen lateral libre pasa de 120 px: por debajo, las dos piezas no caben
+   al lado de la tarjeta sin meterse en sus 24 px, y se quedan en la franja de
+   arriba.
+   No van a un `left` en porcentaje sino al borde de la tarjeta: `100% -
+   --sf-margen` es exactamente ese borde, y los 36 px son los 24 prohibidos más
+   lo que la caja envolvente crece al girar. Así la holgura es la misma a 1500
+   que a 2560, en vez de estrecharse hasta cero. */
+@media (min-width: 1500px) {
+  .sf-llave {
+    top: 14%;
+    left: auto;
+    right: calc(100% - var(--sf-margen) + 36px);
+    height: auto;
+    width: clamp(56px, 4.4%, 92px);
+  }
+  .sf-boveda {
+    top: 11%;
+    right: auto;
+    left: calc(100% - var(--sf-margen) + 36px);
+    height: auto;
+    width: clamp(60px, 4.8%, 100px);
+  }
+}
+
+/* ── Móvil: vertical, hacia abajo ──
+   La composición gira: la nave desciende y la estela sube por encima de ella.
+   Todo en CSS, sin regenerar un solo asset.
+   Se gira el GRUPO, no cada pieza: la nave va dentro, así que su rotación
+   efectiva pasa sola de −25.6° a +64.4° —los mismos −25.6 de alineación más
+   los 90 del giro— y la tobera sigue clavada sobre la punta del núcleo sin
+   recalcular nada. `rotate(90deg)` es horario, así que el extremo ancho y
+   apagado de la estela queda arriba y el núcleo brillante abajo.
+
+   El tamaño no va en `vh` sino en porcentaje de la sección, con el ancho
+   derivado del `aspect-ratio`: al girar, el lado largo del grupo pasa a ser el
+   alto en pantalla, y con `height: 46%` ese lado mide 2.357 x 0.46 = 1.08 veces
+   el alto de la sección.
+
+   ── Dónde cae el núcleo, y por qué no donde dice el brief ──
+   El brief lo pone en el 73.46 % de la altura. Ahí no se ve: en un teléfono la
+   tarjeta pasa a una sola columna, ocupa el ancho entero y crece hasta 1081 px
+   de 1368, así que el 73 % cae en mitad de un panel opaco. Medido con el
+   montaje del brief, de la estela no se veía absolutamente nada — ni el núcleo
+   ni la nave.
+   Lo único visible en vertical son las dos franjas, así que el grupo se ancla
+   igual que en escritorio —`bottom: var(--sf-banda)`, el borde inferior de la
+   tarjeta— y el `translateY` deja la punta unos 25 px POR DEBAJO de ese borde.
+   El resultado es el que describe el brief: la nave desciende por la franja de
+   abajo y la estela sube por detrás de la tarjeta, con su extremo apagado
+   asomando por la franja de arriba.
+   El −35 % sale de despejar la posición de la punta: con el giro, el eje largo
+   cae a `0.8747 − 0.5 = +0.3747` de ese lado desde el centro, y el centro está
+   medio lado corto por encima del anclaje. */
+@media (max-width: 767px) {
+  .sf-grupo {
+    left: 50%;
+    top: auto;
+    bottom: var(--sf-banda);
+    height: 46%;
+    width: auto;
+    transform: translate(-50%, -35%) rotate(90deg);
+  }
+  /* Más pequeña que el 46 % del brief. La nave entera tiene que caber en la
+     franja de abajo, que aquí son 143 px: a 46 vw la caja envolvente de la nave
+     girada mide 190 px de alto y la mitad quedaba tapada por la tarjeta. A
+     34 vw mide 140 y desciende limpia. El `vw` y no un porcentaje del grupo
+     porque el grupo ya no mide el ancho de la sección —su ancho lo fija ahora
+     el alto—; en un móvil no hay barra de desplazamiento que descontar. */
+  .sf-nave {
+    width: 34vw;
+  }
+  .sf-estela {
+    opacity: 0.7;
+  }
+  .sf-nebulosa {
+    opacity: 0.22;
+  }
+  .sf-particulas {
+    opacity: 0.3;
+  }
+  .sf-escudo {
+    left: 6%;
+  }
+}
+
+/* Tramo medio: las dos capas grandes bajan un punto, como pide la tabla. */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .sf-nebulosa {
+    opacity: 0.3;
+  }
+  .sf-particulas {
+    opacity: 0.45;
+  }
+}
+
+/* ── Modo ligero ──
+   Las partículas y la nebulosa son dos capas a pantalla completa: sin GPU
+   cuestan más que todo lo demás junto y se caen enteras. `SecurityFx` además
+   no las monta, así que tampoco se descargan; esto es el cinturón.
+   La estela se queda —es la sección— y baja al .55. La nave también: va por
+   alfa y no cuesta nada. Ninguna capa de esta sección lleva `mix-blend-mode`,
+   así que no hay nada que devolver a `normal`. La tarjeta no se toca nunca. */
+[data-perf="low"] .sf-particulas,
+[data-perf="low"] .sf-nebulosa,
+[data-perf="low"] .sf-eco,
+[data-perf="low"] .security__delante {
+  display: none;
+}
+[data-perf="low"] .sf-estela {
+  opacity: 0.55;
+}
