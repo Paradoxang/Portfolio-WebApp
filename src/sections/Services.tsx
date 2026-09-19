@@ -172,7 +172,7 @@ export function Services() {
           <Reveal delay={0.12}>
             <p className="mt-6 max-w-[56ch] text-[15.5px] leading-[1.7] text-mute">
               Posicionamiento local, presencia en buscadores con IA y protección
-              de los datos de tus pacientes, en un plan mensual.{" "}
+              de los datos de tu negocio, en un plan mensual.{" "}
               <strong className="font-bold text-ink">
                 La página web va incluida.
               </strong>

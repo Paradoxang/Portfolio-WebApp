@@ -222,7 +222,7 @@ export function Hero() {
             <Reveal mount>
               <div className="kicker flex items-center gap-3 !text-[12px]">
                 <span className="inline-block h-px w-10 bg-neb/70" />
-                Crecimiento digital para consultorios · Cali
+                Webs a medida que se hacen encontrar · Cali
               </div>
             </Reveal>
             <h1
@@ -241,7 +241,7 @@ export function Hero() {
                 Posicionamiento local, presencia en{" "}
                 <strong className="font-extrabold text-ink">buscadores con IA</strong> y
                 protección de los{" "}
-                <strong className="font-extrabold text-ink">datos de tus pacientes</strong>,
+                <strong className="font-extrabold text-ink">datos de tu negocio</strong>,
                 en un plan mensual. La página web va incluida.
               </p>
             </Reveal>
@@ -328,7 +328,7 @@ export function Hero() {
             <div className="hero-promesa">
               <div className="hero-promesa__titular">
                 <p className="kicker !text-[11px]">
-                  Crecimiento digital para consultorios · Cali
+                  Webs a medida que se hacen encontrar · Cali
                 </p>
                 <h1 className="hero-promesa__h1">
                   Que te encuentren cuando te{" "}

@@ -40,10 +40,19 @@ import { contact } from "@/data/site";
  * enlace entre las dos es el que cierra.
  *
  * ── Los cuatro frentes son los mismos que en la portada ──
- * "Que te encuentren", "Que la IA te cite", "Que reserven solos" y "Que estés
+ * "Que te encuentren", "Que la IA te cite", "Que te escriban" y "Que estés
  * protegido" son las cuatro tarjetas del bloque 01. Aquí se desarrollan. Si
  * cambian allí, tienen que cambiar aquí: es la misma promesa contada con más
  * detalle, y si dicen cosas distintas se nota.
+ *
+ * ── Sin vertical ──
+ * Una versión anterior de esta página hablaba solo a consultorios. El negocio
+ * es hacer proyectos a medida para cualquier sector, así que ningún texto puede
+ * dar por hecho quién está leyendo. Donde antes decía "pacientes" ahora dice
+ * "clientes", y donde daba por hecho que se agendan citas, ahora habla de
+ * contacto.
+ * Lo que sí se conserva es la Ley 1581: obliga a cualquier empresa que trate
+ * datos personales, no solo a las de salud.
  */
 
 interface Frente {
@@ -59,11 +68,11 @@ const frentes: Frente[] = [
   {
     icon: Search,
     title: "Que te encuentren",
-    desc: "Cuando alguien busca “odontólogo cerca de mí” o “consultorio en Cali”, el objetivo es que aparezcas en ese puñado de resultados que la gente sí mira.",
+    desc: "Cuando alguien busca lo que tú vendes y le añade “cerca de mí” o el nombre de la ciudad, el objetivo es que aparezcas en ese puñado de resultados que la gente sí mira.",
     incluye: [
       "Ficha de Google creada, verificada y completa",
       "Categorías, horarios, fotos y servicios al día",
-      "Páginas propias por cada servicio que ofreces",
+      "Páginas propias por cada servicio o producto",
       "Trabajo de reseñas: pedirlas, ordenarlas y responderlas",
       "Datos estructurados de negocio local",
     ],
@@ -72,9 +81,9 @@ const frentes: Frente[] = [
   {
     icon: Bot,
     title: "Que la IA te cite",
-    desc: "Cada vez más pacientes preguntan antes de buscar. Si alguien le pide a ChatGPT una recomendación en tu ciudad, hay un consultorio en esa respuesta.",
+    desc: "Cada vez más gente pregunta antes de buscar. Si alguien le pide a ChatGPT una recomendación de lo que tú haces en tu ciudad, hay un negocio en esa respuesta.",
     incluye: [
-      "Contenido que responde preguntas concretas de pacientes",
+      "Contenido que responde preguntas concretas de tus clientes",
       "Estructura legible para los modelos, no solo para Google",
       "Datos estructurados de preguntas frecuentes",
       "Ficha coherente en los directorios que las IA leen",
@@ -84,21 +93,21 @@ const frentes: Frente[] = [
   },
   {
     icon: CalendarCheck,
-    title: "Que reserven solos",
-    desc: "Que te encuentren no sirve de nada si al llegar no saben qué hacer. La web tiene que convertir la visita en una cita sin que nadie levante el teléfono.",
+    title: "Que te escriban",
+    desc: "Que te encuentren no sirve de nada si al llegar no saben qué hacer. La web tiene que convertir la visita en un mensaje, una cotización o una cita, sin que nadie levante el teléfono.",
     incluye: [
-      "Sitio propio, rápido y en tu dominio",
-      "Agenda o formulario de cita conectado",
+      "Sitio a medida, rápido y en tu dominio",
+      "Formulario, cotizador o agenda, según lo que pidas",
       "WhatsApp a un toque desde cualquier página",
-      "Textos pensados para que el paciente decida",
+      "Textos pensados para que el visitante decida",
       "Carga rápida también en datos móviles",
     ],
-    mide: "Formularios enviados, clics a WhatsApp y citas pedidas desde el sitio.",
+    mide: "Formularios enviados, clics a WhatsApp y contactos llegados desde el sitio.",
   },
   {
     icon: ShieldCheck,
     title: "Que estés protegido",
-    desc: "Un consultorio maneja datos sensibles. Esto es lo que casi nadie que hace webs puede acompañarte a resolver, y es donde mi especialización deja de ser un adorno.",
+    desc: "Cualquier negocio que guarde datos de sus clientes está bajo la Ley 1581. Esto es lo que casi nadie que hace webs puede acompañarte a resolver, y es donde mi especialización deja de ser un adorno.",
     incluye: [
       "HTTPS, cabeceras estrictas y CSP desde el diseño",
       "Respaldos automáticos y restauración probada",
@@ -151,15 +160,15 @@ const faqs = [
   },
   {
     q: "¿Cuánto tengo que trabajar yo en esto?",
-    a: "Poco, pero no cero. Necesito una reunión corta al arrancar, acceso a tu ficha de Google y que me cuentes cosas que solo tú sabes: qué te preguntan los pacientes, qué tratamientos quieres llenar. El resto lo llevo yo.",
+    a: "Poco, pero no cero. Necesito una reunión corta al arrancar, acceso a tu ficha de Google y que me cuentes cosas que solo tú sabes: qué te preguntan tus clientes, qué producto o servicio quieres mover. El resto lo llevo yo.",
   },
   {
     q: "¿El dominio y el hosting van aparte?",
     a: "El hosting va incluido en el plan. El dominio se compra a tu nombre y queda tuyo desde el primer día — son unos pocos dólares al año que pagas tú directamente, y prefiero que sea así para que nunca dependa de mí.",
   },
   {
-    q: "¿Solo trabajas con consultorios?",
-    a: "Es donde me estoy especializando, porque es donde mi formación en ciberseguridad suma de verdad: los datos de salud tienen un régimen más estricto. Pero si tienes otro negocio y encaja con los planes, escríbeme y lo hablamos.",
+    q: "¿Trabajas con cualquier tipo de negocio?",
+    a: "Sí. Cada proyecto se diseña para el negocio que lo pide: no hay plantilla ni sector preferido. En el muestrario hay piezas de un estudio creativo, una marca de café, una joyería, un hotel y un consultorio, y ninguna se parece a la otra — precisamente por eso.",
   },
   {
     q: "¿Trabajas solo en Cali?",
@@ -167,7 +176,7 @@ const faqs = [
   },
   {
     q: "¿Qué pasa si quiero algo que no está en los planes?",
-    a: "Se cotiza aparte y te lo digo antes, no después. Una aplicación interna, una integración con tu software de historias clínicas o una tienda en línea son otro tipo de trabajo y no tiene sentido meterlos en una cuota mensual.",
+    a: "Se cotiza aparte y te lo digo antes, no después. Una aplicación interna, una integración con tu software de facturación o inventario, o una tienda en línea completa son otro tipo de trabajo y no tiene sentido meterlos en una cuota mensual.",
   },
 ];
 
@@ -195,8 +204,8 @@ export function Services() {
       <PaginaFx semilla={0} />
 
       <Seo
-        title="Posicionamiento web y seguridad para consultorios en Cali | Dox Designs"
-        description="Qué incluye cada mes: posicionamiento local y ficha de Google, presencia en buscadores con IA, web con agenda y WhatsApp, y seguridad con acompañamiento en la Ley 1581. Para consultorios y clínicas en Cali y toda Colombia."
+        title="Páginas web a medida, posicionamiento y seguridad en Cali | Dox Designs"
+        description="Qué incluye cada mes: posicionamiento local y ficha de Google, presencia en buscadores con IA, web a medida con formularios y WhatsApp, y seguridad con acompañamiento en la Ley 1581. Para negocios en Cali y toda Colombia."
         path="/servicios"
         jsonLd={jsonLd}
       />
@@ -223,10 +232,11 @@ export function Services() {
           </h1>
           <Reveal delay={0.24} mount>
             <p className="mt-7 max-w-[62ch] text-[16px] leading-[1.75] text-mute">
-              Cuatro frentes que trabajan juntos: que te{" "}
-              <strong className="text-ink">encuentren</strong>, que la{" "}
-              <strong className="text-ink">IA te cite</strong>, que{" "}
-              <strong className="text-ink">reserven solos</strong> y que estés{" "}
+              Hago webs <strong className="text-ink">a medida</strong> —sin plantillas
+              y sin sector preferido— y después las sostengo en cuatro frentes: que
+              te <strong className="text-ink">encuentren</strong>, que la{" "}
+              <strong className="text-ink">IA te cite</strong>, que te{" "}
+              <strong className="text-ink">escriban</strong> y que estés{" "}
               <strong className="text-ink">protegido</strong>. Aquí está el detalle
               de cada uno y cómo se comprueba que funcionó.
             </p>
@@ -360,9 +370,10 @@ export function Services() {
                 <p className="mt-3 max-w-[70ch] text-[14.5px] leading-[1.7] text-mute">
                   Tengo especialización en Ciberseguridad. Todo sitio sale con
                   HTTPS, cabeceras estrictas y buenas prácticas desde el diseño.
-                  Y si manejas datos de pacientes, eso es el punto de partida y
-                  no la meta: el plan Blindaje añade auditoría, monitoreo y
-                  acompañamiento en la Ley 1581.
+                  Y si guardas datos de tus clientes —cualquier negocio que lo
+                  haga está bajo la Ley 1581—, eso es el punto de partida y no la
+                  meta: el plan Blindaje añade auditoría, monitoreo y
+                  acompañamiento en el cumplimiento.
                 </p>
                 <p className="mt-3 max-w-[70ch] text-[13px] leading-[1.65] text-faint">
                   Acompañamiento <strong className="text-mute">técnico</strong>: preparo

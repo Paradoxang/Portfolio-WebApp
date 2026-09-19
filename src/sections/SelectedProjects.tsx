@@ -112,7 +112,18 @@ export function SelectedProjects() {
               demostraciones propias, y llamarlas de otra forma es exactamente
               lo que un comprador detecta en diez segundos. Declararlo primero
               convierte la debilidad en argumento: se puede entrar a todas. */}
-          <SectionHeading kicker="04 — Muestrario" title="Así se vería el tuyo" />
+          <SectionHeading kicker="04 — Muestrario" title="Así se vería el tuyo">
+            <Reveal delay={0.12}>
+              {/* La variedad de sectores no es casualidad, es el argumento:
+                  cada pieza se diseñó para un negocio distinto y ninguna se
+                  parece a la otra. Es lo que sostiene el "a medida". */}
+              <p className="mt-5 max-w-[52ch] text-[14.5px] leading-[1.7] text-mute">
+                Demostraciones que construí para probar ideas — un estudio
+                creativo, una marca de café, una joyería, un hotel, un
+                consultorio. Ninguna se parece a la otra, y esa es la idea.
+              </p>
+            </Reveal>
+          </SectionHeading>
           <Reveal delay={0.15}>
             <Link
               to="/proyectos"

@@ -36,7 +36,7 @@ export function Home() {
     <>
       <Seo
         title="Santiago Miranda · Desarrollador y Diseñador Web | Dox Designs"
-        description="Portafolio de Santiago Miranda (Dox Designs): desarrollador full-stack y diseñador web en Cali, Colombia. Creo experiencias digitales donde el código y el diseño se encuentran — React, Next.js, .NET, Angular y Electron."
+        description="Dox Designs · Santiago Miranda: páginas web a medida para negocios en Cali y toda Colombia, con posicionamiento local, presencia en buscadores con IA y seguridad incluida. Planes mensuales desde COP 350.000."
         path="/"
       />
       <Hero />

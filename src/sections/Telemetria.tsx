@@ -13,7 +13,7 @@ import { telemetria } from "@/data/site";
  * ── Las métricas son las que él entiende ──
  * Llamadas, formularios, "cómo llegar", citas. No posiciones de palabras clave
  * ni impresiones: eso es vocabulario de agencia y no se parece a nada que el
- * dueño de un consultorio reconozca como un paciente.
+ * dueño de un negocio reconozca como un cliente.
  *
  * ── Por qué encaja sin assets nuevos ──
  * El lenguaje visual ya estaba inventado en esta casa: la tira de datos del
@@ -31,7 +31,7 @@ export function Telemetria({ kicker = "03 — Telemetría" }: { kicker?: string 
             <p className="mt-6 max-w-[46ch] text-[15.5px] leading-[1.7] text-mute">
               Un reporte con las cifras que de verdad importan:{" "}
               <strong className="font-bold text-ink">cuánta gente te llamó</strong>,
-              cuánta pidió cita y cuánta buscó cómo llegar. Sin jerga y sin
+              cuánta escribió y cuánta buscó cómo llegar. Sin jerga y sin
               capturas de paneles que no dicen nada.
             </p>
           </Reveal>

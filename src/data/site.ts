@@ -102,9 +102,9 @@ export const services: Service[] = [
   },
   {
     icon: LayoutTemplate,
-    title: "Que reserven solos",
-    desc: "Web rápida con agenda, formularios y WhatsApp para que la cita se pida sin llamar.",
-    resumen: "Agenda y WhatsApp sin llamar.",
+    title: "Que te escriban",
+    desc: "Web a medida con formularios, agenda y WhatsApp para que el contacto salga sin tener que llamar.",
+    resumen: "Formularios y WhatsApp directos.",
     variante: "cristal",
     objeto: "wdid_03_cristal",
     etiqueta: "Conversión",
@@ -115,7 +115,7 @@ export const services: Service[] = [
   {
     icon: Shield,
     title: "Que estés protegido",
-    desc: "Los datos de tus pacientes cifrados, el sitio monitoreado y el cumplimiento de la Ley 1581 al día.",
+    desc: "Los datos de tus clientes cifrados, el sitio monitoreado y el cumplimiento de la Ley 1581 al día.",
     resumen: "Datos y cumplimiento al día.",
     variante: "vela",
     objeto: "wdid_04_vela",
@@ -163,7 +163,7 @@ export const planes: Plan[] = [
     id: "base",
     etiqueta: "Órbita baja",
     nombre: "Base",
-    para: "Para el consultorio que todavía no está en internet.",
+    para: "Para el negocio que todavía no está en internet.",
     precio: "350.000",
     periodo: "/mes",
     incluye: [
@@ -194,7 +194,7 @@ export const planes: Plan[] = [
     id: "blindaje",
     etiqueta: "Datos sensibles",
     nombre: "Blindaje",
-    para: "Para quien maneja historias clínicas y datos de pacientes.",
+    para: "Para quien guarda datos de clientes y no puede permitirse una fuga.",
     precio: "1.150.000",
     periodo: "/mes",
     incluye: [
@@ -248,7 +248,7 @@ export const objeciones = [
   },
   {
     q: "¿Ya lo has hecho con alguien más?",
-    a: "Todavía no con un consultorio, y prefiero decirlo yo. Por eso los tres primeros entran a precio de fundador a cambio de permiso para publicar sus números. Lo que sí puedes revisar es cómo trabajo: todo el muestrario de abajo está en línea y se puede navegar.",
+    a: "Todavía no con este modelo de trabajo, y prefiero decirlo yo. Por eso los tres primeros entran a precio de fundador a cambio de permiso para publicar sus números. Lo que sí puedes revisar es cómo trabajo: todo el muestrario está en línea y se puede navegar, y hay piezas de sectores muy distintos.",
   },
 ];
 
@@ -401,7 +401,7 @@ export const projects: Project[] = [
     desc: "Demo de sitio para un consultorio médico: presentación institucional de servicios de salud con interfaz responsive, desplegada en Vercel.",
     rol: "Concepto, diseño y desarrollo",
     resultado:
-      "Estructura pensada para comunicar los servicios, generar confianza y facilitar el contacto de los pacientes.",
+      "Estructura pensada para comunicar los servicios, generar confianza y facilitar el contacto.",
     stack: ["React", "Tailwind", "Vercel", "Responsive"],
     demo: "https://vitalis-muestreo-app.vercel.app/",
     mark: "VC",
@@ -485,7 +485,7 @@ export const projects: Project[] = [
     name: "Integración de IA",
     tipo: "Chat-bot",
     tag: "Tecnologías META",
-    desc: "Ejercicio de chat-bot de atención sobre tecnologías META, planteado alrededor de un caso de consultorio: manejo de tokens y entrenamiento acotado a un guion.",
+    desc: "Ejercicio de chat-bot de atención sobre tecnologías META: manejo de tokens y entrenamiento acotado a un guion de negocio.",
     rol: "Concepto, integración y entrenamiento",
     resultado:
       "Flujo de conversación completo sobre un guion cerrado, con manejo de tokens y respuestas entrenadas para un dominio concreto.",

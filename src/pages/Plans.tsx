@@ -27,8 +27,8 @@ export function Plans() {
       <PaginaFx semilla={12} />
 
       <Seo
-        title="Planes y precios · Crecimiento digital para consultorios | Dox Designs"
-        description="Planes mensuales para consultorios y clínicas en Cali: posicionamiento local, presencia en buscadores con IA, seguridad y cumplimiento de la Ley 1581. Desde COP 350.000 al mes, con la página web incluida."
+        title="Planes y precios · Webs con posicionamiento y seguridad | Dox Designs"
+        description="Planes mensuales para negocios en Cali y toda Colombia: posicionamiento local, presencia en buscadores con IA, seguridad y cumplimiento de la Ley 1581. Desde COP 350.000 al mes, con la página web a medida incluida."
         path="/planes"
       />
 

@@ -169,7 +169,7 @@ export function Planes({
             <div className="min-w-0 flex-1">
               <div className="kicker !text-cosmo">Programa fundador</div>
               <p className="mt-3 max-w-[58ch] text-[14.5px] leading-[1.7] text-mute">
-                Los <strong className="text-ink">tres primeros consultorios</strong>{" "}
+                Los <strong className="text-ink">tres primeros clientes</strong>{" "}
                 entran a precio reducido a cambio de permiso para publicar sus
                 números. Lo digo de frente: todavía no tengo un caso propio que
                 enseñarte, y prefiero que lo sepas por mí. Tú ganas el precio;
