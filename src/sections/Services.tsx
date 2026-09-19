@@ -154,7 +154,8 @@ export function Services() {
     <section
       ref={ref}
       onPointerMove={onPointer}
-      className="wdid-sec relative w-full overflow-hidden px-[clamp(1.5rem,5vw,5rem)] [padding-block:clamp(6rem,12vh,11rem)]"
+      id="especialidades"
+      className="wdid-sec relative w-full scroll-mt-24 overflow-hidden px-[clamp(1.5rem,5vw,5rem)] [padding-block:clamp(6rem,12vh,11rem)]"
     >
       <WdidFx mx={mx} my={my} tramo={tramo} corriendo={enPantalla} />
 
@@ -162,7 +163,22 @@ export function Services() {
 
       <div className="wdid-sec__contenido relative mx-auto w-full max-w-[1600px]">
       <div className="relative z-[6]">
-        <SectionHeading kicker="01 — Qué hago" title="What I Do" />
+        {/* El kicker dice lo mismo que el raíl del hero que trae hasta aquí.
+            Decían cosas distintas —"Qué hago" contra "Especialidades"— y el
+            enlace parecía llevar a otro sitio.
+            El párrafo es el que estaba en el hero: aquí tiene ancho, fondo
+            tranquilo y llega justo cuando el visitante ya está leyendo. */}
+        <SectionHeading kicker="01 — Especialidades" title="What I Do">
+          <Reveal delay={0.12}>
+            <p className="mt-6 max-w-[56ch] text-[15.5px] leading-[1.7] text-mute">
+              Posicionamiento local, presencia en buscadores con IA y protección
+              de los datos de tus pacientes, en un plan mensual.{" "}
+              <strong className="font-bold text-ink">
+                La página web va incluida.
+              </strong>
+            </p>
+          </Reveal>
+        </SectionHeading>
       </div>
 
       {movil ? (

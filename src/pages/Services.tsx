@@ -1,98 +1,173 @@
 import {
   ArrowRight,
   Bot,
+  CalendarCheck,
   Check,
-  Globe,
+  LineChart,
   MessageCircle,
-  Server,
+  Radar,
+  RefreshCw,
+  Rocket,
+  Search,
   ShieldCheck,
-  ShoppingCart,
+  type LucideIcon,
 } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/seo";
+import { PaginaFx } from "@/components/PaginaFx";
 import { OrbitRings } from "@/components/Cosmic";
 import { Magnetic, Reveal, RevealLine } from "@/lib/anim";
 import { trackContact, trackViewContent } from "@/lib/analytics";
 import { contact } from "@/data/site";
 
-/* Servicios en lenguaje de cliente (no de programador): así es como los
-   buscan en Google — "página web para mi negocio", "tienda online", etc. */
-const servicios = [
+/**
+ * `/servicios` — qué hago, no cuánto cuesta.
+ *
+ * La página anterior vendía la oferta vieja: "páginas web, tiendas online y
+ * aplicaciones a la medida", cotización a medida y precio por WhatsApp. Con el
+ * pivote eso dejó de ser lo que se vende, así que la página entera se rehizo.
+ *
+ * ── El reparto con /planes ──
+ * Las dos páginas se tocan y hay que mantenerlas separadas o se canibalizan:
+ *
+ *   · `/planes`    → CUÁNTO CUESTA. Los tres planes, la telemetría y las
+ *                    cuatro preguntas que frenan una suscripción.
+ *   · `/servicios` → QUÉ HAGO. Los cuatro frentes desarrollados, el ciclo de
+ *                    trabajo mensual y las dudas operativas.
+ *
+ * De ahí que aquí no haya ni un precio y allí no haya un listado de tareas: el
+ * enlace entre las dos es el que cierra.
+ *
+ * ── Los cuatro frentes son los mismos que en la portada ──
+ * "Que te encuentren", "Que la IA te cite", "Que reserven solos" y "Que estés
+ * protegido" son las cuatro tarjetas del bloque 01. Aquí se desarrollan. Si
+ * cambian allí, tienen que cambiar aquí: es la misma promesa contada con más
+ * detalle, y si dicen cosas distintas se nota.
+ */
+
+interface Frente {
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  incluye: string[];
+  /** Cómo se comprueba que funcionó. Sin esto, cada punto es una promesa. */
+  mide: string;
+}
+
+const frentes: Frente[] = [
   {
-    icon: Globe,
-    title: "Páginas web para negocios",
-    desc: "Tu negocio en internet con una web moderna que carga rápido, se ve bien en el celular y transmite confianza.",
+    icon: Search,
+    title: "Que te encuentren",
+    desc: "Cuando alguien busca “odontólogo cerca de mí” o “consultorio en Cali”, el objetivo es que aparezcas en ese puñado de resultados que la gente sí mira.",
     incluye: [
-      "Diseño a la medida de tu marca",
-      "Adaptada a celular, tablet y computador",
-      "Optimizada para aparecer en Google",
-      "Botón de WhatsApp para que te escriban",
+      "Ficha de Google creada, verificada y completa",
+      "Categorías, horarios, fotos y servicios al día",
+      "Páginas propias por cada servicio que ofreces",
+      "Trabajo de reseñas: pedirlas, ordenarlas y responderlas",
+      "Datos estructurados de negocio local",
     ],
-    ejemplo: "Vitalis · Consultorio",
-  },
-  {
-    icon: ShoppingCart,
-    title: "Tiendas online (e-commerce)",
-    desc: "Vende tus productos por internet 24/7, con catálogo, carrito y una experiencia de compra pensada para convertir.",
-    incluye: [
-      "Catálogo de productos",
-      "Carrito y proceso de compra",
-      "Diseño enfocado en vender",
-      "Integración con tus redes",
-    ],
-    ejemplo: "Calidoso · Café",
-  },
-  {
-    icon: Server,
-    title: "Aplicaciones a la medida",
-    desc: "Sistemas internos, paneles de administración y herramientas que resuelven el problema específico de tu operación.",
-    incluye: [
-      "Análisis de tu proceso actual",
-      "Base de datos y panel de control",
-      "Usuarios y permisos",
-      "Documentación y soporte",
-    ],
-    ejemplo: "Hotel Marea",
+    mide: "Llamadas desde Google, solicitudes de “cómo llegar” y posición en el mapa.",
   },
   {
     icon: Bot,
-    title: "Chat-bots e inteligencia artificial",
-    desc: "Un asistente que atiende a tus clientes en WhatsApp o tu web, responde dudas y agenda citas mientras tú trabajas.",
+    title: "Que la IA te cite",
+    desc: "Cada vez más pacientes preguntan antes de buscar. Si alguien le pide a ChatGPT una recomendación en tu ciudad, hay un consultorio en esa respuesta.",
     incluye: [
-      "Entrenado con la info de tu negocio",
-      "Atención 24/7 sin costo por hora",
-      "Agenda citas y responde preguntas",
-      "Integración con META (WhatsApp)",
+      "Contenido que responde preguntas concretas de pacientes",
+      "Estructura legible para los modelos, no solo para Google",
+      "Datos estructurados de preguntas frecuentes",
+      "Ficha coherente en los directorios que las IA leen",
+      "Revisión mensual de en qué respuestas apareces",
     ],
-    ejemplo: "Integración de IA · ~90% CSAT",
+    mide: "Menciones detectadas en respuestas de IA. Te lo digo claro: la atribución todavía es parcial y no vendo esto como un canal medible.",
+  },
+  {
+    icon: CalendarCheck,
+    title: "Que reserven solos",
+    desc: "Que te encuentren no sirve de nada si al llegar no saben qué hacer. La web tiene que convertir la visita en una cita sin que nadie levante el teléfono.",
+    incluye: [
+      "Sitio propio, rápido y en tu dominio",
+      "Agenda o formulario de cita conectado",
+      "WhatsApp a un toque desde cualquier página",
+      "Textos pensados para que el paciente decida",
+      "Carga rápida también en datos móviles",
+    ],
+    mide: "Formularios enviados, clics a WhatsApp y citas pedidas desde el sitio.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Que estés protegido",
+    desc: "Un consultorio maneja datos sensibles. Esto es lo que casi nadie que hace webs puede acompañarte a resolver, y es donde mi especialización deja de ser un adorno.",
+    incluye: [
+      "HTTPS, cabeceras estrictas y CSP desde el diseño",
+      "Respaldos automáticos y restauración probada",
+      "Cifrado, mínimo privilegio y control de accesos",
+      "Acompañamiento técnico en la Ley 1581 y el registro ante la SIC",
+      "Revisión de seguridad en cada reporte mensual",
+    ],
+    mide: "Estado del escudo en la telemetría del mes y registro de parches aplicados.",
   },
 ];
 
+/* El ciclo de trabajo. No es el de un proyecto —descubrir, diseñar, entregar—
+   sino el de una cuota: hay un arranque y después un bucle que se repite todos
+   los meses. Contarlo como proyecto es lo que hace que el cliente crea que al
+   tercer mes ya no hay nada que hacer. */
+const ciclo: { num: string; icon: LucideIcon; title: string; desc: string }[] = [
+  {
+    num: "01",
+    icon: Radar,
+    title: "Diagnóstico",
+    desc: "Gratis y en 48 horas. Miro cómo estás hoy en Google, qué tiene la competencia que tú no, y qué riesgos hay con los datos que manejas. Te lo entrego por escrito, contrates o no.",
+  },
+  {
+    num: "02",
+    icon: Rocket,
+    title: "Montaje",
+    desc: "El primer mes: sitio en tu dominio, ficha de Google verificada, agenda y WhatsApp conectados, y la base de seguridad puesta. Es el mes con más trabajo y el que deja todo funcionando.",
+  },
+  {
+    num: "03",
+    icon: RefreshCw,
+    title: "Ciclo mensual",
+    desc: "Lo que sostiene el resultado: contenido nuevo, reseñas, ajustes de posicionamiento, parches y respaldos. Esto es lo que no se puede hacer una vez y abandonar.",
+  },
+  {
+    num: "04",
+    icon: LineChart,
+    title: "Telemetría",
+    desc: "Cada mes recibes el reporte con llamadas, formularios, cómo llegar, posición y estado de seguridad. Si un número no se mueve, ahí decidimos qué cambiar.",
+  },
+];
+
+/* Dudas OPERATIVAS. Las comerciales —permanencia, salida, propiedad, prueba—
+   viven en /planes y no se repiten aquí: duplicarlas partiría la respuesta en
+   dos páginas y ninguna quedaría completa. */
 const faqs = [
   {
-    q: "¿Cuánto cuesta una página web?",
-    a: "Depende del alcance: no es lo mismo una landing de una sección que una tienda online con catálogo completo. Escríbeme por WhatsApp, cuéntame qué necesitas y te doy un precio claro y cerrado, sin sorpresas ni costos ocultos.",
+    q: "¿Y si ya tengo página web?",
+    a: "Mejor: nos ahorramos el montaje. Reviso lo que tienes, te digo si conviene conservarla o rehacerla, y arrancamos por la ficha de Google y el posicionamiento, que suele ser lo que de verdad falta.",
   },
   {
-    q: "¿Cuánto se demora el proyecto?",
-    a: "Una landing o web sencilla suele estar lista en 1 a 2 semanas. Una tienda online o una aplicación a la medida toma entre 3 y 6 semanas, según la complejidad. Siempre te doy una fecha estimada antes de empezar.",
+    q: "¿Cuánto tengo que trabajar yo en esto?",
+    a: "Poco, pero no cero. Necesito una reunión corta al arrancar, acceso a tu ficha de Google y que me cuentes cosas que solo tú sabes: qué te preguntan los pacientes, qué tratamientos quieres llenar. El resto lo llevo yo.",
   },
   {
-    q: "¿Trabajas solo en Cali o en toda Colombia?",
-    a: "Trabajo desde Cali para toda Colombia y también con clientes en el exterior. Todo el proceso se puede llevar de forma remota, y hablo inglés (nivel C1) si tu proyecto lo requiere.",
+    q: "¿El dominio y el hosting van aparte?",
+    a: "El hosting va incluido en el plan. El dominio se compra a tu nombre y queda tuyo desde el primer día — son unos pocos dólares al año que pagas tú directamente, y prefiero que sea así para que nunca dependa de mí.",
   },
   {
-    q: "¿La página va a aparecer en Google?",
-    a: "Sí. Todos mis sitios se entregan optimizados para buscadores: estructura correcta, velocidad de carga, datos estructurados y configuración de Google Search Console. Este mismo portafolio es la prueba.",
+    q: "¿Solo trabajas con consultorios?",
+    a: "Es donde me estoy especializando, porque es donde mi formación en ciberseguridad suma de verdad: los datos de salud tienen un régimen más estricto. Pero si tienes otro negocio y encaja con los planes, escríbeme y lo hablamos.",
   },
   {
-    q: "¿Qué pasa después de entregar el sitio?",
-    a: "Te entrego el sitio funcionando, con acceso completo y una guía para administrarlo. Si quieres, puedo encargarme del mantenimiento, actualizaciones y nuevas funcionalidades.",
+    q: "¿Trabajas solo en Cali?",
+    a: "Estoy en Cali y trabajo con toda Colombia. Todo el proceso se lleva de forma remota sin perder nada, y si tu caso lo necesita, hablo inglés a nivel C1.",
   },
   {
-    q: "¿Mi sitio va a ser seguro?",
-    a: "Sí, y es parte del trato, no un extra. Tengo especialización en Ciberseguridad: cada proyecto sale con HTTPS, cabeceras de seguridad estrictas y buenas prácticas aplicadas desde el diseño.",
+    q: "¿Qué pasa si quiero algo que no está en los planes?",
+    a: "Se cotiza aparte y te lo digo antes, no después. Una aplicación interna, una integración con tu software de historias clínicas o una tienda en línea son otro tipo de trabajo y no tiene sentido meterlos en una cuota mensual.",
   },
 ];
 
@@ -100,7 +175,7 @@ export function Services() {
   // Señal de interés: quien llega aquí está evaluando contratar. Sirve para
   // crear públicos de remarketing en Meta.
   useEffect(() => {
-    trackViewContent("Servicios", "diseno_web");
+    trackViewContent("Servicios", "crecimiento_digital");
   }, []);
 
   const jsonLd = {
@@ -114,10 +189,14 @@ export function Services() {
   };
 
   return (
-    <>
+    /* `.pagina` es el contenedor posicionado contra el que mide la capa
+       decorativa, y el que recorta lo que sobresale por los lados. */
+    <div className="pagina">
+      <PaginaFx semilla={0} />
+
       <Seo
-        title="Diseño y desarrollo de páginas web en Cali | Dox Designs"
-        description="Creo páginas web, tiendas online y aplicaciones a la medida para negocios en Cali y toda Colombia. Sitios rápidos, seguros y listos para aparecer en Google. Cotiza por WhatsApp."
+        title="Posicionamiento web y seguridad para consultorios en Cali | Dox Designs"
+        description="Qué incluye cada mes: posicionamiento local y ficha de Google, presencia en buscadores con IA, web con agenda y WhatsApp, y seguridad con acompañamiento en la Ley 1581. Para consultorios y clínicas en Cali y toda Colombia."
         path="/servicios"
         jsonLd={jsonLd}
       />
@@ -136,19 +215,20 @@ export function Services() {
           </Reveal>
           <h1 className="display mt-4 text-[clamp(43.5px,8.4vw,111px)] leading-[0.88]">
             <RevealLine delay={0.08} mount>
-              Tu negocio,
+              Lo que hago
             </RevealLine>
             <RevealLine delay={0.16} mount>
-              <span className="text-shimmer">en internet</span>
+              <span className="text-shimmer">cada mes</span>
             </RevealLine>
           </h1>
           <Reveal delay={0.24} mount>
             <p className="mt-7 max-w-[62ch] text-[16px] leading-[1.75] text-mute">
-              Diseño y desarrollo <strong className="text-ink">páginas web</strong>,{" "}
-              <strong className="text-ink">tiendas online</strong> y{" "}
-              <strong className="text-ink">aplicaciones a la medida</strong> para
-              negocios en Cali y toda Colombia. Sitios rápidos, seguros y
-              pensados para que tus clientes te encuentren y te escriban.
+              Cuatro frentes que trabajan juntos: que te{" "}
+              <strong className="text-ink">encuentren</strong>, que la{" "}
+              <strong className="text-ink">IA te cite</strong>, que{" "}
+              <strong className="text-ink">reserven solos</strong> y que estés{" "}
+              <strong className="text-ink">protegido</strong>. Aquí está el detalle
+              de cada uno y cómo se comprueba que funcionó.
             </p>
           </Reveal>
           <Reveal delay={0.34} mount>
@@ -161,27 +241,27 @@ export function Services() {
                   onClick={() => trackContact("whatsapp")}
                   className="btn-neb group py-2 pl-7 pr-2 text-[15px]"
                 >
-                  Cotizar mi proyecto
+                  Diagnóstico gratis
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-space transition-transform group-hover:scale-110">
                     <MessageCircle className="h-4 w-4 text-neb" />
                   </span>
                 </a>
               </Magnetic>
               <Link
-                to="/proyectos"
+                to="/planes"
                 className="pill px-6 py-3.5 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-mute"
               >
-                Ver trabajos
+                Ver precios
               </Link>
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* Servicios */}
+      {/* Los cuatro frentes */}
       <section className="mx-auto max-w-[1200px] px-6 py-12 md:px-8">
         <div className="grid gap-5 lg:grid-cols-2">
-          {servicios.map((s, i) => (
+          {frentes.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.08}>
               <div className="card card-hover shine-hover group h-full p-7 md:p-8">
                 <div className="flex h-12 w-12 items-center justify-center rounded-[10px] border border-neb/30 bg-neb/10 transition-all duration-300 group-hover:-rotate-6 group-hover:scale-110 group-hover:border-neb/60 group-hover:shadow-[0_0_24px_rgba(143,162,255,.35)]">
@@ -207,8 +287,15 @@ export function Services() {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-6 border-t border-white/10 pt-4 font-mono text-[10px] tracking-[0.14em] uppercase text-faint">
-                  Ejemplo real: <span className="text-neb">{s.ejemplo}</span>
+                {/* Cada frente dice cómo se comprueba. Sin esta línea, los
+                    cinco puntos de arriba son cinco promesas. */}
+                <div className="mt-6 border-t border-white/10 pt-4">
+                  <span className="font-mono text-[9.5px] tracking-[0.16em] uppercase text-faint">
+                    Cómo se mide
+                  </span>
+                  <p className="mt-2 text-[13px] leading-[1.6] text-mute">
+                    {s.mide}
+                  </p>
                 </div>
               </div>
             </Reveal>
@@ -216,7 +303,47 @@ export function Services() {
         </div>
       </section>
 
-      {/* Seguridad incluida */}
+      {/* El ciclo de trabajo */}
+      <section className="mx-auto max-w-[1200px] px-6 py-12 md:px-8">
+        <Reveal>
+          <div className="kicker">Cómo se trabaja</div>
+        </Reveal>
+        <h2 className="display mt-3 text-[clamp(30px,5.2vw,58.5px)] leading-[0.96]">
+          <RevealLine delay={0.06}>Un arranque y un bucle</RevealLine>
+        </h2>
+        <Reveal delay={0.14}>
+          <p className="mt-6 max-w-[62ch] text-[15px] leading-[1.75] text-mute">
+            No es un proyecto que se entrega y se acaba. Hay un primer mes de
+            montaje y después un ciclo que se repite, porque el posicionamiento
+            se sostiene o se pierde.
+          </p>
+        </Reveal>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {ciclo.map((p, i) => (
+            <Reveal key={p.num} delay={0.08 + i * 0.07}>
+              <div className="card card-hover group h-full p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[9px] border border-neb/30 bg-neb/10 transition-all duration-300 group-hover:scale-110 group-hover:border-neb/60">
+                    <p.icon className="h-4 w-4 text-neb" strokeWidth={1.7} />
+                  </div>
+                  <span className="display text-[27px] leading-none text-white/10">
+                    {p.num}
+                  </span>
+                </div>
+                <div className="mt-5 text-[15px] font-bold text-ink">
+                  {p.title}
+                </div>
+                <p className="mt-2 text-[13px] leading-[1.65] text-faint">
+                  {p.desc}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Seguridad */}
       <section className="mx-auto max-w-[1200px] px-6 py-12 md:px-8">
         <Reveal>
           <div className="glow-quote relative overflow-hidden rounded-2xl border border-neb/20 bg-space/60 p-8 md:p-10">
@@ -228,13 +355,19 @@ export function Services() {
               </div>
               <div>
                 <h2 className="display text-[clamp(22.5px,3vw,33px)] leading-[1.05]">
-                  Seguridad incluida, no cobrada aparte
+                  La seguridad no es un extra
                 </h2>
                 <p className="mt-3 max-w-[70ch] text-[14.5px] leading-[1.7] text-mute">
-                  Tengo especialización en Ciberseguridad. Cada sitio se entrega
-                  con HTTPS, cabeceras estrictas y buenas prácticas aplicadas
-                  desde el diseño — protegiendo tu negocio y la confianza de tus
-                  clientes.
+                  Tengo especialización en Ciberseguridad. Todo sitio sale con
+                  HTTPS, cabeceras estrictas y buenas prácticas desde el diseño.
+                  Y si manejas datos de pacientes, eso es el punto de partida y
+                  no la meta: el plan Blindaje añade auditoría, monitoreo y
+                  acompañamiento en la Ley 1581.
+                </p>
+                <p className="mt-3 max-w-[70ch] text-[13px] leading-[1.65] text-faint">
+                  Acompañamiento <strong className="text-mute">técnico</strong>: preparo
+                  tu sitio y tus procesos para cumplir, no sustituyo el criterio
+                  de un abogado.
                 </p>
               </div>
             </div>
@@ -250,6 +383,15 @@ export function Services() {
         <h2 className="display mt-3 text-[clamp(33px,5.6vw,63px)] leading-[0.94]">
           <RevealLine delay={0.06}>Preguntas frecuentes</RevealLine>
         </h2>
+        <Reveal delay={0.12}>
+          <p className="mt-5 max-w-[60ch] text-[14.5px] leading-[1.7] text-faint">
+            Las de permanencia, salida y propiedad del sitio están en{" "}
+            <Link to="/planes" className="link-underline text-neb">
+              planes y precios
+            </Link>
+            .
+          </p>
+        </Reveal>
         <div className="mt-10 grid gap-4 md:grid-cols-2">
           {faqs.map((f, i) => (
             <Reveal key={f.q} delay={i * 0.05}>
@@ -271,11 +413,12 @@ export function Services() {
         <Reveal>
           <div className="glow-cta relative overflow-hidden rounded-2xl border border-white/10 bg-space/60 p-8 text-center md:p-14">
             <h2 className="display text-[clamp(30px,4.7vw,52.5px)] leading-[0.98]">
-              ¿Hablamos de tu proyecto?
+              Empieza por el diagnóstico
             </h2>
-            <p className="mx-auto mt-4 max-w-[52ch] text-[15px] leading-[1.7] text-mute">
-              Cuéntame qué necesitas y te doy un precio claro, sin compromiso.
-              Respondo el mismo día.
+            <p className="mx-auto mt-4 max-w-[54ch] text-[15px] leading-[1.7] text-mute">
+              En 48 horas te digo por escrito cómo estás hoy en Google, qué tiene
+              la competencia que tú no, y qué riesgos hay con los datos que
+              manejas. Es gratis y es tuyo, contrates o no.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Magnetic>
@@ -286,21 +429,20 @@ export function Services() {
                   onClick={() => trackContact("whatsapp")}
                   className="btn-neb px-7 py-3.5 text-sm"
                 >
-                  Escribirme por WhatsApp
+                  Pedir mi diagnóstico
                   <ArrowRight className="h-4 w-4" />
                 </a>
               </Magnetic>
-              <a
-                href={`mailto:${contact.email}`}
-                onClick={() => trackContact("email")}
+              <Link
+                to="/planes"
                 className="pill px-6 py-3.5 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-mute"
               >
-                Enviar un correo
-              </a>
+                Ver planes y precios
+              </Link>
             </div>
           </div>
         </Reveal>
       </section>
-    </>
+    </div>
   );
 }

@@ -128,7 +128,7 @@ export function Hero() {
         <>
           {/* Izquierda: el "01" solo en escritorio; en móvil queda la etiqueta
               con su flecha, como enlace a servicios. */}
-          <Link to="/servicios" className="hero-rail hero-rail--left hero-indice">
+          <Link to="/#especialidades" className="hero-rail hero-rail--left hero-indice">
             {/* El número a la izquierda de la etiqueta; la flecha, a su derecha. */}
             <span className="hero-index-group">
               <span className="hero-index-box hero-solo-escritorio">
@@ -148,15 +148,18 @@ export function Hero() {
                 como dos cosas distintas. Comparte `hero-indice` con el de la
                 izquierda, así que hereda el remolino del número en hover sin
                 duplicar una sola regla. */}
+            {/* El gemelo del 01 apunta ahora al bloque que cobra y no al
+                muestrario: es el segundo paso de la lectura comercial, no el
+                archivo de trabajos. */}
             <Link
-              to="/proyectos"
+              to="/planes"
               className="hero-indice hero-solo-escritorio"
-              aria-label="Ver misiones completadas: proyectos"
+              aria-label="Ver los planes de vuelo"
             >
               <span className="hero-index-group hero-index-group--espejo">
                 <FlechaLarga />
                 <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
-                  Misiones completadas
+                  Planes de vuelo
                 </span>
                 <span className="hero-index-box">
                   <span className="hero-index">02</span>
@@ -170,10 +173,10 @@ export function Hero() {
                 flecha hacia dentro, así que aquí la flecha va primero —hacia
                 dentro también— y la etiqueta al borde. Con el orden invertido
                 las dos flechas caían del mismo lado y el par no se leía. */}
-            <Link to="/proyectos" className="hero-rail__enlace hero-rail__enlace--espejo hero-solo-movil">
+            <Link to="/planes" className="hero-rail__enlace hero-rail__enlace--espejo hero-solo-movil">
               <FlechaLarga />
               <span className="hero-rail__vertical font-elnath text-[13px]">
-                Misiones completadas
+                Planes de vuelo
               </span>
             </Link>
           </div>
@@ -219,48 +222,65 @@ export function Hero() {
             <Reveal mount>
               <div className="kicker flex items-center gap-3 !text-[12px]">
                 <span className="inline-block h-px w-10 bg-neb/70" />
-                Desarrollador &amp; Diseñador Web
+                Crecimiento digital para consultorios · Cali
               </div>
             </Reveal>
             <h1
-              className="display mt-6 text-[clamp(48px,10.2vw,139.5px)] leading-[0.86]"
-              aria-label="Santiago Miranda"
+              className="display mt-6 text-[clamp(40px,8.2vw,112px)] leading-[0.88]"
+              aria-label="Que te encuentren cuando te buscan"
             >
               <span className="block whitespace-nowrap">
-                <Letters text="SANTIAGO" delay={0.1} stagger={0.05} mount />
+                <Letters text="QUE TE" delay={0.1} stagger={0.05} mount />
               </span>
-              <RevealLine delay={0.45} mount className="whitespace-nowrap">
-                <span className="text-shimmer">MIRANDA</span>
+              <RevealLine delay={0.4} mount className="whitespace-nowrap">
+                <span className="text-shimmer">ENCUENTREN</span>
               </RevealLine>
             </h1>
             <Reveal delay={0.65} mount>
-              <p className="mt-8 max-w-[44ch] text-[clamp(17px,1.6vw,21px)] leading-[1.6] text-mute">
-                Diseño y construyo experiencias digitales donde el{" "}
-                <strong className="font-extrabold text-ink">código</strong> y el{" "}
-                <strong className="font-extrabold text-ink">diseño</strong> se
-                encuentran.
+              <p className="mt-8 max-w-[46ch] text-[clamp(16px,1.5vw,20px)] leading-[1.6] text-mute">
+                Posicionamiento local, presencia en{" "}
+                <strong className="font-extrabold text-ink">buscadores con IA</strong> y
+                protección de los{" "}
+                <strong className="font-extrabold text-ink">datos de tus pacientes</strong>,
+                en un plan mensual. La página web va incluida.
               </p>
             </Reveal>
             <Reveal delay={0.78} mount>
               <div className="mt-10 flex flex-wrap items-center gap-5">
+                {/* El primario sale del sitio: es una conversación, no otra
+                    página. El secundario lleva al bloque que cobra. Antes los
+                    dos llevaban hacia dentro —proyectos y biografía— y ninguna
+                    ruta de la portada terminaba en una venta. */}
                 <Magnetic>
-                  <Link
-                    to="/proyectos"
+                  <a
+                    href={contact.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackContact("whatsapp")}
                     className="btn-neb group py-2 pl-8 pr-2 text-[15px]"
                   >
-                    Ver proyectos
+                    Diagnóstico gratis
                     <span className="flex h-11 w-11 items-center justify-center rounded-full bg-space transition-transform group-hover:scale-110">
                       <ArrowRight className="h-4.5 w-4.5 text-neb" />
                     </span>
-                  </Link>
+                  </a>
                 </Magnetic>
                 <Link
-                  to="/sobre-mi"
+                  to="/planes"
                   className="pill px-7 py-3.5 font-mono text-[12px] font-semibold tracking-[0.14em] uppercase text-mute"
                 >
-                  Sobre mí
+                  Ver planes
                 </Link>
               </div>
+            </Reveal>
+            {/* El nombre no desaparece, cambia de rango: el titular lo ocupa
+                ahora la promesa. Con la credencial al lado, porque sin clientes
+                todavía es la única prueba que no depende de haber trabajado
+                para alguien. */}
+            <Reveal delay={0.9} mount>
+              <p className="mt-7 font-mono text-[10.5px] font-medium tracking-[0.16em] uppercase text-faint">
+                Santiago Miranda · Ing. Informático · Esp. Ciberseguridad
+              </p>
             </Reveal>
           </div>
           )}
@@ -297,6 +317,51 @@ export function Hero() {
           </motion.div>
         </div>
       </div>
+
+      {/* z-55: por encima de la capa DELANTERA de la decoración, que va en 50,
+          y por debajo del nav. En 30 los cristales y la constelación le pasaban
+          por encima al titular — medido en móvil, un cristal cubría la mitad de
+          "BUSCAN". Sigue en pie la regla del brief 8: ninguna pieza tapa texto. */}
+      {HERO_ISOLATED && (
+        <div className="relative z-[55] mx-auto w-full max-w-[1240px] px-6 pb-8 md:px-8">
+          <Reveal delay={0.85} mount>
+            <div className="hero-promesa">
+              <div className="hero-promesa__titular">
+                <p className="kicker !text-[11px]">
+                  Crecimiento digital para consultorios · Cali
+                </p>
+                <h1 className="hero-promesa__h1">
+                  Que te encuentren cuando te{" "}
+                  <span className="text-shimmer">buscan</span>.
+                </h1>
+              </div>
+
+              <div className="hero-promesa__acciones">
+                <Magnetic>
+                  <a
+                    href={contact.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackContact("whatsapp")}
+                    className="btn-neb group py-2 pl-7 pr-2 text-[14px]"
+                  >
+                    Diagnóstico gratis
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-space transition-transform group-hover:scale-110">
+                      <ArrowRight className="h-4 w-4 text-neb" />
+                    </span>
+                  </a>
+                </Magnetic>
+                <Link
+                  to="/#planes"
+                  className="pill px-6 py-3 font-mono text-[11.5px] font-semibold tracking-[0.14em] uppercase text-mute"
+                >
+                  Ver planes
+                </Link>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      )}
 
       {/* Cintillo inferior + indicador de scroll */}
       {!HERO_ISOLATED && (

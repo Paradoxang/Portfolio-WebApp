@@ -13,7 +13,6 @@ import {
   Search,
   Lightbulb,
   Rocket,
-  Languages,
   Hourglass,
   FolderCheck,
   Braces,
@@ -41,11 +40,17 @@ export const contact = {
   domain: "doxdesigns.dev",
 };
 
-/* ── Stats (cifras reales, sin inventar clientes) ── */
+/* ── La barra de credencial ──
+   Antes decía "25+ proyectos", "Inglés C1" y "4+ años". Ninguna de las tres era
+   una razon para contratar: son datos de hoja de vida, no de propuesta. Y el
+   25+ tampoco se sostiene cuando lo navegable son seis.
+   Las tres de ahora son las unicas cosas comprobables que se pueden ofrecer sin
+   tener todavia un cliente con cifras: lo que se puede mirar, lo que se entrega
+   antes de cobrar, y el titulo. */
 export const stats = [
-  { icon: FolderCheck, value: 25, suffix: "+", label: "Proyectos realizados" },
-  { icon: Languages, display: "C1", label: "Inglés bilingüe" },
-  { icon: Hourglass, value: 4, suffix: "+", label: "Años construyendo" },
+  { icon: FolderCheck, value: 6, suffix: "", label: "Demostraciones navegables" },
+  { icon: Hourglass, display: "48h", label: "Diagnóstico gratuito" },
+  { icon: Shield, display: "Esp.", label: "Especialización en Ciberseguridad" },
 ] as const;
 
 /* ── What I do ──
@@ -72,52 +77,178 @@ export interface Service {
 }
 export const services: Service[] = [
   {
-    icon: Code2,
-    title: "Desarrollo full-stack",
-    desc: "APIs y aplicaciones de extremo a extremo con .NET, Next.js y SQL Server.",
-    resumen: ".NET, Next.js y SQL Server.",
+    icon: Search,
+    title: "Que te encuentren",
+    desc: "Posicionamiento local, ficha de Google y reseñas para aparecer cuando alguien busca cerca de ti.",
+    resumen: "Aparecer al buscar cerca.",
     variante: "modulo",
     objeto: "wdid_01_modulo",
-    etiqueta: "Backend & API",
+    etiqueta: "Posicionamiento",
     color: "#F0A868",
-    cta: "Ver stack",
-    href: "/servicios",
-  },
-  {
-    icon: PenTool,
-    title: "Diseño de interfaz",
-    desc: "UI oscura y editorial: sistemas de diseño con tipografía protagonista.",
-    resumen: "Sistemas oscuros y editoriales.",
-    variante: "astrolabio",
-    objeto: "wdid_02_astrolabio",
-    etiqueta: "Sistemas de diseño",
-    color: "#E7DCFF",
-    cta: "Ver proceso",
-    href: "/servicios",
-  },
-  {
-    icon: LayoutTemplate,
-    title: "Landings & web",
-    desc: "Sitios rápidos, responsive y accesibles con React + Tailwind.",
-    resumen: "Rápidas, responsive, accesibles.",
-    variante: "cristal",
-    objeto: "wdid_03_cristal",
-    etiqueta: "Rendimiento",
-    color: "#8FA2FF",
-    cta: "Ver proyectos",
-    href: "/proyectos",
+    cta: "Ver planes",
+    href: "/planes",
   },
   {
     icon: Bot,
-    title: "Integración de IA",
-    desc: "Chat-bots y asistentes con entrenamiento enfocado al negocio.",
-    resumen: "Chat-bots enfocados al negocio.",
+    title: "Que la IA te cite",
+    desc: "Contenido y datos estructurados para salir en las respuestas de ChatGPT, Perplexity y los resúmenes de Google.",
+    resumen: "Salir en respuestas de IA.",
+    variante: "astrolabio",
+    objeto: "wdid_02_astrolabio",
+    etiqueta: "Buscadores con IA",
+    color: "#E7DCFF",
+    cta: "Ver planes",
+    href: "/planes",
+  },
+  {
+    icon: LayoutTemplate,
+    title: "Que reserven solos",
+    desc: "Web rápida con agenda, formularios y WhatsApp para que la cita se pida sin llamar.",
+    resumen: "Agenda y WhatsApp sin llamar.",
+    variante: "cristal",
+    objeto: "wdid_03_cristal",
+    etiqueta: "Conversión",
+    color: "#8FA2FF",
+    cta: "Ver muestrario",
+    href: "/proyectos",
+  },
+  {
+    icon: Shield,
+    title: "Que estés protegido",
+    desc: "Los datos de tus pacientes cifrados, el sitio monitoreado y el cumplimiento de la Ley 1581 al día.",
+    resumen: "Datos y cumplimiento al día.",
     variante: "vela",
     objeto: "wdid_04_vela",
-    etiqueta: "Automatización",
+    etiqueta: "Cumplimiento",
     color: "#FFB39C",
-    cta: "Hablemos",
-    href: "/contacto",
+    cta: "Ver el escudo",
+    href: "/#escudo",
+  },
+];
+
+/* ── Planes de vuelo ──
+   El bloque que cambia el modelo: deja de venderse el proyecto y se vende la
+   cuota. Tres columnas, mensual y con el número a la vista — el precio en
+   pantalla filtra a quien no puede pagar antes de gastar una hora cotizando, y
+   cambia la conversación de "cuánto me cobras" a "cuál me sirve".
+
+   ── La escalera de precios ──
+   350.000 / 690.000 / 1.150.000 COP al mes. Es una escalera de entrada
+   deliberadamente baja: el salto Base→Crecimiento es x2 y el de Crecimiento→
+   Blindaje x1.7, que es el reparto que hace que el del medio se lea como el
+   razonable y no como el caro.
+   Conviene saber lo que cuesta entrar así de abajo: subirle la cuota a un
+   cliente que ya entró es mucho más difícil que entrar caro, y con el programa
+   fundador encima hay dos descuentos apilados sobre el mismo plan. Cuando
+   estén los tres primeros casos con cifras, esto se revisa. */
+export interface Plan {
+  /** Ancla para el enlace directo. */
+  id: string;
+  /** Etiqueta corta de la tarjeta, en el idioma de la casa. */
+  etiqueta: string;
+  nombre: string;
+  /** Para quién es, en una línea. */
+  para: string;
+  /** Solo la cifra, en pesos y con punto de miles. La moneda la escribe la
+      tarjeta: metida aquí, "COP 1.150.000" se come el ancho de la columna y el
+      número deja de leerse de un vistazo, que es justo para lo que está. */
+  precio: string;
+  periodo: string;
+  incluye: string[];
+  /** El del medio: el que se quiere vender. */
+  destacado?: boolean;
+}
+export const planes: Plan[] = [
+  {
+    id: "base",
+    etiqueta: "Órbita baja",
+    nombre: "Base",
+    para: "Para el consultorio que todavía no está en internet.",
+    precio: "350.000",
+    periodo: "/mes",
+    incluye: [
+      "Sitio web propio, rápido y en tu dominio",
+      "Ficha de Google optimizada y verificada",
+      "Formulario y WhatsApp conectados",
+      "Respaldos, actualizaciones y monitoreo",
+      "Telemetría mensual",
+    ],
+  },
+  {
+    id: "crecimiento",
+    etiqueta: "El más contratado",
+    nombre: "Crecimiento",
+    para: "Para el que ya está y quiere que lo encuentren primero.",
+    precio: "690.000",
+    periodo: "/mes · mín. 6 meses",
+    destacado: true,
+    incluye: [
+      "Todo lo del plan Base",
+      "Posicionamiento local y trabajo de reseñas",
+      "Dos contenidos al mes en tu sitio",
+      "Presencia en buscadores con IA",
+      "Telemetría mensual ampliada",
+    ],
+  },
+  {
+    id: "blindaje",
+    etiqueta: "Datos sensibles",
+    nombre: "Blindaje",
+    para: "Para quien maneja historias clínicas y datos de pacientes.",
+    precio: "1.150.000",
+    periodo: "/mes",
+    incluye: [
+      "Todo lo del plan Crecimiento",
+      "Auditoría técnica de seguridad",
+      "Acompañamiento en Ley 1581 y registro ante la SIC",
+      "Cifrado, mínimo privilegio y control de accesos",
+      "Revisión de seguridad en cada telemetría",
+    ],
+  },
+];
+
+/* ── Telemetría ──
+   El informe mensual. Es el bloque que justifica el cobro recurrente: sin él,
+   el cliente paga el mes dos sin saber qué compró y se va en el tres.
+   Las métricas son las que él entiende —llamadas, citas, cómo llegar—, no
+   posiciones de palabras clave.
+
+   Los valores son de EJEMPLO y la sección lo dice en pantalla. */
+export interface Metrica {
+  k: string;
+  valor: string;
+  delta?: string;
+}
+export const telemetria: Metrica[] = [
+  { k: "Llamadas", valor: "38", delta: "+12" },
+  { k: "Formularios", valor: "14", delta: "+5" },
+  { k: "Cómo llegar", valor: "61", delta: "+19" },
+  { k: "Posición local", valor: "3.º", delta: "+4" },
+  { k: "Citas en IA", valor: "7", delta: "+3" },
+  { k: "Escudo", valor: "OK" },
+];
+
+/* ── Objeciones ──
+   No son las dudas de un proyecto —esas ya están en /servicios—, son las cuatro
+   que frenan una SUSCRIPCIÓN, que son otras. La cuarta es la incómoda y por eso
+   va contestada de frente: sin clientes todavía, decirlo tú primero convierte
+   la debilidad en el motivo para decidirse ya. */
+export const objeciones = [
+  {
+    q: "¿En cuánto tiempo veo resultados?",
+    a: "La ficha de Google y las reseñas suelen moverse en semanas. El posicionamiento por búsquedas tarda de tres a seis meses — te lo digo antes de que firmes, no después.",
+  },
+  {
+    q: "¿Hay permanencia? ¿Y si me quiero ir?",
+    a: "Base no tiene permanencia. Crecimiento y Blindaje piden seis meses, porque antes de eso no hay nada que medir. Avisas con un mes y se cierra sin penalización.",
+  },
+  {
+    q: "Si cancelo, ¿la web sigue siendo mía?",
+    a: "Sí. El dominio y el contenido son tuyos desde el primer día y te los entrego funcionando. Lo que se acaba es el trabajo mensual, no tu sitio.",
+  },
+  {
+    q: "¿Ya lo has hecho con alguien más?",
+    a: "Todavía no con un consultorio, y prefiero decirlo yo. Por eso los tres primeros entran a precio de fundador a cambio de permiso para publicar sus números. Lo que sí puedes revisar es cómo trabajo: todo el muestrario de abajo está en línea y se puede navegar.",
   },
 ];
 
@@ -160,6 +291,14 @@ export const quote = {
 
 /* ── Proyectos (contenido real) ── */
 export interface Project {
+  /** Entra en el carrusel del muestrario de la portada.
+      El criterio es uno solo: **¿se puede entrar y moverse por él?** El
+      argumento de la sección es "míralo funcionando", así que un caso sin
+      enlace vivo no pinta nada ahí. Se caen Aurora —ejercicio de vídeo, poco
+      que enseñarle a un cliente— y los dos de 2025, que ni siquiera tienen
+      demo navegable. No se borran: bajan a la lista de capacidades técnicas,
+      donde suman sin ocupar un carril que debería estar vendiendo. */
+  muestrario?: boolean;
   num: string;
   slug: string;
   name: string;
@@ -185,6 +324,7 @@ export const projects: Project[] = [
   {
     num: "01",
     slug: "gem-eyes",
+    muestrario: true,
     preview: {
       mp4: "/previews/gem-eyes-960.mp4",
       webm: "/previews/gem-eyes-960.webm",
@@ -192,9 +332,9 @@ export const projects: Project[] = [
     },
     name: "Gem Eyes",
     tipo: "Web",
-    tag: "Sitio de estudio creativo",
-    desc: "Sitio web para un estudio creativo con una identidad visual audaz: ilustración a pantalla completa, animaciones expresivas y secciones de galería, proceso y contacto.",
-    rol: "Diseño y desarrollo completo",
+    tag: "Concepto · estudio creativo",
+    desc: "Demo de sitio para un estudio creativo, con identidad visual audaz: ilustración a pantalla completa, animaciones expresivas y secciones de galería, proceso y contacto.",
+    rol: "Concepto, diseño y desarrollo",
     resultado:
       "Experiencia inmersiva y responsive que destaca el arte del estudio sin sacrificar la velocidad de carga.",
     stack: ["React", "Tailwind", "Vite", "Vercel"],
@@ -206,6 +346,7 @@ export const projects: Project[] = [
   {
     num: "02",
     slug: "dr-adrian",
+    muestrario: true,
     preview: {
       mp4: "/previews/dr-adrian-960.mp4",
       webm: "/previews/dr-adrian-960.webm",
@@ -213,9 +354,9 @@ export const projects: Project[] = [
     },
     name: "Portafolio Dr. Adrián",
     tipo: "Web",
-    tag: "Portafolio profesional médico",
-    desc: "Portafolio digital del Dr. Adrián, especialista médico: una carta de presentación en línea que reúne su perfil profesional, servicios y datos de contacto.",
-    rol: "Diseño y desarrollo",
+    tag: "Concepto · portafolio médico",
+    desc: "Demo de portafolio para un especialista médico: una carta de presentación en línea que reúne perfil profesional, servicios y datos de contacto.",
+    rol: "Concepto, diseño y desarrollo",
     resultado: "Diseño responsive y limpio, desplegado en Vercel.",
     stack: ["React", "Tailwind", "Vercel", "Responsive"],
     demo: "https://portfolio-doctor-app.vercel.app/",
@@ -226,6 +367,7 @@ export const projects: Project[] = [
   {
     num: "03",
     slug: "calidoso",
+    muestrario: true,
     preview: {
       mp4: "/previews/calidoso-960.mp4",
       webm: "/previews/calidoso-960.webm",
@@ -233,9 +375,9 @@ export const projects: Project[] = [
     },
     name: "Calidoso · Café",
     tipo: "Web",
-    tag: "E-commerce para tienda de café",
-    desc: "Tienda en línea para Calidoso, negocio de café: catálogo de producto, presentación de marca e interfaz responsive desplegada en Vercel.",
-    rol: "Diseño y desarrollo",
+    tag: "Concepto · e-commerce de café",
+    desc: "Demo de tienda en línea para una marca de café: catálogo de producto, presentación de marca e interfaz responsive desplegada en Vercel.",
+    rol: "Concepto, diseño y desarrollo",
     resultado:
       "E-commerce enfocado en conversión, con identidad cálida y navegación clara del catálogo.",
     stack: ["React", "Tailwind", "Vercel", "E-commerce"],
@@ -247,6 +389,7 @@ export const projects: Project[] = [
   {
     num: "04",
     slug: "vitalis",
+    muestrario: true,
     preview: {
       mp4: "/previews/vitalis-960.mp4",
       webm: "/previews/vitalis-960.webm",
@@ -254,9 +397,9 @@ export const projects: Project[] = [
     },
     name: "Vitalis · Consultorio",
     tipo: "Web",
-    tag: "Landing para consultorio médico",
-    desc: "Sitio web para el consultorio médico Vitalis: presentación institucional de servicios de salud con interfaz responsive y desplegada en Vercel.",
-    rol: "Diseño y desarrollo",
+    tag: "Concepto · consultorio médico",
+    desc: "Demo de sitio para un consultorio médico: presentación institucional de servicios de salud con interfaz responsive, desplegada en Vercel.",
+    rol: "Concepto, diseño y desarrollo",
     resultado:
       "Estructura pensada para comunicar los servicios, generar confianza y facilitar el contacto de los pacientes.",
     stack: ["React", "Tailwind", "Vercel", "Responsive"],
@@ -268,6 +411,7 @@ export const projects: Project[] = [
   {
     num: "05",
     slug: "eco-muestreo",
+    muestrario: true,
     preview: {
       mp4: "/previews/eco-muestreo-960.mp4",
       webm: "/previews/eco-muestreo-960.webm",
@@ -275,9 +419,9 @@ export const projects: Project[] = [
     },
     name: "Eco Muestreo · Joyería",
     tipo: "Web",
-    tag: "E-commerce para joyería artesanal",
-    desc: "Tienda en línea para Eco Muestreo, joyería artesanal: catálogo de piezas, presentación de marca e interfaz responsive desplegada en Vercel.",
-    rol: "Diseño y desarrollo",
+    tag: "Concepto · joyería artesanal",
+    desc: "Demo de tienda en línea para una joyería artesanal: catálogo de piezas, presentación de marca e interfaz responsive desplegada en Vercel.",
+    rol: "Concepto, diseño y desarrollo",
     resultado:
       "E-commerce con estética artesanal, pensado para resaltar cada pieza y facilitar la compra.",
     stack: ["React", "Tailwind", "Vercel", "E-commerce"],
@@ -289,6 +433,7 @@ export const projects: Project[] = [
   {
     num: "06",
     slug: "hotel-marea",
+    muestrario: true,
     preview: {
       mp4: "/previews/hotel-marea-960.mp4",
       webm: "/previews/hotel-marea-960.webm",
@@ -340,10 +485,11 @@ export const projects: Project[] = [
     name: "Integración de IA",
     tipo: "Chat-bot",
     tag: "Tecnologías META",
-    desc: "Chat-bot de atención al cliente para un consultorio de Psicología, mediante tokens y entrenamiento enfocado.",
-    rol: "Integración y entrenamiento",
-    resultado: "Alcanzó ~90% en pruebas de satisfacción del cliente.",
-    stack: ["IA", "META", "Tokens", "~90% CSAT"],
+    desc: "Ejercicio de chat-bot de atención sobre tecnologías META, planteado alrededor de un caso de consultorio: manejo de tokens y entrenamiento acotado a un guion.",
+    rol: "Concepto, integración y entrenamiento",
+    resultado:
+      "Flujo de conversación completo sobre un guion cerrado, con manejo de tokens y respuestas entrenadas para un dominio concreto.",
+    stack: ["IA", "META", "Tokens", "Prompting"],
     mark: "IA",
     year: "2025",
   },
@@ -370,6 +516,8 @@ export const projects: Project[] = [
 ];
 
 export const featuredProjects = projects.filter((p) => p.featured);
+/** Los seis navegables: lo que corre dentro de la tableta de la portada. */
+export const muestrario = projects.filter((p) => p.muestrario);
 
 /* ── Sobre mí ── */
 export interface SkillGroup {

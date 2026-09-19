@@ -108,13 +108,17 @@ export function SelectedProjects() {
           portada se lea como una rejilla y no como dos secciones sueltas. */}
       <div className="projects__inner relative z-[6] mx-auto w-full max-w-[1600px]">
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <SectionHeading kicker="02 — Trabajo seleccionado" title="Selected Projects" />
+          {/* Deja de ser "Trabajo seleccionado". Todo lo que hay dentro son
+              demostraciones propias, y llamarlas de otra forma es exactamente
+              lo que un comprador detecta en diez segundos. Declararlo primero
+              convierte la debilidad en argumento: se puede entrar a todas. */}
+          <SectionHeading kicker="04 — Muestrario" title="Así se vería el tuyo" />
           <Reveal delay={0.15}>
             <Link
               to="/proyectos"
               className="group flex items-center gap-2 font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-neb transition-colors hover:text-ink"
             >
-              Ver todos
+              Ver los seis
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </Link>
           </Reveal>

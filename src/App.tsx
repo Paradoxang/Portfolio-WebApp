@@ -16,6 +16,7 @@ import { About } from "@/pages/About";
 import { Contact } from "@/pages/Contact";
 import { Projects } from "@/pages/Projects";
 import { Services } from "@/pages/Services";
+import { Plans } from "@/pages/Plans";
 
 function Layout() {
   useLenis();
@@ -103,6 +104,7 @@ export const routes: RouteRecord[] = [
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
+      { path: "planes", element: <Plans /> },
       { path: "servicios", element: <Services /> },
       { path: "proyectos", element: <Projects /> },
       { path: "sobre-mi", element: <About /> },

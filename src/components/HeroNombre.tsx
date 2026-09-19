@@ -63,12 +63,19 @@ export function HeroNombre({ listo }: { listo: boolean }) {
   );
 
   return (
-    <h1 className="hero-name" ref={ref} aria-label="Santiago Miranda">
+    /* `p` y no `h1`: el titular de la portada es ahora la promesa, que va en
+       la banda de debajo. El nombre se ve exactamente igual —misma clase,
+       mismo descifrado— y solo cambia de rango.
+       Las dos líneas siguen ocultas al lector de pantalla porque el scramble
+       les reescribe los caracteres fotograma a fotograma; el nombre legible lo
+       pone el `sr-only`. */
+    <p className="hero-name" ref={ref}>
+      <span className="sr-only">Santiago Miranda</span>
       {LINEAS.map((t) => (
         <span key={t} className="hero-name__linea block" aria-hidden="true">
           {t}
         </span>
       ))}
-    </h1>
+    </p>
   );
 }

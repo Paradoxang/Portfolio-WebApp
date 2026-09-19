@@ -24,7 +24,7 @@ export function Cta() {
         <div className="relative grid items-center gap-10 p-8 md:p-12 lg:grid-cols-[1fr_0.9fr]">
           <div>
             <Reveal>
-              <div className="kicker">06 — Contacto</div>
+              <div className="kicker">07 — Contacto</div>
             </Reveal>
             <h2 className="display mt-4 text-[clamp(37.5px,5.6vw,60px)] leading-[0.92]">
               <RevealLine delay={0.06}>Let's Work</RevealLine>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { projects, type Project } from "@/data/site";
+import { muestrario, type Project } from "@/data/site";
 
 /**
  * El carrusel que corre dentro de la tableta.
@@ -243,7 +243,11 @@ export function CarruselProyectos({
   /** La sección está en pantalla y en marcha. */
   activo?: boolean;
 }) {
-  const conPreview = projects.filter((p) => p.preview);
+  /* El muestrario, no la lista entera. Son seis y no nueve porque la sección
+     dejó de ser un portafolio: su argumento es "entra y muévete por él", así
+     que lo que no tiene enlace vivo no cuenta. Con seis, `repartir()` deja
+     tres por fila y la columna del móvil respira mejor. */
+  const conPreview = muestrario.filter((p) => p.preview);
 
   if (quieto) {
     return (

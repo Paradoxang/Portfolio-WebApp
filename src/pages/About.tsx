@@ -1,13 +1,18 @@
 import { Languages, Award, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/seo";
+import { PaginaFx } from "@/components/PaginaFx";
 import { Reveal, RevealLine } from "@/lib/anim";
 import { Constellation, GlowOrb } from "@/components/Cosmic";
 import { skillGroups, timeline, achievements, collage, contact } from "@/data/site";
 
 export function About() {
   return (
-    <>
+    /* `.pagina` es el contenedor posicionado contra el que mide la capa
+       decorativa, y el que recorta lo que sobresale por los lados. */
+    <div className="pagina">
+      <PaginaFx semilla={6} />
+
       <Seo
         title="Sobre mí · Santiago Miranda | Dox Designs"
         description="Conoce a Santiago Miranda (Dox Designs): experiencia, habilidades y formación — React, Next.js, .NET, Angular y Electron. Desarrollador full-stack y diseñador web en Cali, Colombia."
@@ -199,6 +204,6 @@ export function About() {
           </Reveal>
         </div>
       </section>
-    </>
+    </div>
   );
 }

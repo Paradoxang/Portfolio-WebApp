@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { Facebook, Instagram, Mail, MapPin, MessageCircle } from "lucide-react";
 import { useRef } from "react";
 import { Seo } from "@/components/seo";
+import { PaginaFx } from "@/components/PaginaFx";
 import { Magnetic, Reveal, RevealLine } from "@/lib/anim";
 import { trackContact } from "@/lib/analytics";
 import { contact } from "@/data/site";
@@ -50,7 +51,11 @@ export function Contact() {
   const mockY = useTransform(scrollYProgress, [0, 1], [30, -30]);
 
   return (
-    <>
+    /* `.pagina` es el contenedor posicionado contra el que mide la capa
+       decorativa, y el que recorta lo que sobresale por los lados. */
+    <div className="pagina">
+      <PaginaFx semilla={9} />
+
       <Seo
         title="Contacto · Santiago Miranda | Dox Designs"
         description="Hablemos de tu proyecto. WhatsApp, correo y redes de Santiago Miranda (Dox Designs), desarrollador full-stack y diseñador web en Cali, Colombia."
@@ -177,6 +182,6 @@ export function Contact() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

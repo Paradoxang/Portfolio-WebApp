@@ -46,7 +46,7 @@ const practices = [
  */
 export function Security() {
   return (
-    <section className="security">
+    <section id="escudo" className="security scroll-mt-24">
       {/* z0–z3 · nebulosa, partículas, eco, estela y nave. Todo por DEBAJO de
           la tarjeta: la sección es la más oscura del sitio y la estela el
           objeto más brillante de la página; por encima, el titular no se lee. */}
@@ -66,7 +66,7 @@ export function Security() {
 
           <div className="relative grid items-center gap-10 p-8 md:p-12 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <div className="kicker">03 — Valor agregado</div>
+              <div className="kicker">05 — Escudo</div>
               <h2 className="display mt-4 text-[clamp(37.5px,6vw,67.5px)] leading-[0.92]">
                 <RevealLine delay={0.06}>Security</RevealLine>
                 <RevealLine delay={0.14}>

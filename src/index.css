@@ -3024,3 +3024,200 @@ html.lenis body {
 [data-perf="low"] .sf-estela {
   opacity: 0.55;
 }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   Planes de vuelo — la tarjeta destacada
+   ════════════════════════════════════════════════════════════════════════
+
+   El realce va aquí y no en clases sueltas porque son cuatro propiedades que
+   tienen que moverse juntas: si el borde cambia de color y el fondo no, la
+   tarjeta se lee como un error de estado y no como la opción recomendada.
+
+   El acento es `cosmo` y no `neb`. En todo el sitio el azul nebulosa es el
+   color del cromo —enlaces, iconos, kickers—, así que una tarjeta en azul no
+   destacaría sobre las otras dos: sería más de lo mismo. El magenta solo
+   aparece en momentos puntuales, y por eso funciona para señalar uno. */
+.plan--destacado {
+  background: linear-gradient(180deg, #16162b, #0d1020);
+  border-color: rgba(255, 143, 189, 0.38);
+  /* El realce no crece la tarjeta: en una rejilla de tres columnas, una pieza
+     más alta desalinea los precios y se pierde la comparación, que es justo
+     para lo que sirve el bloque. Se levanta con sombra, no con tamaño. */
+  box-shadow:
+    0 0 0 1px rgba(255, 143, 189, 0.12),
+    0 18px 50px -24px rgba(255, 143, 189, 0.45);
+}
+.plan--destacado:hover {
+  border-color: rgba(255, 143, 189, 0.55);
+}
+
+/* ── El panel del programa fundador ──
+   Misma receta de fondo que `.security__panel`: un resplandor de acento en una
+   esquina sobre un degradado opaco. Es lo que hace que un contenedor de este
+   sitio tenga profundidad en vez de parecer un rectángulo pintado, y aquí el
+   resplandor entra por abajo a la izquierda para acompañar a las órbitas. */
+.fundador {
+  background:
+    radial-gradient(90% 120% at 0% 100%, rgba(255, 143, 189, 0.13), transparent 58%),
+    linear-gradient(180deg, #151129, #0b0d1c);
+}
+
+/* Los tres cupos. Mismo vocabulario que el punto de "disponible para misiones":
+   un indicador pequeño con halo, no un adorno. */
+.fundador__cupo {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-cosmo);
+  box-shadow: 0 0 0 3px rgba(255, 143, 189, 0.16);
+}
+
+[data-perf="low"] .fundador__cupo {
+  box-shadow: none;
+}
+
+/* En modo ligero la sombra de color se cae como el resto: es un desenfoque
+   grande y permanente, de lo más caro que hay sin GPU. El borde se queda, que
+   es lo que de verdad señala cuál es. */
+[data-perf="low"] .plan--destacado {
+  box-shadow: none;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   La banda de promesa del hero
+   ════════════════════════════════════════════════════════════════════════
+
+   El hero aislado —el que se ve— no llevaba ni una frase ni un botón: retrato
+   fundido, nombre y nada más. Esta banda es lo mínimo para que la portada diga
+   qué se vende, y está medida para caber en el aire que deja el escenario.
+
+   No toca la composición: va por debajo del escenario, comparte su tope de
+   ancho y su sangrado, y el retrato, el nombre, los raíles y el chip de
+   disponibilidad se quedan donde estaban. */
+.hero-promesa {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.2vw, 1.6rem);
+  padding-top: clamp(0.75rem, 1.6vh, 1.4rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── El velo de detrás ──
+   Subir la banda a z-55 arregla el apilado, pero no la legibilidad: el texto
+   seguía cayendo sobre esferas cromadas y líneas de constelación, que es
+   exactamente lo que el fondo del sitio tiene de bonito y de ruidoso.
+   Este velo la despega sin meter una caja: es un degradado que nace
+   transparente por arriba —para que no se vea un borde contra el retrato— y
+   cierra opaco por abajo. Sangra 50vw a cada lado para llegar de borde a borde
+   de la ventana, porque la banda vive dentro del contenedor con tope de ancho
+   y un fondo recortado a esa caja se leería como un rectángulo pegado.
+   Va en z-index -1: por detrás del texto de la banda, por delante de la
+   decoración. */
+.hero-promesa::before {
+  content: "";
+  position: absolute;
+  inset: -1.5rem -50vw -2.5rem;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 6, 13, 0) 0%,
+    rgba(4, 6, 13, 0.72) 22%,
+    rgba(4, 6, 13, 0.9) 60%,
+    rgba(4, 6, 13, 0.94) 100%
+  );
+}
+
+.hero-promesa__h1 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.9vw, 40.5px);
+  line-height: 1.04;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  margin-top: 0.6rem;
+  color: var(--color-ink);
+}
+
+.hero-promesa__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+  flex: none;
+}
+
+/* ── Fila de TRES a partir de 900 px ──
+   Titular, frase y botones repartidos en horizontal, no apilados. No es
+   estética: con el párrafo debajo del titular la banda medía 197 px y el hero
+   se iba a 124vh, así que la promesa quedaba fuera de la primera pantalla —
+   justo lo que esta banda viene a arreglar. En tres columnas mide unos 130 y
+   entra.
+   El alineado por el borde inferior es lo que hace que las tres se lean como
+   una sola banda y no como tres cosas sueltas. */
+@media (min-width: 900px) {
+  .hero-promesa {
+    flex-direction: row;
+    align-items: end;
+    gap: clamp(1.5rem, 3vw, 3rem);
+  }
+  .hero-promesa__titular {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+/* En portátiles bajos el escenario ya se come el alto entero, así que el
+   titular se aprieta un punto para que la banda entera siga cabiendo. */
+@media (min-width: 900px) and (max-height: 820px) {
+  .hero-promesa__h1 {
+    font-size: clamp(21px, 2.3vw, 31.5px);
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   Decoración de las páginas interiores
+   ════════════════════════════════════════════════════════════════════════
+
+   `.pagina` es el contenedor contra el que mide la capa: sin un ancestro
+   posicionado, el `inset: 0` de `.pagina-fx` treparía hasta el `<main>` y las
+   piezas se repartirían sobre el alto de OTRA página.
+   El recorte lateral es obligatorio: hay piezas al 94 y 95 % de ancho que
+   sobresalen por la derecha, y sin él aparece scroll horizontal. `clip` y no
+   `hidden` porque `hidden` crea contexto de desplazamiento y rompe cualquier
+   `sticky` de la página. */
+.pagina {
+  position: relative;
+  overflow-x: clip;
+}
+
+.pagina-fx {
+  position: absolute;
+  inset: 0;
+  /* Por detrás del contenido en flujo y por delante del campo de estrellas
+     global. En 0 se pondría ENCIMA del texto: un elemento posicionado gana a
+     los que están en flujo normal aunque compartan nivel. */
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pagina-fx img {
+  position: absolute;
+  height: auto;
+  /* Preflight de Tailwind pone `max-width: 100%` a toda imagen; aquí los
+     anchos van en porcentaje de la página y el tope no estorba, pero se deja
+     explícito para que nadie lo herede de otra regla. */
+  max-width: none;
+  translate: -50% -50%;
+}
+
+/* Las piezas no se animan: son atmósfera, no protagonistas. Lo único que hace
+   falta es que no compitan con el texto, y de eso ya se encarga la opacidad. */
+[data-perf="low"] .pagina-fx {
+  display: none;
+}
