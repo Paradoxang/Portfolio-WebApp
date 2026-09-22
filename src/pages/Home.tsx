@@ -7,6 +7,8 @@ import { SelectedProjects } from "@/sections/SelectedProjects";
 import { Security } from "@/sections/Security";
 import { Objeciones } from "@/sections/Objeciones";
 import { Cta } from "@/sections/Cta";
+import { useLocale } from "@/i18n/LocaleContext";
+import { faqPage, plansSchema } from "@/lib/schema";
 
 /**
  * La portada, en el orden de una decisión de compra y no en el de un
@@ -24,20 +26,16 @@ import { Cta } from "@/sections/Cta";
  * El orden importa tanto como los bloques: el precio va ANTES del muestrario
  * porque quien llega quiere saber si le alcanza antes de mirar trabajos, y la
  * telemetría va pegada al precio porque es lo que lo justifica.
- *
-  * La barra de cifras se quitó: con seis demos y un título, los tres números
- * no sostenían una fila entera de esa altura — el bloque 01 dice lo mismo con
- * más contexto. `Stats` sigue en `src/sections` por si vuelve.
- *
- * Proceso y herramientas siguen fuera, en `src/sections`, por si vuelven.
  */
 export function Home() {
+  const { t, locale } = useLocale();
   return (
     <>
       <Seo
-        title="Santiago Miranda · Desarrollador y Diseñador Web | Dox Designs"
-        description="Dox Designs · Santiago Miranda: páginas web a medida para negocios en Cali y toda Colombia, con posicionamiento local, presencia en buscadores con IA y seguridad incluida. Planes mensuales desde COP 350.000."
-        path="/"
+        route="home"
+        title={t.pages.home.seo.title}
+        description={t.pages.home.seo.description}
+        jsonLd={[plansSchema(t, locale), faqPage(t.faq.items)]}
       />
       <Hero />
       <Services />

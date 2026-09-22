@@ -13,7 +13,10 @@
   /* Texto */
   --color-ink: #eef2fb;
   --color-mute: #a8b2c9;
-  --color-faint: #66707f;
+  /* #808a9b y no #66707f: el anterior daba 3.97:1 sobre el fondo y 3.5:1
+     sobre una tarjeta, por debajo del 4.5:1 que pide el AA, y se usaba como
+     texto de cuerpo a 13 px. Este da 5.7:1 y 4.9:1. */
+  --color-faint: #808a9b;
 
   /* Acentos — nebulosa */
   --color-neb: #8fa2ff; /* azul nebulosa: enlaces, foco, numeración */
@@ -88,6 +91,59 @@
     font-family: inherit;
     cursor: pointer;
   }
+
+  /* ── Foco visible, en todo el sitio ──
+     No había ni una regla de foco: el anillo por defecto del navegador sobre
+     #060912 era casi invisible. Solo con `:focus-visible`, así el clic de
+     ratón no lo dibuja y el teclado sí. */
+  :focus-visible {
+    outline: 2px solid var(--color-neb);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .btn:focus-visible,
+  .tag--link:focus-visible,
+  .nav-enlace:focus-visible,
+  .lang-switch:focus-visible {
+    outline-offset: 2px;
+    border-radius: 9999px;
+  }
+  .acordeon__boton:focus-visible {
+    outline-offset: -3px;
+    border-radius: 16px;
+  }
+  main:focus {
+    outline: none;
+  }
+}
+
+/* ── Saltar al contenido ──
+   Invisible hasta que recibe el foco: entonces aparece arriba a la izquierda,
+   por encima del nav. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  padding: 0.7rem 1rem;
+  border-radius: 9999px;
+  background: var(--color-neb);
+  color: var(--color-space);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Con el panel del menú abierto la página no se desplaza por debajo. */
+html.scroll-pausado,
+html.scroll-pausado body {
+  overflow: hidden;
 }
 
 /* ── Kicker: etiqueta mono con numeración de sección ── */
@@ -118,17 +174,6 @@
   letter-spacing: 0.01em;
   color: transparent;
   -webkit-text-stroke: 1px rgba(143, 162, 255, 0.14);
-  white-space: nowrap;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* Variante rellena tenue */
-.ghost-word {
-  font-family: var(--font-display);
-  font-weight: 400;
-  text-transform: uppercase;
-  color: rgba(143, 162, 255, 0.07);
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
@@ -165,16 +210,18 @@
 }
 
 /* ── Tarjetas panel ── */
+/* 16 px, el mismo radio que `rounded-2xl`: cada consumidor lo pisaba con esa
+   utilidad y quedaban dos radios distintos en la misma página. */
 .card {
   background: linear-gradient(180deg, #101a30, #0c1424);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 .card-flat {
   background: #0b1120;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 .card-hover {
@@ -186,36 +233,471 @@
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Chips / pills ── */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 9999px;
-  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
-}
-.pill:hover {
-  border-color: rgba(143, 162, 255, 0.5);
-  color: var(--color-neb);
-  background: rgba(143, 162, 255, 0.06);
-}
+/* ════════════════════════════════════════════════════════════════════════
+   Botones — un solo sistema
+   ════════════════════════════════════════════════════════════════════════
 
-/* ── Botón primario nebulosa ── */
-.btn-neb {
+   Había `.btn-neb`, `.pill` (que era botón y chip a la vez) y tres pastillas
+   escritas a mano con utilidades en Planes y en el nav, cada una con su
+   tamaño de letra y su padding. Ahora hay UNA base y tres variantes:
+
+     --primary  · nebulosa sólida, el que convierte
+     --accent   · magenta, solo para el plan destacado y el programa fundador
+     --ghost    · contorno, el secundario
+
+   Todos miden 44 px de alto como mínimo —el objetivo táctil del AA— y todos
+   se hunden un punto al pulsar, que es lo que hace que un botón se sienta
+   botón y no un enlace con fondo. */
+.btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease,
+    box-shadow 0.25s ease, transform 0.15s ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn--sm {
+  min-height: 40px;
+  padding: 0.6rem 1.15rem;
+  font-size: 10.5px;
+}
+.btn--primary {
   background: var(--color-neb);
   color: #060912;
-  border-radius: 9999px;
-  font-weight: 700;
-  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
-.btn-neb:hover {
+.btn--primary:hover {
   background: #a5b4ff;
   box-shadow: 0 8px 30px rgba(143, 162, 255, 0.35);
 }
+.btn--accent {
+  background: var(--color-cosmo);
+  color: #060912;
+}
+.btn--accent:hover {
+  background: #ffa8cc;
+  box-shadow: 0 8px 30px rgba(255, 143, 189, 0.35);
+}
+.btn--ghost {
+  border-color: rgba(255, 255, 255, 0.16);
+  color: var(--color-mute);
+  background: transparent;
+}
+.btn--ghost:hover {
+  border-color: rgba(143, 162, 255, 0.55);
+  color: var(--color-neb);
+  background: rgba(143, 162, 255, 0.06);
+}
+/* El primario con disco: la flecha va dentro de un círculo oscuro a la
+   derecha, el gesto de la portada. */
+.btn--flecha {
+  padding: 0.35rem 0.4rem 0.35rem 1.6rem;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.btn__disco {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: var(--color-space);
+  color: var(--color-neb);
+  transition: transform 0.25s ease;
+}
+.btn--flecha:hover .btn__disco {
+  transform: scale(1.1);
+}
+
+/* ── Chips: etiquetas que no se pulsan ──
+   Stack de un proyecto, habilidades, el sello "comparado contra el mes
+   anterior". Tres tamaños, misma pieza. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  background: rgba(14, 21, 38, 0.7);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-mute);
+}
+.tag--sm {
+  padding: 0.3rem 0.65rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+.tag--lg {
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+.tag--neb {
+  border-color: rgba(143, 162, 255, 0.3);
+  background: rgba(143, 162, 255, 0.1);
+  color: var(--color-neb);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  padding: 0.55rem 1rem;
+}
+.tag--link {
+  min-height: 44px;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+.tag--link:hover {
+  border-color: rgba(143, 162, 255, 0.5);
+  color: var(--color-neb);
+}
+
+/* ── Placa de icono ──
+   El cuadradito con borde y fondo de nebulosa que precede a un título.
+   Estaba escrito seis veces con radios de 9, 10 y 16 px. */
+.icon-plate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(143, 162, 255, 0.3);
+  background: rgba(143, 162, 255, 0.1);
+  color: var(--color-neb);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.icon-plate--sm {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9px;
+}
+.icon-plate--lg {
+  width: 3rem;
+  height: 3rem;
+}
+.icon-plate--xl {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 14px;
+}
+.icon-plate--cosmo {
+  border-color: rgba(255, 143, 189, 0.3);
+  background: rgba(255, 143, 189, 0.1);
+  color: var(--color-cosmo);
+}
+.group:hover .icon-plate {
+  transform: scale(1.1);
+  border-color: rgba(143, 162, 255, 0.6);
+  box-shadow: 0 0 20px rgba(143, 162, 255, 0.35);
+}
+.group:hover .icon-plate--gira {
+  transform: scale(1.1) rotate(-6deg);
+}
+
+/* ── Enlace con flecha ("Ver los seis") ── */
+.link-flecha {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-neb);
+  transition: color 0.25s ease;
+}
+.link-flecha:hover {
+  color: var(--color-ink);
+}
+
+/* ── Navegación ──
+   La fila de escritorio y el panel comparten el enlace; la página actual
+   lleva un punto de nebulosa debajo, no un color distinto, para que se lea
+   como "estás aquí" y no como hover. */
+.nav-escritorio {
+  align-items: center;
+  gap: 0.25rem;
+}
+.nav-enlace {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.7rem;
+  border-radius: 9999px;
+  font-family: var(--font-elnath);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-mute);
+  transition: color 0.25s ease, background 0.25s ease;
+}
+.nav-enlace:hover {
+  color: var(--color-neb);
+  background: rgba(255, 255, 255, 0.04);
+}
+/* Entre 1024 y 1279 los siete enlaces se aprietan un punto para que las dos
+   columnas laterales de la rejilla midan lo mismo y la lista quede centrada. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .nav-enlace {
+    padding: 0 0.5rem;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+}
+.nav-enlace[aria-current="page"] {
+  color: var(--color-ink);
+}
+.nav-enlace[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-neb);
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px var(--color-neb);
+}
+.nav-enlace--panel {
+  gap: 0.6rem;
+  padding: 0 1rem;
+  border-radius: 12px;
+  font-size: 13px;
+}
+.nav-enlace--panel[aria-current="page"]::after {
+  left: auto;
+  right: 1rem;
+  bottom: 50%;
+  transform: translateY(50%);
+}
+
+/* ── Conmutador de idioma ──
+   Dos letras, la actual apagada y la otra encendida: es un enlace al otro
+   idioma, no un indicador. */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 44px;
+  padding: 0 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-ink);
+  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+}
+.lang-switch:hover {
+  border-color: rgba(143, 162, 255, 0.5);
+  background: rgba(143, 162, 255, 0.06);
+}
+.lang-switch__actual {
+  color: var(--color-faint);
+}
+.lang-switch__sep {
+  color: rgba(255, 255, 255, 0.2);
+}
+.lang-switch__otro {
+  color: var(--color-neb);
+}
+.lang-switch--pie {
+  border: 0;
+  padding: 0;
+  min-height: 44px;
+}
+
+/* ── Pie ── */
+.pie__titulo {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+.pie__enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-mute);
+  transition: color 0.25s ease;
+}
+.pie__enlace:hover {
+  color: var(--color-neb);
+}
+
+/* ── Acordeón de preguntas ── */
+.acordeon {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.acordeon__item {
+  background: #0b1120;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  transition: border-color 0.3s ease;
+}
+.acordeon__item.esta-abierto {
+  border-color: rgba(143, 162, 255, 0.35);
+}
+.acordeon__boton {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 56px;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  color: var(--color-ink);
+  border-radius: 16px;
+  transition: color 0.25s ease;
+}
+.acordeon__boton:hover {
+  color: var(--color-neb);
+}
+.acordeon__pregunta {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.acordeon__icono {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--color-neb);
+  transition: transform 0.3s ease;
+}
+.esta-abierto .acordeon__icono {
+  transform: rotate(180deg);
+}
+.acordeon__panel {
+  overflow: hidden;
+}
+.acordeon__respuesta {
+  padding: 0 1.25rem 1.2rem;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-mute);
+}
+
+/* ── Formulario ── */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.campo label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(6, 9, 18, 0.7);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.campo textarea {
+  resize: vertical;
+}
+.campo select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-neb) 50%),
+    linear-gradient(135deg, var(--color-neb) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 2.5rem;
+}
+.campo select option {
+  background: #0e1526;
+}
+.campo input::placeholder,
+.campo textarea::placeholder {
+  color: rgba(128, 138, 155, 0.7);
+}
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--color-neb);
+  box-shadow: 0 0 0 3px rgba(143, 162, 255, 0.18);
+}
+.campo [aria-invalid="true"] {
+  border-color: var(--color-cosmo);
+}
+.campo__error {
+  font-size: 12.5px;
+  color: var(--color-cosmo);
+}
+
+/* ── El latido del punto "disponible" ──
+   Sustituye al `animate-ping` de Tailwind, que no respetaba reduced-motion
+   ni el modo ligero. */
+@keyframes latido-kf {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.latido {
+  animation: latido-kf 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 
 /* ── Grano sutil ── */
 .noise-overlay {
@@ -265,38 +747,6 @@
   background-clip: text;
   color: transparent;
   animation: shimmer-x 5s linear infinite;
-}
-
-/* ── Marquee horizontal continuo (palabra gigante del hero) ── */
-@keyframes marquee-x {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-.marquee-track {
-  display: flex;
-  width: max-content;
-  will-change: transform;
-  animation: marquee-x 46s linear infinite;
-}
-
-/* ── Glow pulsante para el retrato ── */
-@keyframes glow-pulse-kf {
-  0%,
-  100% {
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55),
-      0 0 70px rgba(143, 162, 255, 0.16);
-  }
-  50% {
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55),
-      0 0 130px rgba(143, 162, 255, 0.38);
-  }
-}
-.glow-pulse {
-  animation: glow-pulse-kf 5.5s ease-in-out infinite;
 }
 
 /* ── Flotación suave ── */
@@ -1578,7 +2028,9 @@
   flex-direction: row;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.4rem 0.2rem;
+  /* 44 px de alto: es un enlace y en móvil se toca. */
+  min-height: 44px;
+  padding: 0.6rem 0.4rem;
   /* Mas pequeno que los railes: es un indicador de estado, no un rotulo. */
   font-size: clamp(9px, 0.68vw, 11px);
   letter-spacing: 0.2em;
@@ -1919,8 +2371,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .text-shimmer,
-  .marquee-track,
-  .glow-pulse,
+  .latido,
   .float-y,
   .scroll-line,
   .spin-slow,
@@ -2333,7 +2784,6 @@ html.lenis body {
 /* ── 1 · Ni un blend vivo ── */
 [data-perf="low"] .noise-overlay,
 [data-perf="low"] .hero-quantum,
-[data-perf="low"] .cta-neb,
 [data-perf="low"] [class*="mix-blend"] {
   mix-blend-mode: normal !important;
 }
@@ -2351,12 +2801,9 @@ html.lenis body {
 }
 
 /* ── 3 · El paneo del hero se queda en un fotograma ──
-   Los otros seis ángulos ni se descargan (lo decide `heroPan`), y aquí se
-   ocultan por si alguno llegó a montarse. Ahorra los repintados de una imagen
-   de 1975x2428 en cada movimiento del cursor. */
-[data-perf="low"] .hero-pan__frame:not(.hero-pan__frame--base) {
-  display: none !important;
-}
+   Lo decide `heroPan` en JS: los otros seis ángulos ni se descargan ni se
+   montan. (La regla CSS que había aquí apuntaba a una clase que ya no existe
+   y llevaba meses sin hacer nada.) */
 
 /* ── 4 y 10 · La decoración se queda quieta y se adelgaza ──
    Sobreviven los fondos; el eco y las piezas sueltas se van. No es solo el
@@ -2376,9 +2823,8 @@ html.lenis body {
 [data-perf="low"] .fx__pieza--respira,
 [data-perf="low"] .fx-datos__cinta--corre,
 [data-perf="low"] .carrusel__carril,
-[data-perf="low"] .marquee-track,
 [data-perf="low"] .text-shimmer,
-[data-perf="low"] .glow-pulse,
+[data-perf="low"] .latido,
 [data-perf="low"] .float-y,
 [data-perf="low"] .spin-slow,
 [data-perf="low"] .spin-slow-rev,
@@ -2431,6 +2877,7 @@ html.lenis body {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
+  min-height: 44px;
   font: inherit;
   letter-spacing: inherit;
   text-transform: inherit;
@@ -2475,8 +2922,7 @@ html.lenis body {
    desplazamiento salta mientras se recorre la página, porque el navegador
    asume alto cero para lo que no ha pintado. Las alturas son las medidas. */
 .projects,
-.wdid-sec,
-.seccion-diferida {
+.wdid-sec {
   content-visibility: auto;
 }
 .wdid-sec {
@@ -2484,9 +2930,6 @@ html.lenis body {
 }
 .projects {
   contain-intrinsic-size: auto 1140px;
-}
-.seccion-diferida {
-  contain-intrinsic-size: auto 700px;
 }
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -3142,6 +3585,17 @@ html.lenis body {
   color: var(--color-ink);
 }
 
+/* Quién firma: nombre y credencial, en la línea del kicker. */
+.hero-promesa__firma {
+  margin-top: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+
 .hero-promesa__acciones {
   display: flex;
   flex-wrap: wrap;
@@ -3220,4 +3674,21 @@ html.lenis body {
    falta es que no compitan con el texto, y de eso ya se encarga la opacidad. */
 [data-perf="low"] .pagina-fx {
   display: none;
+}
+
+
+/* ── La pausa del carrusel también entra por teclado ──
+   Con el foco en una tarjeta el carril se congela igual que con el hover;
+   si no, el enlace enfocado se iba por el borde mientras se leía. */
+.carrusel__carril:focus-within,
+.carrusel__columna:focus-within {
+  animation-play-state: paused !important;
+}
+
+/* ── El CTA de la tarjeta suelta (móvil) ──
+   Es solo una flecha de 16 px. El área de toque se amplía con padding y
+   margen negativo, así la flecha se queda donde estaba y el dedo tiene 44. */
+.wdid--suelta .wdid__cta {
+  padding: 14px;
+  margin: calc(1rem - 14px) 0 -14px -14px;
 }

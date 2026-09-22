@@ -5,8 +5,10 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useModoLigero } from "@/lib/perf";
+import { EASE } from "@/lib/anim";
+import { useTramo, type Tramo } from "@/components/WdidFx";
 import {
   FxCorchetes,
   FxMarcoHud,
@@ -39,7 +41,6 @@ import {
  */
 
 type Capa = "fondo" | "medio" | "contenedor" | "acento";
-type Tramo = "movil" | "medio" | "ancho";
 
 interface Pieza {
   /** Clave de React. Varias piezas pueden compartir asset con ids distintos. */
@@ -184,23 +185,6 @@ const NIVEL: Record<Tramo, number> = { movil: 0, medio: 1, ancho: 2 };
 const enTramo = (p: Pieza, t: Tramo) =>
   NIVEL[t] >= NIVEL[p.desde] && (!p.hasta || NIVEL[t] <= NIVEL[p.hasta]);
 
-function useTramo(): Tramo {
-  const [tramo, setTramo] = useState<Tramo>("ancho");
-  useEffect(() => {
-    const ancho = window.matchMedia("(min-width: 1280px)");
-    const medio = window.matchMedia("(min-width: 768px)");
-    const leer = () =>
-      setTramo(ancho.matches ? "ancho" : medio.matches ? "medio" : "movil");
-    leer();
-    ancho.addEventListener("change", leer);
-    medio.addEventListener("change", leer);
-    return () => {
-      ancho.removeEventListener("change", leer);
-      medio.removeEventListener("change", leer);
-    };
-  }, []);
-  return tramo;
-}
 
 /**
  * Los dos bucles continuos de los bitmaps, ahora como clases CSS.
@@ -321,7 +305,7 @@ function PiezaFx({ p, sx, sy, quieto, listo, corriendo, dpr2, orden }: PiezaProp
      no puede pasar en el modo que existe para las maquinas que van justas. */
   const curva = quieto
     ? { duration: 0 }
-    : { duration: 0.8, delay: orden * 0.07, ease: [0.16, 1, 0.3, 1] };
+    : { duration: 0.8, delay: orden * 0.07, ease: EASE };
 
   return (
     <motion.div

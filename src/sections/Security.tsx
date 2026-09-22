@@ -1,113 +1,83 @@
-import { ShieldCheck, Lock, Globe, KeyRound } from "lucide-react";
-import { Reveal, RevealLine } from "@/lib/anim";
+import { ArrowRight, ShieldCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Reveal } from "@/lib/anim";
 import { OrbitRings } from "@/components/Cosmic";
+import { SectionHeading } from "@/components/SectionHeading";
 import { SecurityFondo, SecurityDelante } from "@/components/SecurityFx";
-
-const practices = [
-  {
-    icon: ShieldCheck,
-    title: "Cabeceras y CSP estrictas",
-    desc: "Sin scripts de terceros no autorizados.",
-  },
-  {
-    icon: Lock,
-    title: "HTTPS + HSTS",
-    desc: "Cifrado de extremo a extremo, siempre.",
-  },
-  {
-    icon: Globe,
-    title: "Dominio blindado",
-    desc: "DNS protegido y anti-suplantación de correo.",
-  },
-  {
-    icon: KeyRound,
-    title: "Datos protegidos",
-    desc: "Credenciales cifradas y mínimo privilegio.",
-  },
-];
+import { securityIcons } from "@/data/site";
+import { Rich, useLocale } from "@/i18n/LocaleContext";
 
 /**
  * "Security First".
  *
  * ── La sección va a sangre ──
  * La estela cruza de lado a lado y la nave sale por la derecha; con un
- * contenedor centrado y con tope de ancho las dos se cortan en seco.
- *
- * El brief propone `width:100vw; margin-inline:calc(50% - 50vw)`. Aquí no hace
- * falta y además sería peor: las secciones cuelgan directamente del `<main>`
- * del layout, que **no tiene `max-width`** —el tope lo pone cada sección por
- * dentro—, así que basta con no ponérselo. Y `100vw` incluye el ancho de la
- * barra de desplazamiento: en escritorio la sección quedaría unos 15 px más
- * ancha que el hueco disponible, que es exactamente el scroll horizontal que
- * el criterio 2 prohíbe. Mismo patrón que "What I Do" y "Selected Projects".
- *
- * La tarjeta sí se queda en la rejilla, con el mismo tope y el mismo sangrado
- * que el resto del sitio. Solo el lienzo gráfico va a pantalla completa.
+ * contenedor centrado y con tope de ancho las dos se cortan en seco. Las
+ * secciones cuelgan del `<main>`, que no tiene `max-width`, así que basta con
+ * no ponérselo. La tarjeta sí se queda en la rejilla, con el mismo tope y el
+ * mismo sangrado que el resto del sitio. Solo el lienzo gráfico va a pantalla
+ * completa.
  */
 export function Security() {
+  const { t, href } = useLocale();
+  const s = t.security;
   return (
-    <section id="escudo" className="security scroll-mt-24">
+    <section id={t.anchors.shield} aria-labelledby="escudo-titulo" className="security scroll-mt-24">
       {/* z0–z3 · nebulosa, partículas, eco, estela y nave. Todo por DEBAJO de
           la tarjeta: la sección es la más oscura del sitio y la estela el
           objeto más brillante de la página; por encima, el titular no se lee. */}
       <SecurityFondo />
 
       {/* La entrada envuelve la tarjeta y NO al lienzo: `Reveal` anima opacidad
-          y desplazamiento, y un elemento con opacidad distinta de 1 crea un
-          contexto de apilado. Con las seis piezas dentro, el z4 de la tarjeta y
-          el z5 de las piezas de seguridad dejarían de significar nada. */}
+          y un elemento con opacidad distinta de 1 crea un contexto de apilado
+          que se llevaría por delante el orden z de las piezas. */}
       <Reveal className="security__card">
-        {/* Sin `glow-quote`: su resplandor de esquina pasó a ser una capa más
-            del fondo de `.security__panel`. Las dos pintaban `background` y se
-            anulaban. */}
         <div className="security__panel relative overflow-hidden rounded-2xl border border-neb/20">
-          <div className="scan-line-y" />
-          <OrbitRings className="absolute -left-24 -top-24 h-[340px] w-[340px] opacity-40" />
+          <div className="scan-line-y" aria-hidden="true" />
+          <OrbitRings className="absolute -left-24 -top-24 h-[340px] w-[340px] opacity-40" aria-hidden="true" />
 
           <div className="relative grid items-center gap-10 p-8 md:p-12 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <div className="kicker">05 — Escudo</div>
-              <h2 className="display mt-4 text-[clamp(37.5px,6vw,67.5px)] leading-[0.92]">
-                <RevealLine delay={0.06}>Security</RevealLine>
-                <RevealLine delay={0.14}>
-                  <span className="text-shimmer">First</span>
-                </RevealLine>
-              </h2>
+              <SectionHeading
+                id="escudo-titulo"
+                kicker={s.kicker}
+                title={s.title}
+                lines
+                titleClass="text-[clamp(37.5px,6vw,67.5px)] leading-[0.92]"
+              />
               <p className="mt-6 max-w-[46ch] text-[15px] leading-[1.7] text-mute">
-                Cuento con{" "}
-                <strong className="font-bold text-ink">
-                  especialización en Ciberseguridad
-                </strong>
-                : cada proyecto que entrego nace endurecido — no como un parche
-                al final, sino como parte del diseño. Tu sitio, tus datos y tus
-                clientes, protegidos desde el día uno.
+                <Rich text={s.text} />
               </p>
-              <div className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-neb/30 bg-neb/10 px-4 py-2 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase text-neb">
-                <ShieldCheck className="h-4 w-4" strokeWidth={1.8} />
-                Ing. Informático · Esp. Ciberseguridad
+              <div className="tag tag--neb mt-6">
+                <ShieldCheck className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+                {s.badge}
+              </div>
+              <div className="mt-7">
+                <Link to={href("security")} className="link-flecha group">
+                  {s.more}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                </Link>
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              {practices.map((p, i) => (
-                <Reveal key={p.title} delay={0.1 + i * 0.08}>
-                  <div className="card card-hover group h-full p-5">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-[9px] border border-neb/30 bg-neb/10 transition-all duration-300 group-hover:scale-110 group-hover:border-neb/60 group-hover:shadow-[0_0_20px_rgba(143,162,255,.35)]">
-                      <p.icon
-                        className="h-4.5 w-4.5 text-neb"
-                        strokeWidth={1.6}
-                      />
-                    </div>
-                    <div className="mt-4 text-[14px] font-bold text-ink">
-                      {p.title}
-                    </div>
-                    <p className="mt-1 text-[12.5px] leading-[1.55] text-faint">
-                      {p.desc}
-                    </p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+            <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2" role="list">
+              {s.practices.map((p, i) => {
+                const Icono = securityIcons[i];
+                return (
+                  <li key={p.title} className="h-full">
+                    <Reveal delay={0.1 + i * 0.08} className="h-full">
+                      <div className="card card-hover group h-full p-5">
+                        <div className="icon-plate">
+                          <Icono className="h-4.5 w-4.5" strokeWidth={1.6} aria-hidden="true" />
+                        </div>
+                        <h3 className="mt-4 text-[14px] font-bold text-ink">{p.title}</h3>
+                        <p className="mt-1 text-[12.5px] leading-[1.55] text-faint">{p.desc}</p>
+                      </div>
+                    </Reveal>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </div>
       </Reveal>

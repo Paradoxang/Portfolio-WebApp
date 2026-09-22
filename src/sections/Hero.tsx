@@ -1,28 +1,14 @@
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-  useMotionValue,
-} from "framer-motion";
+import { useMotionValue } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Letters, Magnetic, Reveal, RevealLine } from "@/lib/anim";
-import { HeroComparison } from "@/components/HeroComparison";
+import { Magnetic, Reveal } from "@/lib/anim";
 import { HeroFusion } from "@/components/HeroFusion";
-import { HeroPortrait } from "@/components/HeroPortrait";
 import { QuantumSwarm } from "@/components/QuantumSwarm";
 import { HeroFx } from "@/components/HeroFx";
 import { HeroNombre } from "@/components/HeroNombre";
-import { contact } from "@/data/site";
 import { trackContact } from "@/lib/analytics";
-
-/**
- * Modo aislado: solo nav + fondo + figura. Temporal, para evaluar la animación
- * sin ruido visual. A `false` vuelve la Hero completa, sin tocar nada más.
- */
-const HERO_ISOLATED: boolean = true;
+import { Rich, useLocale } from "@/i18n/LocaleContext";
 
 /** Flecha de descenso alargada: un icono cuadrado no da la proporción. */
 function FlechaLarga() {
@@ -44,15 +30,22 @@ function FlechaLarga() {
     </svg>
   );
 }
-/** Qué se muestra en modo aislado: la capa 3 fundida o la comparativa apilada. */
-const ISOLATED_VIEW: "fusion" | "comparativa" = "fusion";
 
+/**
+ * El hero: retrato fundido con el astronauta, el nombre descifrándose, los dos
+ * raíles numerados y, debajo, la banda de promesa con el titular y los dos
+ * botones.
+ *
+ * Durante meses convivió con una segunda rama —titular a la izquierda,
+ * retrato con chips a la derecha— detrás de un interruptor "temporal". Esta
+ * es la única que se ve y la única que queda.
+ */
 export function Hero() {
+  const { t, href, whatsapp } = useLocale();
   const ref = useRef<HTMLElement>(null);
   /** La figura ancla el disco de acreción sobre el rostro. */
   const figureRef = useRef<HTMLElement>(null);
   const [fused, setFused] = useState(false);
-  const reduced = useReducedMotion();
 
   /* ── Capa decorativa ──
      Un solo par de motion values para las doce piezas, alimentado desde el
@@ -92,23 +85,24 @@ export function Hero() {
       document.removeEventListener("visibilitychange", revisar);
     };
   }, []);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  // El retrato sube más despacio que el scroll
-  const portraitY = useTransform(scrollYProgress, [0, 1], [0, -80]);
 
   return (
     <section
       ref={ref}
-      className="glow-hero hero-cursor relative flex min-h-screen flex-col overflow-hidden pt-20"
+      aria-labelledby="hero-titulo"
+      /* `min-h-dvh` y no `min-h-screen`: en móvil `100vh` incluye la barra
+         del navegador y el hero se pasaba de la primera pantalla. */
+      className="glow-hero hero-cursor relative flex min-h-dvh flex-col overflow-hidden pt-20"
     >
-      {/* Nebulosa de fondo (glow a la derecha, oscuro a la izquierda para el texto) */}
+      {/* Nebulosa de fondo (glow a la derecha, oscuro a la izquierda para el
+          texto). Es lo primero que se ve: prioridad alta, decodificación
+          asíncrona y nunca perezosa. */}
       <img
         src="/nebula-banner.webp"
         alt=""
         aria-hidden="true"
+        decoding="async"
+        {...{ fetchpriority: "high" }}
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-right opacity-70"
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-base via-base/60 to-transparent" />
@@ -124,262 +118,122 @@ export function Hero() {
 
       {/* Los raíles cuelgan de la sección, no del contenedor centrado: así se
           pegan al borde real de la pantalla y no al del ancho máximo. */}
-      {HERO_ISOLATED && ISOLATED_VIEW === "fusion" && (
-        <>
-          {/* Izquierda: el "01" solo en escritorio; en móvil queda la etiqueta
-              con su flecha, como enlace a servicios. */}
-          <Link to="/#especialidades" className="hero-rail hero-rail--left hero-indice">
-            {/* El número a la izquierda de la etiqueta; la flecha, a su derecha. */}
-            <span className="hero-index-group">
-              <span className="hero-index-box hero-solo-escritorio">
-                <span className="hero-index">01</span>
-              </span>
-              <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
-                Especialidades
-              </span>
-              <FlechaLarga />
+      {/* Izquierda: el "01" solo en escritorio; en móvil queda la etiqueta
+          con su flecha, como enlace a servicios. */}
+      <Link to={href("home", "services")} className="hero-rail hero-rail--left hero-indice">
+        <span className="hero-index-group">
+          <span className="hero-index-box hero-solo-escritorio">
+            <span className="hero-index">01</span>
+          </span>
+          <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
+            {t.hero.railServices}
+          </span>
+          <FlechaLarga />
+        </span>
+      </Link>
+
+      <div className="hero-rail hero-rail--right">
+        {/* Gemelo del "01", en espejo: la flecha y la etiqueta van primero y
+            el número queda pegado al borde derecho, que es lo que hace que los
+            dos raíles se lean como un par. Apunta al bloque que cobra. */}
+        <Link
+          to={href("plans")}
+          className="hero-indice hero-solo-escritorio"
+          aria-label={t.hero.railPlansAria}
+        >
+          <span className="hero-index-group hero-index-group--espejo">
+            <FlechaLarga />
+            <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
+              {t.hero.railPlans}
             </span>
-          </Link>
-
-          <div className="hero-rail hero-rail--right">
-            {/* Gemelo del "01 — Especialidades", en espejo: aquí la flecha y la
-                etiqueta van primero y el número queda pegado al borde derecho,
-                que es lo que hace que los dos raíles se lean como un par y no
-                como dos cosas distintas. Comparte `hero-indice` con el de la
-                izquierda, así que hereda el remolino del número en hover sin
-                duplicar una sola regla. */}
-            {/* El gemelo del 01 apunta ahora al bloque que cobra y no al
-                muestrario: es el segundo paso de la lectura comercial, no el
-                archivo de trabajos. */}
-            <Link
-              to="/planes"
-              className="hero-indice hero-solo-escritorio"
-              aria-label="Ver los planes de vuelo"
-            >
-              <span className="hero-index-group hero-index-group--espejo">
-                <FlechaLarga />
-                <span className="hero-rail__vertical font-elnath text-[clamp(10px,1.1vw,14px)]">
-                  Planes de vuelo
-                </span>
-                <span className="hero-index-box">
-                  <span className="hero-index">02</span>
-                </span>
-              </span>
-            </Link>
-
-            {/* En móvil el número no entra: queda la etiqueta con su flecha,
-                espejo de "Especialidades" en el lado izquierdo. */}
-            {/* Espejo del izquierdo: allí la etiqueta va pegada al borde y la
-                flecha hacia dentro, así que aquí la flecha va primero —hacia
-                dentro también— y la etiqueta al borde. Con el orden invertido
-                las dos flechas caían del mismo lado y el par no se leía. */}
-            <Link to="/planes" className="hero-rail__enlace hero-rail__enlace--espejo hero-solo-movil">
-              <FlechaLarga />
-              <span className="hero-rail__vertical font-elnath text-[13px]">
-                Planes de vuelo
-              </span>
-            </Link>
-          </div>
-
-          {/* La disponibilidad ya no cuelga del raíl derecho.
-              Vertical y colgando del "02" se salía de la ventana por abajo en
-              todo lo que no fuera 1080 de alto: son 295 px de rótulo más los
-              180 del número, y en un borde de 700 a 900 px no caben los dos.
-              Aquí abajo, en horizontal, es lo que siempre fue —un indicador de
-              estado— y no compite con nada. */}
-          <a
-            href={contact.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackContact("whatsapp")}
-            className="hero-disponible"
-          >
-            <span className="hero-disponible__punto" aria-hidden="true" />
-            <span className="font-elnath">
-              Disponible para misiones
+            <span className="hero-index-box">
+              <span className="hero-index">02</span>
             </span>
-          </a>
-        </>
-      )}
+          </span>
+        </Link>
+
+        {/* En móvil el número no entra: queda la etiqueta con su flecha,
+            espejo de la izquierda. */}
+        <Link to={href("plans")} className="hero-rail__enlace hero-rail__enlace--espejo hero-solo-movil">
+          <FlechaLarga />
+          <span className="hero-rail__vertical font-elnath text-[13px]">
+            {t.hero.railPlans}
+          </span>
+        </Link>
+      </div>
+
+      {/* La disponibilidad, abajo y en horizontal: es un indicador de estado
+          y no compite con los raíles. */}
+      <a
+        href={whatsapp()}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => trackContact("whatsapp")}
+        className="hero-disponible"
+      >
+        <span className="hero-disponible__punto" aria-hidden="true" />
+        <span className="font-elnath">{t.hero.available}</span>
+      </a>
 
       {/* z-30 deja la figura (y el nombre, que va sobre ella dentro de este
           mismo contexto) por encima del enjambre cuántico, que está en 20: el
           retrato ya no se lee lavado por las partículas. */}
       <div className="relative z-30 mx-auto flex w-full max-w-[1240px] flex-1 items-center px-6 md:px-8">
-        <div
-          className={
-            HERO_ISOLATED
-              ? // la fusión ocupa 88vh: sin padding vertical para que quepa
-                `grid w-full place-items-center${
-                  ISOLATED_VIEW === "fusion" ? "" : " py-14"
-                }`
-              : "grid w-full items-center gap-12 py-14 lg:grid-cols-[1.15fr_0.85fr]"
-          }
-        >
-          {/* Texto — protagonista absoluto */}
-          {!HERO_ISOLATED && (
-          <div>
-            <Reveal mount>
-              <div className="kicker flex items-center gap-3 !text-[12px]">
-                <span className="inline-block h-px w-10 bg-neb/70" />
-                Webs a medida que se hacen encontrar · Cali
-              </div>
-            </Reveal>
-            <h1
-              className="display mt-6 text-[clamp(40px,8.2vw,112px)] leading-[0.88]"
-              aria-label="Que te encuentren cuando te buscan"
-            >
-              <span className="block whitespace-nowrap">
-                <Letters text="QUE TE" delay={0.1} stagger={0.05} mount />
-              </span>
-              <RevealLine delay={0.4} mount className="whitespace-nowrap">
-                <span className="text-shimmer">ENCUENTREN</span>
-              </RevealLine>
-            </h1>
-            <Reveal delay={0.65} mount>
-              <p className="mt-8 max-w-[46ch] text-[clamp(16px,1.5vw,20px)] leading-[1.6] text-mute">
-                Posicionamiento local, presencia en{" "}
-                <strong className="font-extrabold text-ink">buscadores con IA</strong> y
-                protección de los{" "}
-                <strong className="font-extrabold text-ink">datos de tu negocio</strong>,
-                en un plan mensual. La página web va incluida.
-              </p>
-            </Reveal>
-            <Reveal delay={0.78} mount>
-              <div className="mt-10 flex flex-wrap items-center gap-5">
-                {/* El primario sale del sitio: es una conversación, no otra
-                    página. El secundario lleva al bloque que cobra. Antes los
-                    dos llevaban hacia dentro —proyectos y biografía— y ninguna
-                    ruta de la portada terminaba en una venta. */}
-                <Magnetic>
-                  <a
-                    href={contact.whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => trackContact("whatsapp")}
-                    className="btn-neb group py-2 pl-8 pr-2 text-[15px]"
-                  >
-                    Diagnóstico gratis
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-space transition-transform group-hover:scale-110">
-                      <ArrowRight className="h-4.5 w-4.5 text-neb" />
-                    </span>
-                  </a>
-                </Magnetic>
-                <Link
-                  to="/planes"
-                  className="pill px-7 py-3.5 font-mono text-[12px] font-semibold tracking-[0.14em] uppercase text-mute"
-                >
-                  Ver planes
-                </Link>
-              </div>
-            </Reveal>
-            {/* El nombre no desaparece, cambia de rango: el titular lo ocupa
-                ahora la promesa. Con la credencial al lado, porque sin clientes
-                todavía es la única prueba que no depende de haber trabajado
-                para alguien. */}
-            <Reveal delay={0.9} mount>
-              <p className="mt-7 font-mono text-[10.5px] font-medium tracking-[0.16em] uppercase text-faint">
-                Santiago Miranda · Ing. Informático · Esp. Ciberseguridad
-              </p>
-            </Reveal>
+        <div className="grid w-full place-items-center">
+          {/* w-full para que el max-width de las figuras mida contra la celda
+              y no contra sí mismas: si no, en móvil se desbordan. */}
+          <div className="flex w-full min-w-0 justify-center">
+            <div className="hero-stage">
+              <HeroFusion figureRef={figureRef} onFusedChange={setFused} onPointer={onPointer} />
+              {/* Dos líneas como en el esquema: Astro es muy ancha y en una
+                  sola no cabe sin encogerla hasta perder presencia. */}
+              <HeroNombre listo={fxListo} />
+            </div>
           </div>
-          )}
-
-          {/* Retrato recortado que panea siguiendo el cursor. Sin marco: la
-              figura se funde con el fondo mediante la máscara inferior. */}
-          <motion.div
-            style={reduced || HERO_ISOLATED ? undefined : { y: portraitY }}
-            className={
-              HERO_ISOLATED
-                ? // w-full para que el max-width de las figuras mida contra la
-                  // celda y no contra sí mismas: si no, en móvil se desbordan.
-                  "flex w-full min-w-0 justify-center"
-                : "order-first flex justify-center lg:order-none"
-            }
-          >
-            {!HERO_ISOLATED ? (
-              <HeroPortrait figureRef={figureRef} />
-            ) : ISOLATED_VIEW === "fusion" ? (
-              <div className="hero-stage">
-                <HeroFusion
-                figureRef={figureRef}
-                onFusedChange={setFused}
-                onPointer={onPointer}
-              />
-
-                {/* Dos líneas como en el esquema: Astro es muy ancha y en una
-                    sola no cabe sin encogerla hasta perder presencia. */}
-                <HeroNombre listo={fxListo} />
-              </div>
-            ) : (
-              <HeroComparison />
-            )}
-          </motion.div>
         </div>
       </div>
 
       {/* z-55: por encima de la capa DELANTERA de la decoración, que va en 50,
-          y por debajo del nav. En 30 los cristales y la constelación le pasaban
-          por encima al titular — medido en móvil, un cristal cubría la mitad de
-          "BUSCAN". Sigue en pie la regla del brief 8: ninguna pieza tapa texto. */}
-      {HERO_ISOLATED && (
-        <div className="relative z-[55] mx-auto w-full max-w-[1240px] px-6 pb-8 md:px-8">
-          <Reveal delay={0.85} mount>
-            <div className="hero-promesa">
-              <div className="hero-promesa__titular">
-                <p className="kicker !text-[11px]">
-                  Webs a medida que se hacen encontrar · Cali
-                </p>
-                <h1 className="hero-promesa__h1">
-                  Que te encuentren cuando te{" "}
-                  <span className="text-shimmer">buscan</span>.
-                </h1>
-              </div>
+          y por debajo del nav. Ninguna pieza tapa texto. */}
+      <div className="relative z-[55] mx-auto w-full max-w-[1240px] px-6 pb-8 md:px-8">
+        <Reveal delay={0.85} mount>
+          <div className="hero-promesa">
+            <div className="hero-promesa__titular">
+              <p className="kicker !text-[11px]">{t.hero.kicker}</p>
+              <h1 id="hero-titulo" className="hero-promesa__h1">
+                <Rich text={t.hero.h1} strong="text-shimmer" as="span" />
+              </h1>
+              {/* Quién firma. Sin clientes todavía es la única prueba que no
+                  depende de haber trabajado para alguien, y es lo que un
+                  buscador usa para saber que hay una persona real detrás. */}
+              <p className="hero-promesa__firma">{t.hero.credential}</p>
+            </div>
 
-              <div className="hero-promesa__acciones">
-                <Magnetic>
-                  <a
-                    href={contact.whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => trackContact("whatsapp")}
-                    className="btn-neb group py-2 pl-7 pr-2 text-[14px]"
-                  >
-                    Diagnóstico gratis
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-space transition-transform group-hover:scale-110">
-                      <ArrowRight className="h-4 w-4 text-neb" />
-                    </span>
-                  </a>
-                </Magnetic>
-                <Link
-                  to="/#planes"
-                  className="pill px-6 py-3 font-mono text-[11.5px] font-semibold tracking-[0.14em] uppercase text-mute"
+            <div className="hero-promesa__acciones">
+              {/* El primario sale del sitio: es una conversación, no otra
+                  página. El secundario lleva a la página que cobra, igual que
+                  el raíl de la derecha. */}
+              <Magnetic>
+                <a
+                  href={whatsapp()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackContact("whatsapp")}
+                  className="btn btn--primary btn--flecha"
                 >
-                  Ver planes
-                </Link>
-              </div>
+                  {t.hero.ctaPrimary}
+                  <span className="btn__disco">
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                </a>
+              </Magnetic>
+              <Link to={href("plans")} className="btn btn--ghost">
+                {t.hero.ctaSecondary}
+              </Link>
             </div>
-          </Reveal>
-        </div>
-      )}
-
-      {/* Cintillo inferior + indicador de scroll */}
-      {!HERO_ISOLATED && (
-      <div className="relative z-10 mx-auto w-full max-w-[1240px] px-6 md:px-8">
-        <Reveal delay={0.9} mount>
-          <div className="relative flex items-center justify-between border-t border-white/10 py-5 font-mono text-[10px] font-medium tracking-[0.16em] uppercase text-faint">
-            <span>{contact.location} — Ingeniero Informático · Full-stack</span>
-            <div className="absolute left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1.5 sm:flex">
-              <span className="text-[9px] tracking-[0.3em] text-faint">
-                Scroll
-              </span>
-              <span className="scroll-line block h-8 w-px bg-gradient-to-b from-neb to-transparent" />
-            </div>
-            <span className="hidden sm:block">{contact.domain}</span>
           </div>
         </Reveal>
       </div>
-      )}
     </section>
   );
 }

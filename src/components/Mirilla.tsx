@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useModoLigero } from "@/lib/perf";
 
@@ -10,10 +10,12 @@ import { useModoLigero } from "@/lib/perf";
  *  1. **Solo con `(pointer: fine)`.** En táctil el componente ni se monta: no
  *     hay cursor que sustituir.
  *
- *  2. **`cursor: none` vive dentro de ese mismo media query**, en el CSS. Si
- *     fuera global y el componente no montara —JS caído, JS desactivado,
- *     táctil— el usuario se quedaría sin cursor ninguno. Es el fallo clásico
- *     de esta técnica y deja el sitio inusable.
+ *  2. **`cursor: none` vive dentro de ese mismo media query**, en el CSS, y
+ *     solo se activa con la clase `mirilla-on`, que se pone **al primer
+ *     movimiento del puntero**, no al montar. Antes se ponía al montar y el
+ *     visitante que aún no había movido el ratón se quedaba sin cursor nativo
+ *     y sin mirilla dibujada: nada. Ahora el cursor nativo no desaparece hasta
+ *     que la mirilla ya está en pantalla.
  *
  *  3. **Un solo listener de `pointermove` en `window`**, y el movimiento por
  *     motion values sobre `transform`. Con `left`/`top` habría cálculo de
@@ -43,9 +45,12 @@ function usePunteroFino() {
   return fino;
 }
 
+/* Solo lo que de verdad se puede pulsar. Antes incluía `.card` y `.pill`, que
+   son contenedores, y la mirilla decía "clicable" sobre cosas que no lo eran.
+   `.wdid` se queda: la tarjeta entera reacciona al hover y lleva su enlace. */
 const SELECTOR_ACTIVO =
-  'a, button, [role="button"], summary, label[for], select, .wdid, .card, .pill';
-const SELECTOR_TEXTO = "input, textarea, [contenteditable=\"true\"]";
+  'a, button, [role="button"], summary, label[for], select, input[type="submit"], .wdid';
+const SELECTOR_TEXTO = 'input:not([type="submit"]), textarea, [contenteditable="true"]';
 
 export function Mirilla() {
   /* En modo ligero, cursor nativo. La mirilla son dos capas que se repintan en
@@ -66,18 +71,8 @@ export function Mirilla() {
   const [estado, setEstado] = useState<Estado>("reposo");
   const [pulsado, setPulsado] = useState(false);
   const [dentro, setDentro] = useState(false);
-
-  /* `cursor: none` se activa desde aquí, no desde el CSS a secas.
-     Con la regla puesta solo tras el media query bastaba con que el componente
-     no montara —JS caído o desactivado— para que el usuario se quedara sin
-     cursor ninguno: el media query se aplica igual, el componente no. Colgando
-     la clase del propio montaje, si no hay JS no hay clase y el cursor nativo
-     sigue ahí. */
-  useEffect(() => {
-    if (!fino) return;
-    document.documentElement.classList.add("mirilla-on");
-    return () => document.documentElement.classList.remove("mirilla-on");
-  }, [fino]);
+  /** El primer movimiento ya ocurrió: solo entonces se retira el cursor nativo. */
+  const activada = useRef(false);
 
   useEffect(() => {
     if (!fino) return;
@@ -85,7 +80,11 @@ export function Mirilla() {
     const mover = (e: PointerEvent) => {
       x.set(e.clientX);
       y.set(e.clientY);
-      if (!dentro) setDentro(true);
+      if (!activada.current) {
+        activada.current = true;
+        document.documentElement.classList.add("mirilla-on");
+      }
+      setDentro(true);
       const el = e.target as Element | null;
       if (!el || !el.closest) return;
       setEstado(
@@ -112,8 +111,10 @@ export function Mirilla() {
       window.removeEventListener("pointerup", arriba);
       document.removeEventListener("pointerleave", salir);
       document.removeEventListener("pointerenter", entrar);
+      activada.current = false;
+      document.documentElement.classList.remove("mirilla-on");
     };
-  }, [fino, x, y, dentro]);
+  }, [fino, x, y]);
 
   // En táctil no se monta. Es la condición que hace segura la regla `cursor: none`.
   if (!fino) return null;
@@ -143,7 +144,7 @@ export function Mirilla() {
           transition={salto}
         >
           {texto ? (
-            /* Sobre texto seleccionable el anillo se colapsa en una barra. */
+            /* Sobre texto editable el anillo se colapsa en una barra. */
             <rect x="44" y="6" width="12" height="88" rx="5" fill={LAVANDA_FUERTE} />
           ) : (
             <>

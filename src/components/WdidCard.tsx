@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { gsap, useGSAP } from "@/lib/gsap";
 import type { VarianteWdid } from "@/data/site";
+import { useNitidez } from "@/components/WdidFx";
 
 /**
  * Tarjeta de la sección "What I Do".
@@ -72,16 +73,6 @@ const animObjeto = {
   hover: { scale: 1.07, rotate: 2 },
 };
 const muelle = { type: "spring" as const, stiffness: 400, damping: 15 };
-
-/** `x1` por debajo de 2 dppx. Se resuelve tras montar: en el prerender no hay
- *  `window`, y servir x2 a todo el mundo son 530 KB en vez de 206. */
-function useNitidez() {
-  const [x2, setX2] = useState(false);
-  useEffect(() => {
-    setX2((window.devicePixelRatio || 1) >= 2);
-  }, []);
-  return x2 ? "x2" : "x1";
-}
 
 export const WdidCard = forwardRef<HTMLDivElement, WdidCardProps>(function WdidCard(
   { variante, objeto, etiqueta, color, title, desc, resumen, cta, href, suelta, giro = 0, indice = 0 },

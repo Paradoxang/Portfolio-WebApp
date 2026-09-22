@@ -8,6 +8,7 @@ import { WdidCard } from "@/components/WdidCard";
 import { WdidFx, WdidNebulosa, useTramo } from "@/components/WdidFx";
 import { modoActual } from "@/lib/perf";
 import { services } from "@/data/site";
+import { Rich, useLocale } from "@/i18n/LocaleContext";
 
 /**
  * "What I Do".
@@ -27,17 +28,13 @@ import { services } from "@/data/site";
  * cuatro imágenes grandes.
  *
  * ── El apilado ──
- * Casi todo lo que puede salir mal aquí sale mal por montar algo en la capa
- * equivocada, así que las clases `z-*` de abajo no son decorativas:
- *
  *   z0 velo lateral · z1 eco del hero · z2 fondos · z3 sueltas
  *   z4 astronauta   · z5 nebulosa     · z6 tarjetas y texto
  *
  * El eco va detrás del astronauta y de las tarjetas porque son ecos, no
- * protagonistas: que una esfera quede cortada por la esquina de una tarjeta es
- * la prueba de que está en su sitio. La nebulosa va por encima de la figura
- * —el efecto es que quede dentro del gas— pero por debajo de las tarjetas,
- * porque en móvil se superponen a la figura y el texto gana siempre.
+ * protagonistas. La nebulosa va por encima de la figura —el efecto es que
+ * quede dentro del gas— pero por debajo de las tarjetas, porque en móvil se
+ * superponen a la figura y el texto gana siempre.
  */
 
 /**
@@ -45,11 +42,8 @@ import { services } from "@/data/site";
  *
  * Las coordenadas están elegidas para que ninguna entre en la banda del 40 al
  * 65 % de ancho entre el 30 y el 55 % de alto — que es donde cae el visor con
- * el agujero negro. Esa ventana es el motivo de toda la disposición: el
- * astronauta tiene que verse entero y por el centro.
- *
- * Las profundidades arrancan en 2 para dejar el 0 al astronauta y el 1 a la
- * nebulosa, que van debajo.
+ * el agujero negro. Las profundidades arrancan en 2 para dejar el 0 al
+ * astronauta y el 1 a la nebulosa, que van debajo.
  */
 const RONDA = [
   { x: 1, y: 3, giro: -4, z: 4 },
@@ -59,6 +53,7 @@ const RONDA = [
 ];
 
 export function Services() {
+  const { t, href } = useLocale();
   const tramo = useTramo();
   const movil = tramo === "movil";
   const ref = useRef<HTMLElement>(null);
@@ -72,16 +67,20 @@ export function Services() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setEnPantalla(e.isIntersecting), {
-      threshold: 0,
-      rootMargin: "200px 0px",
-    });
+    let intersecta = false;
+    const revisar = () => setEnPantalla(intersecta && !document.hidden);
+    const io = new IntersectionObserver(
+      ([e]) => {
+        intersecta = e.isIntersecting;
+        revisar();
+      },
+      { threshold: 0, rootMargin: "200px 0px" }
+    );
     io.observe(el);
-    const onVis = () => setEnPantalla((v) => v && !document.hidden);
-    document.addEventListener("visibilitychange", onVis);
+    document.addEventListener("visibilitychange", revisar);
     return () => {
       io.disconnect();
-      document.removeEventListener("visibilitychange", onVis);
+      document.removeEventListener("visibilitychange", revisar);
     };
   }, []);
 
@@ -89,12 +88,9 @@ export function Services() {
      La lente y el velo de nebulosa se centran en el casco del astronauta, y esa
      posición NO es un porcentaje fijo de la sección: las capas gráficas miden
      contra la sección, que va a sangre, mientras la figura vive en la columna
-     topada a 1600 px. Al crecer la pantalla la columna se queda quieta y el
-     casco se desplaza en porcentaje — medido, del 73.6 % a 1024 px al 82.4 % a
-     1763. Un valor fijo solo acierta en un ancho.
-     Así que se mide en cada cambio de tamaño y se publica como dos variables
-     CSS. El 52.9 / 35.1 % es el centroide del casco dentro del archivo del
-     visor, que es 1792x2398 y lleva la figura pegada abajo. */
+     topada a 1600 px. Se mide en cada cambio de tamaño y se publica como dos
+     variables CSS. El 52.9 / 35.1 % es el centroide del casco dentro del
+     archivo del visor, que es 1792x2398 y lleva la figura pegada abajo. */
   const anclarCasco = useCallback(() => {
     const sec = ref.current;
     const img = sec?.querySelector<HTMLImageElement>(".visor .visor__f");
@@ -144,17 +140,17 @@ export function Services() {
     [mx, my]
   );
 
+  const tarjetas = services.map((s) => ({ ...s, ...t.services.items[s.id], to: href(s.href.route, s.href.anchor) }));
+
   return (
     /* La sección va a sangre: sin `max-width`, para que el fondo y la capa
-       gráfica lleguen a los dos bordes de la pantalla. Antes se cortaba a 1600
-       y en un monitor ancho quedaban dos franjas del fondo de página a los
-       lados, con la costura a la vista.
-       El contenido sí se topa por dentro, en `.wdid-sec__contenido`: lo que
-       tiene que llenar la pantalla es la composición, no la línea de texto. */
+       gráfica lleguen a los dos bordes de la pantalla. El contenido sí se topa
+       por dentro, en `.wdid-sec__contenido`. */
     <section
       ref={ref}
       onPointerMove={onPointer}
-      id="especialidades"
+      id={t.anchors.services}
+      aria-labelledby="especialidades-titulo"
       className="wdid-sec relative w-full scroll-mt-24 overflow-hidden px-[clamp(1.5rem,5vw,5rem)] [padding-block:clamp(6rem,12vh,11rem)]"
     >
       <WdidFx mx={mx} my={my} tramo={tramo} corriendo={enPantalla} />
@@ -162,102 +158,84 @@ export function Services() {
       <Constellation className="absolute right-4 top-16 z-[6] hidden h-[150px] w-[200px] opacity-70 md:block" />
 
       <div className="wdid-sec__contenido relative mx-auto w-full max-w-[1600px]">
-      <div className="relative z-[6]">
-        {/* El kicker dice lo mismo que el raíl del hero que trae hasta aquí.
-            Decían cosas distintas —"Qué hago" contra "Especialidades"— y el
-            enlace parecía llevar a otro sitio.
-            El párrafo es el que estaba en el hero: aquí tiene ancho, fondo
-            tranquilo y llega justo cuando el visitante ya está leyendo. */}
-        <SectionHeading kicker="01 — Especialidades" title="What I Do">
-          <Reveal delay={0.12}>
-            <p className="mt-6 max-w-[56ch] text-[15.5px] leading-[1.7] text-mute">
-              Posicionamiento local, presencia en buscadores con IA y protección
-              de los datos de tu negocio, en un plan mensual.{" "}
-              <strong className="font-bold text-ink">
-                La página web va incluida.
-              </strong>
-            </p>
-          </Reveal>
-        </SectionHeading>
-      </div>
-
-      {movil ? (
-        /* ── Móvil: las tarjetas encima del astronauta ──
-           El aire se traslada a los extremos: por dentro la composición está
-           apretada a propósito, pero respira por arriba y por abajo.
-           La nebulosa entra aquí dentro y no en la sección: el bloque aísla su
-           propio contexto de apilado, así que fuera no podría colarse entre la
-           figura y las tarjetas. */
-        <div className="wdid-comp relative z-[4] [margin-block:clamp(3rem,8vh,6rem)]">
-          <VisorLoop className="wdid-comp__fondo" />
-          <WdidNebulosa clase="wdid-fx__nebulosa--movil" corriendo={enPantalla} />
-          {services.map((s, i) => (
-            <div
-              key={s.title}
-              className="wdid-comp__hueco"
-              style={{
-                left: `${RONDA[i].x}%`,
-                top: `${RONDA[i].y}%`,
-                zIndex: RONDA[i].z,
-              }}
-            >
-              <WdidCard
-                variante={s.variante}
-                objeto={s.objeto}
-                etiqueta={s.etiqueta}
-                color={s.color}
-                title={s.title}
-                desc={s.desc}
-                resumen={s.resumen}
-                cta={s.cta}
-                href={s.href}
-                suelta
-                giro={RONDA[i].giro}
-                indice={i}
-              />
-            </div>
-          ))}
+        <div className="relative z-[6]">
+          {/* El kicker dice lo mismo que el raíl del hero que trae hasta aquí. */}
+          <SectionHeading id="especialidades-titulo" kicker={t.services.kicker} title={t.services.title}>
+            <Reveal delay={0.12}>
+              <p className="mt-6 max-w-[56ch] text-[15.5px] leading-[1.7] text-mute">
+                <Rich text={t.services.intro} />
+              </p>
+            </Reveal>
+          </SectionHeading>
         </div>
-      ) : (
-        /* Tarjetas a la izquierda en cuadro 2x2, astronauta a la derecha. El
-           aire del brief se reparte: vertical respecto al titular y horizontal
-           entre las dos columnas, que es donde se nota con este reparto. */
-        <>
+
+        {movil ? (
+          /* ── Móvil: las tarjetas encima del astronauta ──
+             La nebulosa entra aquí dentro y no en la sección: el bloque aísla
+             su propio contexto de apilado. */
+          <ul className="wdid-comp relative z-[4] m-0 list-none p-0 [margin-block:clamp(3rem,8vh,6rem)]" role="list">
+            <VisorLoop className="wdid-comp__fondo" alt={t.a11y.visorAlt} />
+            <WdidNebulosa clase="wdid-fx__nebulosa--movil" corriendo={enPantalla} />
+            {tarjetas.map((s, i) => (
+              <li
+                key={s.id}
+                className="wdid-comp__hueco"
+                style={{
+                  left: `${RONDA[i].x}%`,
+                  top: `${RONDA[i].y}%`,
+                  zIndex: RONDA[i].z,
+                }}
+              >
+                <WdidCard
+                  variante={s.variante}
+                  objeto={s.objeto}
+                  etiqueta={s.label}
+                  color={s.color}
+                  title={s.title}
+                  desc={s.desc}
+                  resumen={s.summary}
+                  cta={s.cta}
+                  href={s.to}
+                  suelta
+                  giro={RONDA[i].giro}
+                  indice={i}
+                />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          /* Tarjetas a la izquierda en cuadro 2x2, astronauta a la derecha. */
           <div className="grid items-center gap-x-[clamp(3rem,7vw,7rem)] gap-y-16 [margin-top:clamp(4rem,9vh,8rem)] lg:grid-cols-[1.4fr_1fr]">
-            <div className="relative z-[6] grid gap-5 sm:grid-cols-2 lg:gap-6">
-              {services.map((s, i) => (
-                <Reveal key={s.title} delay={i * 0.08}>
-                  <WdidCard
-                    variante={s.variante}
-                    objeto={s.objeto}
-                    etiqueta={s.etiqueta}
-                    color={s.color}
-                    title={s.title}
-                    desc={s.desc}
-                resumen={s.resumen}
-                    cta={s.cta}
-                    href={s.href}
-                  />
-                </Reveal>
+            <ul className="relative z-[6] m-0 grid list-none gap-5 p-0 sm:grid-cols-2 lg:gap-6" role="list">
+              {tarjetas.map((s, i) => (
+                <li key={s.id}>
+                  <Reveal delay={i * 0.08}>
+                    <WdidCard
+                      variante={s.variante}
+                      objeto={s.objeto}
+                      etiqueta={s.label}
+                      color={s.color}
+                      title={s.title}
+                      desc={s.desc}
+                      resumen={s.summary}
+                      cta={s.cta}
+                      href={s.to}
+                    />
+                  </Reveal>
+                </li>
               ))}
-            </div>
+            </ul>
 
             {/* z4: la figura queda por debajo del velo de nebulosa. */}
             <div className="relative z-[4] flex justify-center lg:justify-end">
-              <VisorLoop />
+              <VisorLoop alt={t.a11y.visorAlt} />
             </div>
           </div>
-
-        </>
-      )}
+        )}
       </div>
 
-      {/* z5, entre la figura y las tarjetas. Cuelga de la SECCION y no del
-          contenedor topado: su ancla es un porcentaje de la seccion, y dentro
-          del contenedor ese porcentaje mide contra una caja mas estrecha — el
-          velo salia 3 a 5 % a la izquierda del casco. El contenedor no crea
-          contexto de apilado, asi que el z5 sigue cayendo entre la figura y
-          las tarjetas. */}
+      {/* z5, entre la figura y las tarjetas. Cuelga de la SECCIÓN y no del
+          contenedor topado: su ancla es un porcentaje de la sección. */}
       {!movil && <WdidNebulosa corriendo={enPantalla} />}
     </section>
   );

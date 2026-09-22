@@ -1,4 +1,4 @@
-import { motion, useScroll } from "framer-motion";
+import { motion, useReducedMotion, useScroll } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
@@ -11,16 +11,29 @@ import { Mirilla } from "@/components/Mirilla";
 import { useLenis, scrollToTarget, EASE } from "@/lib/anim";
 import { loadAnalytics, trackPageView } from "@/lib/analytics";
 import { arrancarPerf } from "@/lib/perf";
+import { LocaleProvider, useT } from "@/i18n/LocaleContext";
+import { ROUTE_SLUGS, type Locale } from "@/i18n/locales";
 import { Home } from "@/pages/Home";
 import { About } from "@/pages/About";
 import { Contact } from "@/pages/Contact";
 import { Projects } from "@/pages/Projects";
 import { Services } from "@/pages/Services";
 import { Plans } from "@/pages/Plans";
+import { Privacy } from "@/pages/Privacy";
+import { SecurityPage } from "@/pages/SecurityPage";
 
-function Layout() {
+/**
+ * El armazón común a todas las páginas de un idioma.
+ *
+ * Hay un `Layout` por idioma —uno bajo `/` y otro bajo `/en`— y cada uno
+ * monta su `LocaleProvider`. Todo lo que cuelga de aquí lee el idioma del
+ * contexto; ningún componente sabe en qué subárbol vive.
+ */
+function Shell() {
   useLenis();
+  const t = useT();
   const location = useLocation();
+  const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const firstRender = useRef(true);
   useEffect(() => {
@@ -42,20 +55,31 @@ function Layout() {
     trackPageView(location.pathname + location.hash);
   }, [location]);
 
-  // Scroll: al ancla si hay hash, arriba si no (vía Lenis)
+  /* Scroll: al ancla si hay hash, arriba si no (vía Lenis).
+     `getElementById` y no `querySelector(hash)`: un hash que empiece por
+     dígito no es un selector válido y `querySelector` lanzaría. El
+     temporizador se limpia: dos navegaciones en 120 ms dejaban una llamada
+     pendiente sobre un nodo ya desmontado. */
   useEffect(() => {
     if (location.hash) {
-      const el = document.querySelector<HTMLElement>(location.hash);
+      const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
       if (el) {
-        setTimeout(() => scrollToTarget(el), 120);
-        return;
+        const t = window.setTimeout(() => scrollToTarget(el), 120);
+        return () => window.clearTimeout(t);
       }
     }
     scrollToTarget(0, { immediate: true });
+    return undefined;
   }, [location]);
 
   return (
     <div className="relative min-h-screen bg-base font-sans text-ink">
+      {/* Primer elemento enfocable de la página: quien navega con teclado
+          salta el nav y la decoración de un solo Tab. */}
+      <a href="#contenido" className="skip-link">
+        {t.nav.skip}
+      </a>
+
       {/* Calienta los assets del hero en tiempo ocioso. No pinta nada: un velo
           de carga se convertiría en el LCP y penalizaría el SEO. */}
       <Prefetch />
@@ -79,11 +103,14 @@ function Layout() {
 
       <Nav />
 
-      {/* Transición de página: fade-through al cambiar de ruta */}
+      {/* Transición de página: fade-through al cambiar de ruta. Con
+          `prefers-reduced-motion` la página nueva aparece sin desplazarse. */}
       <motion.main
+        id="contenido"
+        tabIndex={-1}
         key={location.pathname}
-        className="relative z-10"
-        initial={firstRender.current ? false : { opacity: 0, y: 14 }}
+        className="relative z-10 outline-none"
+        initial={firstRender.current || reduced ? false : { opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: EASE }}
       >
@@ -98,17 +125,30 @@ function Layout() {
   );
 }
 
+function Layout({ locale }: { locale: Locale }) {
+  return (
+    <LocaleProvider locale={locale}>
+      <Shell />
+    </LocaleProvider>
+  );
+}
+
+/** Las páginas de un idioma, con los slugs de ese idioma. */
+function paginas(locale: Locale): RouteRecord[] {
+  const s = ROUTE_SLUGS[locale];
+  return [
+    { index: true, element: <Home /> },
+    { path: s.plans, element: <Plans /> },
+    { path: s.services, element: <Services /> },
+    { path: s.security, element: <SecurityPage /> },
+    { path: s.projects, element: <Projects /> },
+    { path: s.about, element: <About /> },
+    { path: s.contact, element: <Contact /> },
+    { path: s.privacy, element: <Privacy /> },
+  ];
+}
+
 export const routes: RouteRecord[] = [
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: "planes", element: <Plans /> },
-      { path: "servicios", element: <Services /> },
-      { path: "proyectos", element: <Projects /> },
-      { path: "sobre-mi", element: <About /> },
-      { path: "contacto", element: <Contact /> },
-    ],
-  },
+  { path: "/", element: <Layout locale="es" />, children: paginas("es") },
+  { path: "/en", element: <Layout locale="en" />, children: paginas("en") },
 ];

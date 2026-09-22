@@ -8,7 +8,12 @@
  *
  * Cada plataforma se activa poniendo su ID abajo; con el ID vacío no se carga
  * nada ni se rastrea a nadie.
+ *
+ * Todos los eventos llevan `language` (es/en), leído de la ruta: así el embudo
+ * se puede partir por idioma sin que ningún componente tenga que pasarlo.
  */
+
+import { localeFromPath } from "@/i18n/locales";
 
 /** ID de medición de GA4, p. ej. "G-ABC123XYZ". Vacío = GA4 desactivado. */
 export const GA_MEASUREMENT_ID = "G-RSRJR75JKC";
@@ -43,6 +48,10 @@ interface FbqFn {
 export const analyticsEnabled = () =>
   typeof window !== "undefined" &&
   Boolean(GA_MEASUREMENT_ID || GOOGLE_ADS_ID || META_PIXEL_ID);
+
+/** El idioma de la página actual, para etiquetar cada evento. */
+const idioma = () =>
+  typeof window === "undefined" ? "es" : localeFromPath(window.location.pathname);
 
 let loaded = false;
 
@@ -130,6 +139,7 @@ export function trackPageView(path: string, title?: string) {
       page_path: path,
       page_location: window.location.href,
       page_title: title ?? document.title,
+      language: idioma(),
     });
   }
   if (META_PIXEL_ID && window.fbq) {
@@ -139,14 +149,21 @@ export function trackPageView(path: string, title?: string) {
   }
 }
 
+export type ContactMethod = "whatsapp" | "email" | "phone" | "facebook" | "form";
+
 /**
- * Conversión de contacto (clic a WhatsApp, correo o teléfono). Es *la* métrica
- * que importa: mide clientes potenciales, no visitas.
+ * Conversión de contacto (clic a WhatsApp, correo, teléfono o formulario). Es
+ * *la* métrica que importa: mide clientes potenciales, no visitas.
+ *
+ * `plan` viaja cuando el clic sale de una tarjeta de plan: sin él, "Empezar
+ * con Blindaje" y "Diagnóstico gratis" eran el mismo evento y no se podía
+ * saber qué vende.
  */
-export function trackContact(method: "whatsapp" | "email" | "phone" | "facebook") {
+export function trackContact(method: ContactMethod, { plan }: { plan?: string } = {}) {
   loadAnalytics();
+  const datos = { method, language: idioma(), ...(plan ? { plan } : {}) };
   if (window.gtag) {
-    window.gtag("event", "contacto", { method });
+    window.gtag("event", "contacto", datos);
     if (ADS_CONTACT_CONVERSION_LABEL) {
       window.gtag("event", "conversion", {
         send_to: ADS_CONTACT_CONVERSION_LABEL,
@@ -158,27 +175,21 @@ export function trackContact(method: "whatsapp" | "email" | "phone" | "facebook"
     // · Contact — el que describe el hecho (alguien inició contacto).
     // · Lead    — el que se suele elegir para optimizar las campañas.
     // Si prefieres uno solo en el Administrador de anuncios, borra el otro.
-    window.fbq("track", "Contact", { content_category: method });
-    window.fbq("track", "Lead", { content_category: method });
+    const meta = { content_category: method, ...(plan ? { content_name: plan } : {}) };
+    window.fbq("track", "Contact", meta);
+    window.fbq("track", "Lead", meta);
   }
 }
 
 /**
  * Vista de una página/contenido clave (p. ej. Servicios). En Meta permite crear
- * públicos de "interesados" y hacerles remarketing.
+ * públicos de "interesados" y hacerles remarketing. `name` es una clave
+ * estable, no un texto traducido: si cambiara con el idioma partiría el
+ * público en dos.
  */
 export function trackViewContent(name: string, category?: string) {
   loadAnalytics();
-  if (window.gtag) {
-    window.gtag("event", "view_content", {
-      content_name: name,
-      content_category: category,
-    });
-  }
-  if (META_PIXEL_ID && window.fbq) {
-    window.fbq("track", "ViewContent", {
-      content_name: name,
-      content_category: category,
-    });
-  }
+  const datos = { content_name: name, content_category: category, language: idioma() };
+  if (window.gtag) window.gtag("event", "view_content", datos);
+  if (META_PIXEL_ID && window.fbq) window.fbq("track", "ViewContent", datos);
 }

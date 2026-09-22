@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useModoLigero } from "@/lib/perf";
 
 interface Star {
   x: number;
@@ -22,10 +23,14 @@ interface ShootingStar {
 /**
  * Campo de estrellas cósmico: drift muy lento + twinkle sutil.
  * Los glows/parallax reaccionan levemente al puntero (por capa de profundidad).
- * Con prefers-reduced-motion pinta un frame estático.
+ *
+ * Con prefers-reduced-motion —y en modo ligero— pinta un frame estático: era
+ * el único bucle de `requestAnimationFrame` que seguía vivo a pantalla completa
+ * cuando el visitante pedía el sitio sobrio.
  */
 export function Starfield({ className = "" }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ligero = useModoLigero();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -33,7 +38,8 @@ export function Starfield({ className = "" }: { className?: string }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced =
+      ligero || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
     let stars: Star[] = [];
     let shooting: ShootingStar[] = [];
@@ -156,7 +162,7 @@ export function Starfield({ className = "" }: { className?: string }) {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [ligero]);
 
   return <canvas ref={canvasRef} className={`h-full w-full ${className}`} aria-hidden="true" />;
 }

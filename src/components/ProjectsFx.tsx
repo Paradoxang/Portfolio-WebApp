@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useNitidez, type Tramo } from "@/components/WdidFx";
+import { EASE } from "@/lib/anim";
 
 /**
  * Capa gráfica de "Selected Projects".
@@ -158,7 +159,7 @@ export const ENTRADA = {
   show: (i: number) => ({
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.7, delay: i * 0.09, ease: [0.16, 1, 0.3, 1] as const },
+    transition: { duration: 0.7, delay: i * 0.09, ease: EASE },
   }),
 };
 

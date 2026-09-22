@@ -20,7 +20,7 @@ const DECODE_TIMEOUT_MS = 2000;
 
 /** `className` solo para posicionarla: en móvil la figura pasa a ser el fondo
  *  de la composición de tarjetas. La lógica del bucle no cambia. */
-export function VisorLoop({ className = "" }: { className?: string }) {
+export function VisorLoop({ className = "", alt = "" }: { className?: string; alt?: string }) {
   /** Los otros tres se montan tras el primer pintado, para no competir con el
    *  primer render de la sección. */
   const [montado, setMontado] = useState(false);
@@ -141,7 +141,7 @@ export function VisorLoop({ className = "" }: { className?: string }) {
                 sizes="460px"
                 width={1792}
                 height={2398}
-                alt={esBase ? "Casco con un agujero negro girando en el visor" : ""}
+                alt={esBase ? alt : ""}
                 aria-hidden={esBase ? undefined : true}
                 draggable={false}
                 /* Solo el primero arranca encendido; a partir de ahí la clase

@@ -1,4 +1,5 @@
 import { elegirModo, usePerf } from "@/lib/perf";
+import { useT } from "@/i18n/LocaleContext";
 
 /**
  * Conmutador de «Modo ligero», en el pie.
@@ -15,6 +16,7 @@ import { elegirModo, usePerf } from "@/lib/perf";
 export function ModoLigero() {
   const modo = usePerf();
   const puesto = modo === "low";
+  const t = useT().footer.lightMode;
 
   return (
     <button
@@ -23,16 +25,12 @@ export function ModoLigero() {
       aria-checked={puesto}
       onClick={() => elegirModo(puesto ? "high" : "low")}
       className="modo-ligero"
-      title={
-        puesto
-          ? "Modo ligero activado: menos efectos, más fluidez"
-          : "Activa el modo ligero si el sitio te va lento"
-      }
+      title={puesto ? t.on : t.off}
     >
       <span className="modo-ligero__via" aria-hidden="true">
         <span className="modo-ligero__punto" />
       </span>
-      Modo ligero
+      {t.label}
     </button>
   );
 }

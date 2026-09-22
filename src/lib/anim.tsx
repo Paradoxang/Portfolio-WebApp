@@ -98,83 +98,32 @@ export function RevealLine({
   );
 }
 
-/* ── Letters: revelado letra a letra con blur — para titulares "boom" ── */
-export function Letters({
-  text,
-  delay = 0,
-  stagger = 0.05,
-  mount = false,
-  className = "",
-}: {
-  text: string;
-  delay?: number;
-  stagger?: number;
-  className?: string;
-} & Trigger) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const reduced = useReducedMotion();
-  const inView = useInView(ref, { once: true });
-  const show = SSR || mount || inView;
-  const hidden = { y: "0.4em", opacity: 0, filter: "blur(14px)", scale: 1.18 };
-  const shown = { y: 0, opacity: 1, filter: "blur(0px)", scale: 1 };
-  return (
-    <span
-      ref={ref}
-      className={`inline-block ${className}`}
-      style={{ padding: "0.14em 0.04em", margin: "-0.14em -0.04em" }}
-      aria-label={text}
-    >
-      {[...text].map((ch, i) => (
-        <motion.span
-          key={i}
-          aria-hidden="true"
-          className="inline-block"
-          initial={reduced || SSR ? false : hidden}
-          animate={reduced ? shown : show ? shown : hidden}
-          transition={{
-            duration: 0.75,
-            delay: delay + i * stagger,
-            ease: EASE,
-          }}
-        >
-          {ch === " " ? " " : ch}
-        </motion.span>
-      ))}
-    </span>
-  );
-}
-
-/* ── Counter: count-up al entrar en vista ── */
+/* ── Counter: count-up al entrar en vista.
+   Solo cuenta lo que es un número; "3.º" u "OK" se pintan tal cual. ── */
 export function Counter({
-  to,
-  suffix = "",
+  value,
   duration = 1.4,
 }: {
-  to: number;
-  suffix?: string;
+  value: string;
   duration?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const reduced = useReducedMotion();
-  const [val, setVal] = useState(reduced || SSR ? to : 0);
+  const numero = /^\d+$/.test(value) ? Number(value) : null;
+  const [val, setVal] = useState(reduced || SSR || numero === null ? value : "0");
 
   useEffect(() => {
-    if (!inView || reduced) return;
-    const controls = animate(0, to, {
+    if (!inView || reduced || numero === null) return;
+    const controls = animate(0, numero, {
       duration,
       ease: "easeOut",
-      onUpdate: (v) => setVal(Math.round(v)),
+      onUpdate: (v) => setVal(String(Math.round(v))),
     });
     return () => controls.stop();
-  }, [inView, reduced, to, duration]);
+  }, [inView, reduced, numero, duration]);
 
-  return (
-    <span ref={ref}>
-      {val}
-      {suffix}
-    </span>
-  );
+  return <span ref={ref}>{numero === null ? value : val}</span>;
 }
 
 /* ── Magnetic: el hijo sigue sutilmente el puntero ── */
@@ -210,48 +159,6 @@ export function Magnetic({
       onMouseLeave={() => {
         x.set(0);
         y.set(0);
-      }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-/* ── Tilt: inclinación 3D que sigue al puntero ── */
-export function Tilt({
-  children,
-  max = 9,
-  className = "",
-}: {
-  children: ReactNode;
-  max?: number;
-  className?: string;
-}) {
-  const reduced = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const rx = useMotionValue(0);
-  const ry = useMotionValue(0);
-  const srx = useSpring(rx, { stiffness: 180, damping: 18 });
-  const sry = useSpring(ry, { stiffness: 180, damping: 18 });
-
-  if (reduced) return <div className={className}>{children}</div>;
-
-  return (
-    <motion.div
-      ref={ref}
-      className={className}
-      style={{ rotateX: srx, rotateY: sry, transformPerspective: 900 }}
-      onMouseMove={(e) => {
-        const r = ref.current?.getBoundingClientRect();
-        if (!r) return;
-        const px = (e.clientX - r.left) / r.width - 0.5;
-        const py = (e.clientY - r.top) / r.height - 0.5;
-        ry.set(px * max * 2);
-        rx.set(-py * max * 2);
-      }}
-      onMouseLeave={() => {
-        rx.set(0);
-        ry.set(0);
       }}
     >
       {children}
@@ -300,4 +207,16 @@ export function scrollToTarget(
   } else {
     target.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+}
+
+/**
+ * Para el panel del menú: con él abierto la página de detrás no se desplaza.
+ * Lenis escucha la rueda en `window`, así que `overflow: hidden` a secas no
+ * lo pararía; hay que decírselo a él. Sin Lenis (reduced-motion) basta la
+ * clase, que el CSS traduce a `overflow: hidden`.
+ */
+export function pausarScroll(pausar: boolean) {
+  if (pausar) lenisInstance?.stop();
+  else lenisInstance?.start();
+  document.documentElement.classList.toggle("scroll-pausado", pausar);
 }

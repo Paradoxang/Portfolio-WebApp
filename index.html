@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,7 +12,7 @@
 
     <!-- Default metadata (per-page title/description/canonical/og:* are set in <Seo>) -->
     <meta name="author" content="Santiago Miranda" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#0b0e14" />
 
     <!-- Favicon & app icons -->
@@ -25,7 +25,6 @@
     <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Dox Designs · Santiago Miranda" />
-    <meta property="og:locale" content="es_CO" />
     <meta property="og:image" content="https://doxdesigns.dev/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -37,124 +36,10 @@
 
     <!-- Fonts are self-hosted via @fontsource (imported in src/main.tsx) -->
 
-    <!-- Structured data (Schema.org): negocio de servicios + persona.
-         El ProfessionalService es lo que le dice a Google que eres un proveedor
-         contratable con zona de cobertura — clave para el resultado local. -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "ProfessionalService",
-            "@id": "https://doxdesigns.dev/#business",
-            "name": "Dox Designs",
-            "alternateName": "Dox Designs — Santiago Miranda",
-            "description": "Diseño y desarrollo de páginas web, tiendas online y aplicaciones a medida en Cali, Colombia. Sitios rápidos, seguros y responsive.",
-            "url": "https://doxdesigns.dev/",
-            "image": "https://doxdesigns.dev/og-image.jpg",
-            "logo": "https://doxdesigns.dev/favicon-512.png",
-            "email": "santiago.miranda.trabajo@gmail.com",
-            "telephone": "+57-318-981-9384",
-            "priceRange": "$$",
-            "currenciesAccepted": "COP, USD",
-            "founder": { "@id": "https://doxdesigns.dev/#santiago" },
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": "Cali",
-              "addressRegion": "Valle del Cauca",
-              "addressCountry": "CO"
-            },
-            "areaServed": [
-              { "@type": "City", "name": "Cali" },
-              { "@type": "Country", "name": "Colombia" }
-            ],
-            "knowsLanguage": ["es", "en"],
-            "hasOfferCatalog": {
-              "@type": "OfferCatalog",
-              "name": "Planes mensuales de crecimiento digital",
-              "itemListElement": [
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Páginas web a medida",
-                    "description": "Sitios diseñados para cada negocio, sin plantillas: rápidos, responsive, en tu propio dominio y con formularios y WhatsApp conectados."
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Posicionamiento local",
-                    "description": "Ficha de Google verificada, trabajo de reseñas y contenido para aparecer en las búsquedas cercanas de tu ciudad."
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Presencia en buscadores con IA",
-                    "description": "Contenido y datos estructurados para salir citado en las respuestas de ChatGPT, Perplexity y los resúmenes de Google."
-                  }
-                },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "Seguridad y cumplimiento",
-                    "description": "Endurecimiento del sitio, respaldos, monitoreo y acompañamiento técnico en la Ley 1581 de protección de datos personales."
-                  }
-                }
-              ]
-            },
-            "sameAs": [
-              "https://github.com/Paradoxang",
-              "https://instagram.com/paradoxxan",
-              "https://www.facebook.com/profile.php?id=61591547326067"
-            ]
-          },
-          {
-            "@type": "Person",
-            "@id": "https://doxdesigns.dev/#santiago",
-            "name": "Santiago Miranda",
-            "alternateName": "Dox Designs",
-            "url": "https://doxdesigns.dev/",
-            "image": "https://doxdesigns.dev/og-image.jpg",
-            "jobTitle": "Desarrollador Full-Stack y Diseñador Web",
-            "worksFor": { "@id": "https://doxdesigns.dev/#business" },
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": "Cali",
-              "addressCountry": "CO"
-            },
-            "knowsAbout": [
-              "React",
-              "Next.js",
-              "TypeScript",
-              ".NET",
-              "Angular",
-              "Electron",
-              "Diseño web",
-              "UI/UX",
-              "Ciberseguridad"
-            ],
-            "sameAs": [
-              "https://github.com/Paradoxang",
-              "https://instagram.com/paradoxxan",
-              "https://www.facebook.com/profile.php?id=61591547326067"
-            ]
-          },
-          {
-            "@type": "WebSite",
-            "@id": "https://doxdesigns.dev/#website",
-            "url": "https://doxdesigns.dev/",
-            "name": "Dox Designs — Santiago Miranda",
-            "inLanguage": "es",
-            "publisher": { "@id": "https://doxdesigns.dev/#business" }
-          }
-        ]
-      }
-    </script>
+    <!-- Datos estructurados: los emite <Seo> por página e idioma (ver
+         src/lib/schema.ts). Aquí no queda nada atado a un idioma: el `lang`
+         de la etiqueta html, el og:locale, el canonical y los hreflang los pone cada
+         página. -->
 
     <!-- Modo de rendimiento, antes del primer pintado.
          Aquí va SOLO la parte barata —la preferencia guardada y las señales que

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { FRAMES } from "@/components/heroPan";
 import { modoActual } from "@/lib/perf";
+import { routeFromPath } from "@/i18n/locales";
 
 /**
  * Precarga en segundo plano, sin tapar nada.
@@ -105,7 +106,7 @@ export function Prefetch() {
       /* La sección va en una segunda tanda, en el siguiente hueco ocioso: si
          entrara con la primera competiría con el hero, que es lo que el
          visitante está mirando. */
-      if (window.location.pathname === "/") {
+      if (routeFromPath(window.location.pathname)?.key === "home") {
         const seguir = () => {
           if (!cancelado) pedir(fuentesDeWdid());
         };

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
+import { useT } from "@/i18n/LocaleContext";
 
 /**
  * Las cuatro piezas de geometría pura, rehechas como SVG.
@@ -152,20 +153,6 @@ export function FxTiraDatos({ children, dibujar = false }: Contenedor) {
  * latido solo se redescifra una fila, por turnos: si cambiaran las seis a la
  * vez el bloque parpadearía entero y dejaría de leerse como telemetría.
  */
-const FILAS: { clave: string; valores: string[] }[] = [
-  { clave: "SYS", valores: ["DOX//DESIGNS", "SM · 01", "NUCLEO OK"] },
-  { clave: "STACK", valores: ["REACT 18.3", ".NET 8.0", "NODE 20"] },
-  { clave: "ORIGEN", valores: ["CALI · CO", "3.4516 N", "76.5320 W"] },
-  { clave: "ENLACE", valores: ["DOXDESIGNS.DEV", "TLS 1.3", "HSTS ON"] },
-  { clave: "BUILD", valores: ["SSG · PRERENDER", "CLS 0.00", "TTFB 42MS"] },
-  { clave: "ESTADO", valores: ["DISPONIBLE", "ACEPTANDO", "PARA MISIONES"] },
-];
-
-const LINEAS_CORCHETE = ["ESPECIALIDADES", "FULL-STACK", "UI · UX", "SEGURIDAD"];
-
-const TIRA =
-  "SYS://DOX · UPLINK ESTABLE · LAT 3.4516 N · LON 76.5320 W · REACT 18.3 · .NET 8.0 · NODE 20 · TTFB 42MS · CLS 0.00 · ESTADO: DISPONIBLE PARA MISIONES · ";
-
 /** Rota una lista con un intervalo. Se detiene si `corriendo` es falso. */
 function useRotacion(largo: number, ms: number, corriendo: boolean) {
   const [i, setI] = useState(0);
@@ -189,6 +176,9 @@ function useRotacion(largo: number, ms: number, corriendo: boolean) {
 const CANALES = ["CANAL 07", "CANAL 12", "CANAL 24", "CANAL 03"];
 
 export function TelemetriaMarco({ corriendo }: { corriendo: boolean }) {
+  /* Las filas vienen del contenido del idioma: son datos reales del proyecto
+     y lo poco que cambia es la etiqueta. */
+  const FILAS = useT().hero.hud.rows;
   /* Un contador continuo, no un índice de fila: de él salen tanto la fila que
      toca redescifrar como la vuelta de valores de cada una. */
   const t = useRotacion(FILAS.length * 3, 1700, corriendo);
@@ -197,7 +187,7 @@ export function TelemetriaMarco({ corriendo }: { corriendo: boolean }) {
 
   const turno = t % FILAS.length;
   const valor = (fila: (typeof FILAS)[number], k: number) =>
-    fila.valores[Math.floor((t + k) / FILAS.length) % fila.valores.length];
+    fila.values[Math.floor((t + k) / FILAS.length) % fila.values.length];
 
   useGSAP(
     () => {
@@ -239,8 +229,8 @@ export function TelemetriaMarco({ corriendo }: { corriendo: boolean }) {
 
       <div className="fx-datos__rejilla">
         {FILAS.map((fila, k) => (
-          <div className="fx-datos__fila" key={fila.clave}>
-            <span className="fx-datos__clave">{fila.clave}</span>
+          <div className="fx-datos__fila" key={fila.key}>
+            <span className="fx-datos__clave">{fila.key}</span>
             <span
               className="fx-datos__valor"
               data-valor={valor(fila, k)}
@@ -264,6 +254,7 @@ export function TelemetriaMarco({ corriendo }: { corriendo: boolean }) {
 
 /** Etiqueta única de los corchetes, también descifrándose. */
 export function TelemetriaCorchete({ corriendo }: { corriendo: boolean }) {
+  const LINEAS_CORCHETE = useT().hero.hud.bracket;
   const i = useRotacion(LINEAS_CORCHETE.length, 3200, corriendo);
   const ref = useRef<HTMLSpanElement>(null);
   useGSAP(
@@ -279,7 +270,7 @@ export function TelemetriaCorchete({ corriendo }: { corriendo: boolean }) {
         },
       });
     },
-    { dependencies: [i] }
+    { dependencies: [i, LINEAS_CORCHETE] }
   );
   return <span className="fx-datos__etiqueta" ref={ref} />;
 }
@@ -295,6 +286,7 @@ export function TelemetriaCorchete({ corriendo }: { corriendo: boolean }) {
  * cuelga del contenedor de toda la decoración.
  */
 export function TelemetriaTira({ corriendo }: { corriendo: boolean }) {
+  const TIRA = useT().hero.hud.ticker;
   return (
     <div className={`fx-datos__cinta${corriendo ? " fx-datos__cinta--corre" : ""}`}>
       <span>{TIRA}</span>
